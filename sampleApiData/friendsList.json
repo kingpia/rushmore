@@ -1,0 +1,38 @@
+[
+    {
+      "id": "1",
+      "userName": "TheSnAtchMaster",
+      "name": "Dan",
+      "rushmoresCompletedCount": 10
+    },
+    {
+      "id": "2",
+      "userName": "absenceOfAbrev",
+      "name": "Matt Antonelli",
+      "rushmoresCompletedCount": 5
+    },
+    {
+      "id": "3",
+      "userName": "Mike",
+      "name": "MikeSmell",
+      "rushmoresCompletedCount": 15
+    },
+    {
+      "id": "4",
+      "userName": "BigJim",
+      "name": "Jimbo",
+      "rushmoresCompletedCount": 8
+    },
+    {
+      "id": "5",
+      "userName": "Robbie",
+      "name": "Rob",
+      "rushmoresCompletedCount": 12
+    },
+    {
+      "id": "6",
+      "userName": "bigSet69",
+      "name": "Justin",
+      "rushmoresCompletedCount": 7
+    }
+]

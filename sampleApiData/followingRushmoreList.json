@@ -1,0 +1,33 @@
+[
+    {
+      "id": "1",
+      "rushmore": "Movies",
+      "uidFollowing": "1",
+      "followingUsername": "TheSnatchMaster",
+      "followingFirstName": "Dan",
+      "yourScore": 75,
+      "totalTimesCompleted": 20,
+      "highScore": 90
+    },
+    {
+      "id": "2",
+      "rushmore": "NFL Franchises",
+      "uidFollowing": "2",
+      "followingUsername": "Matt",
+      "followingFirstName": "Matt",
+      "yourScore": 60,
+      "totalTimesCompleted": 15,
+      "highScore": 75
+    },
+    {
+      "id": "3",
+      "rushmore": "Cities",
+      "uidFollowing": "uid3",
+      "followingUsername": "Matt",
+      "followingFirstName": "Matt",
+      "yourScore": 80,
+      "totalTimesCompleted": 25,
+      "highScore": 95
+    }
+  ]
+  

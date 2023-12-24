@@ -1,0 +1,30 @@
+[
+    {
+      "id": 1,
+      "rushmore": "Movies",
+      "timesCompleted": 5489,
+      "favorite": "The Shawshank Redemption",
+      "best": "The Godfather"
+    },
+    {
+      "id": 2,
+      "rushmore": "NFL Franchises",
+      "timesCompleted": 12345,
+      "favorite": "New England Patriots",
+      "best": "Green Bay Packers"
+    },
+    {
+      "id": 3,
+      "rushmore": "Cities",
+      "timesCompleted": 789,
+      "favorite": "New York City",
+      "best": "Tokyo"
+    },
+    {
+      "id": 4,
+      "rushmore": "Actors",
+      "timesCompleted": 987654,
+      "favorite": "Leonardo DiCaprio",
+      "best": "Meryl Streep"
+    }
+  ]

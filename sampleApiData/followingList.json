@@ -1,0 +1,92 @@
+[
+    {
+      "id": "1",
+      "userName": "TheSnAtchMaster",
+      "name": "Dan",
+      "rushmoresCompletedCount": 10
+    },
+    {
+      "id": "2",
+      "userName": "absenceOfAbrev",
+      "name": "Matt Antonelli",
+      "rushmoresCompletedCount": 5
+    },
+    {
+      "id": "3",
+      "userName": "Mike",
+      "name": "MikeSmell",
+      "rushmoresCompletedCount": 15
+    },
+    {
+      "id": "4",
+      "userName": "BigJim",
+      "name": "Jimbo",
+      "rushmoresCompletedCount": 8
+    },
+    {
+      "id": "5",
+      "userName": "Robbie",
+      "name": "Rob",
+      "rushmoresCompletedCount": 12
+    },
+    {
+      "id": "6",
+      "userName": "bigSet69",
+      "name": "Justin",
+      "rushmoresCompletedCount": 7
+    },
+    {
+      "id": "7",
+      "userName": "david_clark",
+      "name": "David Clark",
+      "rushmoresCompletedCount": 20
+    },
+    {
+      "id": "8",
+      "userName": "emily_jones",
+      "name": "Emily Jones",
+      "rushmoresCompletedCount": 14
+    },
+    {
+      "id": "9",
+      "userName": "george_anderson",
+      "name": "George Anderson",
+      "rushmoresCompletedCount": 18
+    },
+    {
+      "id": "10",
+      "userName": "olivia_white",
+      "name": "Olivia White",
+      "rushmoresCompletedCount": 25
+    },
+    {
+      "id": "11",
+      "userName": "michael_smith",
+      "name": "Michael Smith",
+      "rushmoresCompletedCount": 22
+    },
+    {
+      "id": "12",
+      "userName": "linda_davis",
+      "name": "Linda Davis",
+      "rushmoresCompletedCount": 13
+    },
+    {
+      "id": "13",
+      "userName": "peter_robinson",
+      "name": "Peter Robinson",
+      "rushmoresCompletedCount": 16
+    },
+    {
+      "id": "14",
+      "userName": "rachel_baker",
+      "name": "Rachel Baker",
+      "rushmoresCompletedCount": 9
+    },
+    {
+      "id": "15",
+      "userName": "tom_jenkins",
+      "name": "Tom Jenkins",
+      "rushmoresCompletedCount": 11
+    }
+  ]

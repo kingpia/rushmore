@@ -1,0 +1,90 @@
+[
+    {
+      "id": "1",
+      "rushmoreId": "rushmore1",
+      "rushmore": "Movies",
+      "completedDt": 1636726800000, 
+      "public": true,
+      "viewedCount": 500,
+      "solvedCount": 250,
+      "bookmarkedCount": 120,
+      "likedCount": 350
+    },
+    {
+      "id": "2",
+      "rushmoreId": "rushmore2",
+      "rushmore": "NFL Franchises",
+      "completedDt": 1636640400000, 
+      "public": false,
+      "viewedCount": 300,
+      "solvedCount": 150,
+      "bookmarkedCount": 80,
+      "likedCount": 200
+    },
+    {
+      "id": "3",
+      "rushmoreId": "rushmore3",
+      "rushmore": "Cities",
+      "completedDt": 1636554000000, 
+      "public": true,
+      "viewedCount": 800,
+      "solvedCount": 400,
+      "bookmarkedCount": 200,
+      "likedCount": 600
+    },
+    {
+      "id": "4",
+      "rushmoreId": "rushmore4",
+      "rushmore": "Actors",
+      "completedDt": 1636467600000, 
+      "public": false,
+      "viewedCount": 600,
+      "solvedCount": 300,
+      "bookmarkedCount": 150,
+      "likedCount": 450
+    },
+    {
+      "id": "5",
+      "rushmoreId": "rushmore5",
+      "rushmore": "Books",
+      "completedDt": 1636381200000, 
+      "public": true,
+      "viewedCount": 400,
+      "solvedCount": 200,
+      "bookmarkedCount": 100,
+      "likedCount": 300
+    },
+    {
+      "id": "6",
+      "rushmoreId": "rushmore6",
+      "rushmore": "Restaurants",
+      "completedDt": 1636294800000, 
+      "public": false,
+      "viewedCount": 700,
+      "solvedCount": 350,
+      "bookmarkedCount": 175,
+      "likedCount": 525
+    },
+    {
+      "id": "7",
+      "rushmoreId": "rushmore7",
+      "rushmore": "Countries",
+      "completedDt": 1636208400000, 
+      "public": true,
+      "viewedCount": 900,
+      "solvedCount": 450,
+      "bookmarkedCount": 225,
+      "likedCount": 675
+    },
+    {
+      "id": "8",
+      "rushmoreId": "rushmore8",
+      "rushmore": "TV Shows",
+      "completedDt": 1636122000000, 
+      "public": false,
+      "viewedCount": 1000,
+      "solvedCount": 500,
+      "bookmarkedCount": 250,
+      "likedCount": 750
+    }
+  ]
