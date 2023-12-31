@@ -1,0 +1,32 @@
+[
+    {
+      "id": 1,
+      "category": "Movies",
+      "title": "The Shawshank Redemption",
+      "type": "favorite",
+      "timesCompleted":1454
+    },
+    {
+      "id": 2,
+      "category": "Books",
+      "title": "To Kill a Mockingbird",
+      "type": "best",
+      "timesCompleted":54332
+    },
+    {
+      "id": 3,
+      "category": "Music",
+      "title": "Bohemian Rhapsody",
+      "type": "favorite",
+      "timesCompleted":344555
+  
+    },
+    {
+      "id": 4,
+      "category": "Travel",
+      "title": "Machu Picchu",
+      "type": "best",
+      "timesCompleted":24213
+    }
+  ]
+  

@@ -1,0 +1,9 @@
+{
+    "id": 1,
+    "username": "sampleUser",
+    "name": "John Doe",
+    "followingCount": 20,
+    "followerCount": 15,
+    "likeCount": 30
+  }
+  

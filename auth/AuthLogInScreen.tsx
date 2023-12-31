@@ -3,11 +3,13 @@ import { Button, TextInput } from "react-native-paper";
 import { SafeAreaView, View } from "react-native";
 import { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RushmoreStackParamList } from "../navigation/RushmoreStackParamList";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
 
-type StackContainerScreenProps = NativeStackScreenProps<RushmoreStackParamList>;
+type AppContainerStackScreenProps = NativeStackScreenProps<AppStackParamList>;
 
-export const AuthLogInScreen = ({ navigation }: StackContainerScreenProps) => {
+export const AuthLogInScreen = ({
+  navigation,
+}: AppContainerStackScreenProps) => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -17,7 +19,15 @@ export const AuthLogInScreen = ({ navigation }: StackContainerScreenProps) => {
   const handleLoginPress = () => {
     // Perform login logic here
     console.log("Login pressed");
-    navigation.navigate("Tab", { screen: "RushmoreHomeScreen" });
+    navigation.navigate("RushmoreTabContainer", {
+      screen: "CreateRushmoreHomeScreen",
+    });
+
+    // Reset the navigation stack to start fresh with RushmoreTabContainer
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "RushmoreTabContainer" }],
+    });
   };
 
   const togglePasswordVisibility = () => {
@@ -53,7 +63,9 @@ export const AuthLogInScreen = ({ navigation }: StackContainerScreenProps) => {
           onPress={() => {
             // Navigate to the forgot password
             console.log("Navigate to Forgot Password Screen");
-            navigation.navigate("AuthResetPasswordEmailScreen");
+            navigation.navigate("AuthStackContainer", {
+              screen: "AuthResetPasswordEmailScreen",
+            });
           }}
         >
           Forgot Password
@@ -73,7 +85,9 @@ export const AuthLogInScreen = ({ navigation }: StackContainerScreenProps) => {
         <Button
           mode="text"
           onPress={() => {
-            navigation.navigate("AuthHomeScreen");
+            navigation.navigate("AuthStackContainer", {
+              screen: "AuthHomeScreen",
+            });
           }}
         >
           Sign Up

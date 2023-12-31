@@ -1,20 +1,16 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { FriendsTopTabContainerParamList } from "./FriendsTopTabContainerParamList";
-import { FollowingScreen } from "../friends/FollowingScreen";
-import { FollowersScreen } from "../friends/FollowersScreen";
-import { FriendsScreen } from "../friends/FriendsScreen";
+import { useEffect } from "react";
+import { FollowingScreen } from "../../friends/FollowingScreen";
+import { FollowersScreen } from "../../friends/FollowersScreen";
+import { FriendsScreen } from "../../friends/FriendsScreen";
+import { FriendsTopTabContainerParamList } from "../params/FriendsTopTabContainerParamList";
 
 const FriendsTopTab =
   createMaterialTopTabNavigator<FriendsTopTabContainerParamList>();
 
 export const FriendsTopTabContainer = () => {
   return (
-    <FriendsTopTab.Navigator
-      screenOptions={{
-        tabBarLabelStyle: { fontSize: 15 },
-        tabBarStyle: { backgroundColor: "powderblue" },
-      }}
-    >
+    <FriendsTopTab.Navigator screenOptions={{}}>
       <FriendsTopTab.Screen
         name="FollowingScreen"
         component={FollowingScreen}

@@ -1,40 +1,152 @@
-import React, { useEffect, useState } from "react";
-import { FlatList, SafeAreaView } from "react-native";
-import { Button, SegmentedButtons } from "react-native-paper";
-import { RushmoreCard } from "../components/RushmoreCard";
+import React, { useCallback, useState } from "react";
+import { FlatList, SafeAreaView, View } from "react-native";
+import { SegmentedButtons } from "react-native-paper";
+import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
+
 import { RushmoreService } from "../service/RushmoreService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { YourCompletedRushmoreCard } from "../components/YourCompletedRushmoreCard";
+import { HomeStackParamList } from "../nav/params/HomeStackParamList";
+import { YourInProgressRushmore } from "../model/YourInProgressRushmore";
+import { YourInProgressRushmoreCard } from "../components/YourInProgressRushmoreCard";
+import { YourCompletedRushmore } from "../model/YourCompletedRushmore";
+import { categories } from "../model/Categories";
+import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 
-export const YourRushmoreHomeScreen = () => {
-  const [value, setValue] = React.useState("");
-  const [rushmoreItems, setRushmoreItems] = useState<RushmoreCard[]>([]);
+type YourRushmoreHomeScreenProps = {
+  navigation: NativeStackNavigationProp<HomeStackParamList>;
+};
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // Create an instance of RushmoreService with RushmoreCard type
-      const rushmoreService = new RushmoreService<RushmoreCard>();
+export const YourRushmoreHomeScreen = ({
+  navigation,
+}: YourRushmoreHomeScreenProps) => {
+  const [value, setValue] = useState("inprogress");
+  const [yourInProgressRushmoreList, setYourInProgressRushmoreList] = useState<
+    YourInProgressRushmore[]
+  >([]);
+  const [yourCompletedRushmoreList, setYourCompletedRushmoreList] = useState<
+    YourCompletedRushmore[]
+  >([]);
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
-      try {
-        // Fetch Rushmore items
-        const youRushmoreCards = await rushmoreService.getRushmoreItems(
+  const fetchData = async (selectedValue: string) => {
+    console.log(`fetchData: YourRushmoreHomeScreen - ${selectedValue}`);
+
+    try {
+      if (selectedValue === "inprogress") {
+        const rushmoreService = new RushmoreService<YourInProgressRushmore>();
+
+        const yourRushmoreCards = await rushmoreService.getRushmoreItems(
           "pia_id",
-          ApiFetchEnums.RUSHMORE_LIST
+          ApiFetchEnums.YOUR_IN_PROGRESS_RUSHMORE_LIST
         );
+        setYourInProgressRushmoreList(yourRushmoreCards);
+      } else if (selectedValue === "complete") {
+        const rushmoreService = new RushmoreService<YourCompletedRushmore>();
 
-        // Set the fetched Rushmore items to the state
-        setRushmoreItems(youRushmoreCards);
-      } catch (error) {
-        console.error("Error fetching Rushmore items:", error);
+        const completedRushmoreCards = await rushmoreService.getRushmoreItems(
+          "pia_id",
+          ApiFetchEnums.YOUR_COMPLETED_RUSHMORE_LIST
+        );
+        setYourCompletedRushmoreList(completedRushmoreCards);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching Rushmore items:", error);
+    }
+  };
 
-    fetchData(); // Call the async function immediately
-  }, []); // Empty dependency array to run the effect only once on mount
+  const countByCategory = (category: string) => {
+    if (value === "inprogress") {
+      return yourInProgressRushmoreList.filter(
+        (item) => category === "All" || item.rushmoreCategory === category
+      ).length;
+    } else {
+      return yourCompletedRushmoreList.filter(
+        (item) => category === "All" || item.rushmoreCategory === category
+      ).length;
+    }
+  };
 
-  //Call to get your list here via async when page loads from a source.
+  useFocusEffect(
+    useCallback(() => {
+      fetchData(value);
+    }, [value])
+  );
+
+  const navigateToYourCompletedRushmore = (
+    rushmoreItem: YourCompletedRushmore
+  ) => {
+    navigation.navigate("YourCompletedRushmoreScreen", {
+      rushmoreItem,
+      // Add other properties as needed
+    });
+  };
+
+  const navigateToYourInProgressRushmore = (
+    rushmoreItem: YourInProgressRushmore
+  ) => {
+    navigation.navigate("YourInProgressRushmoreScreen", {
+      rushmoreItem,
+    });
+  };
+
+  const handleCategoryPress = (category: string) => {
+    console.log(`Clicked on ${category}`);
+    setSelectedCategory(category);
+  };
+
+  const renderInProgressRushmoreList = () => {
+    return (
+      <>
+        <FlatList
+          data={filteredYourInProgressRushmoreData}
+          keyExtractor={(item) => item.rushmoreId}
+          renderItem={({ item }) => (
+            <YourInProgressRushmoreCard
+              yourInProgressRushmore={item}
+              onPress={() => navigateToYourInProgressRushmore(item)}
+            />
+          )}
+        />
+      </>
+    );
+  };
+
+  const renderCompletedRushmoreList = () => {
+    return (
+      <FlatList
+        data={filteredCompletedInProgressRushmoreData}
+        keyExtractor={(item) => item.rushmoreId}
+        renderItem={({ item }) => (
+          <YourCompletedRushmoreCard
+            yourCompletedRushmore={item}
+            onPress={() => navigateToYourCompletedRushmore(item)}
+          />
+        )}
+      />
+    );
+  };
+
+  const filteredYourInProgressRushmoreData =
+    yourInProgressRushmoreList?.filter(
+      (item) =>
+        selectedCategory === "All" || item.rushmoreCategory === selectedCategory
+    ) || [];
+
+  const filteredCompletedInProgressRushmoreData =
+    yourCompletedRushmoreList?.filter(
+      (item) =>
+        selectedCategory === "All" || item.rushmoreCategory === selectedCategory
+    ) || [];
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <RushmoreHorizontalView
+        selectedCategory={selectedCategory}
+        onPressCategory={handleCategoryPress}
+        countByCategory={countByCategory}
+      />
       <SegmentedButtons
         style={{ margin: 10 }}
         value={value}
@@ -50,20 +162,10 @@ export const YourRushmoreHomeScreen = () => {
           },
         ]}
       />
-      <FlatList
-        data={rushmoreItems}
-        keyExtractor={(item) => item.rushmore.toString()}
-        renderItem={({ item }) => (
-          <RushmoreCard
-            // Render RushmoreCard component with item data
-            id={item.id}
-            rushmore={item.rushmore}
-            timesCompleted={item.timesCompleted}
-            favorite={item.favorite}
-            best={item.best}
-          />
-        )}
-      />
+
+      {value === "inprogress"
+        ? renderInProgressRushmoreList()
+        : renderCompletedRushmoreList()}
     </SafeAreaView>
   );
 };

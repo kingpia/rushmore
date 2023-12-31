@@ -1,51 +1,70 @@
-import React, { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, View } from "react-native";
-import { Text } from "react-native-paper";
+import React, { useState, useEffect, useCallback } from "react";
+import { FlatList, SafeAreaView } from "react-native";
+import { Searchbar, Text } from "react-native-paper";
+import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import { UserCard } from "../components/UserCard";
 import { FriendsService } from "../service/FriendsService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { FriendsStackParamList } from "../nav/params/FriendsStackParamList";
 
-export const FollowersScreen = () => {
+type FollowersScreenProps = {
+  navigation: NativeStackNavigationProp<FriendsStackParamList>;
+};
+export const FollowersScreen = ({ navigation }: FollowersScreenProps) => {
   const [followersList, setFollowersList] = useState<User[]>([]);
+  const [searchQuery, setSearchQuery] = React.useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // Create an instance of RushmoreService with RushmoreCard type
-      const friendService = new FriendsService<User>();
+  const onChangeSearch = (query: string) => setSearchQuery(query);
+  const fetchData = async () => {
+    console.log("Fetching followers screen Data");
+    // Create an instance of RushmoreService with RushmoreCard type
+    const friendService = new FriendsService<User>();
 
-      try {
-        // Fetch Rushmore items
-        const followingCards = await friendService.getRushmoreItems(
-          "pia_id",
-          ApiFetchEnums.FOLLOWERS_LIST
-        );
+    try {
+      // Fetch Rushmore items
+      const followingCards = await friendService.getRushmoreItems(
+        "pia_id",
+        ApiFetchEnums.FOLLOWERS_LIST
+      );
 
-        // Set the fetched Rushmore items to the state
-        setFollowersList(followingCards);
-      } catch (error) {
-        console.error("Error fetching Rushmore items:", error);
-      }
-    };
+      // Set the fetched Rushmore items to the state
+      setFollowersList(followingCards);
+    } catch (error) {
+      console.error("Error fetching Rushmore items:", error);
+    }
+  };
 
-    fetchData(); // Call the async function immediately
-  }, []); // Empty dependency array to run the effect only once on mount
+  // Use useFocusEffect to fetch data when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, []) // Empty dependency array to run the effect only once when the component mounts
+  );
+
+  const navigateToUserProfileScreen = (user: User) => {
+    console.log("navigateToUserProfileScreen");
+    navigation.navigate("UserProfileScreen", {
+      user,
+    });
+  };
 
   return (
-    <SafeAreaView>
-      <View style={{ alignSelf: "center" }}>
-        <Text variant="displaySmall">Following Screen</Text>
-      </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={onChangeSearch}
+        value={searchQuery}
+        style={{ margin: 5 }}
+      />
 
       <FlatList
         data={followersList}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <UserCard
-            id={item.id}
-            userName={item.userName}
-            name={item.name}
-            rushmoresCompletedCount={item.rushmoresCompletedCount}
-            rushmoresSolvedCount={item.rushmoresSolvedCount}
+            user={item}
+            onPress={() => navigateToUserProfileScreen(item)}
           />
         )}
       />

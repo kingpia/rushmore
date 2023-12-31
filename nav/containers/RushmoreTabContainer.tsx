@@ -1,24 +1,26 @@
-import { RushmoreTabContainerParamList } from "./RushmoreTabContainerParamList";
-import { StackContainerScreenProps } from "./RushmoreStackParamList";
-import { FriendsHomeScreen } from "../friends/FriendsHomeScreen";
-import { CreateRushmoreHomeScreen } from "../rushmore/CreateRushmoreHomeScreen";
-import { InboxHomeScreen } from "../inbox/InboxHomeScreen";
-import { ProfileHomeScreen } from "../profile/ProfileHomeScreen";
+import { CreateRushmoreHomeScreen } from "../../rushmore/CreateRushmoreHomeScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { HomeRushmoreStackContainer } from "./HomeRushmoreStackContainer";
-import { HomeTopTabContainer } from "./HomeTopTabContainer";
+import { RushmoreTabContainerParamList } from "../params/RushmoreTabContainerParamList";
 import { FriendsTopTabContainer } from "./FriendsTopTabContainer";
+import { InboxHomeScreen } from "../../inbox/InboxHomeScreen";
 import { ProfileStackContainer } from "./ProfileStackContainer";
+import { HomeStackContainer } from "./HomeStackContainer";
+import { FriendsStackContainer } from "./FriendsStackContainer";
 
 const Tab = createBottomTabNavigator<RushmoreTabContainerParamList>();
 
 export const RushmoreTabContainer = () => {
   return (
-    <Tab.Navigator screenOptions={{}}>
+    <Tab.Navigator
+      screenOptions={{
+        unmountOnBlur: true,
+        headerShown: false, // Hide the header
+      }} // Add this option
+    >
       <Tab.Screen
-        name="HomeTopTabContainer"
-        component={HomeTopTabContainer}
+        name="HomeStackContainer"
+        component={HomeStackContainer}
         options={{
           tabBarLabel: "Home",
           tabBarIcon: ({ color, size }) => {
@@ -29,8 +31,8 @@ export const RushmoreTabContainer = () => {
         }}
       />
       <Tab.Screen
-        name="FriendsTopTabContainer"
-        component={FriendsTopTabContainer}
+        name="FriendsStackContainer"
+        component={FriendsStackContainer}
         options={{
           tabBarLabel: "Friends",
           tabBarIcon: ({ color, size }) => {
@@ -42,6 +44,7 @@ export const RushmoreTabContainer = () => {
               />
             );
           },
+          headerShown: false, // Hide the header
         }}
       />
       <Tab.Screen

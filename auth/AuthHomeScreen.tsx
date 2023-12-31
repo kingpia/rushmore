@@ -5,9 +5,9 @@ import {
   NativeStackScreenProps,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
-import { RushmoreStackParamList } from "../navigation/RushmoreStackParamList";
+import { AuthStackParamList } from "../nav/params/AuthStackParamList";
 
-type HomeScreenProps = NativeStackScreenProps<RushmoreStackParamList>;
+type HomeScreenProps = NativeStackScreenProps<AuthStackParamList>;
 
 export const AuthHomeScreen = ({ navigation }: HomeScreenProps) => {
   return (

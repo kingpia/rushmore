@@ -9,12 +9,18 @@ export class RushmoreService<T> {
     try {
       let data: T[] = [];
 
-      if (toFetch === ApiFetchEnums.RUSHMORE_LIST) {
-        data = require("../sampleApiData/rushmoreList.json");
+      if (toFetch === ApiFetchEnums.YOUR_IN_PROGRESS_RUSHMORE_LIST) {
+        data = require("../sampleApiData/yourInProgressRushmoreList.json");
       } else if (toFetch === ApiFetchEnums.YOUR_COMPLETED_RUSHMORE_LIST) {
         data = require("../sampleApiData/yourCompletedRushmoreList.json");
-      } else if (toFetch === ApiFetchEnums.FOLLOWING_RUSHMORE_IN_PROGRESS) {
-        data = require("../sampleApiData/followingRushmoreList.json");
+      } else if (
+        toFetch === ApiFetchEnums.FOLLOWING_IN_PROGRESS_RUSHMORE_LIST
+      ) {
+        data = require("../sampleApiData/followingRushmoreInProgressList.json");
+      } else if (toFetch === ApiFetchEnums.FOLLOWING_SOLVED_RUSHMORE_LIST) {
+        data = require("../sampleApiData/followingRushmoreSolvedList.json");
+      } else if (toFetch === ApiFetchEnums.USER_RUSHMORE_LIST) {
+        data = require("../sampleApiData/followingRushmoreSolvedList.json");
       } else {
         throw new Error(`Unsupported enum value: ${toFetch}`);
       }

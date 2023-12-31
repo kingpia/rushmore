@@ -1,0 +1,66 @@
+{
+    "rushmoreId": "1",
+    "rushmoreTitle": "Movies",
+    "type": "Favorite",
+    "visibility": "OPEN",
+    "gameType": "GAME",
+    "createdDt": "2023-01-01T12:00:00Z",
+    "likeCount": 85,
+    "completedCount": 10,
+    "icon": "movie_icon.png",
+    "highScoreUsername": "abSenCeOfAbReV",
+    "rushmoreCategory": "Entertainment",
+    "yourCompletedRushmoreItems": [
+      {
+        "riId": 1,
+        "rank": 1,
+        "itemTitle": "Jaws"
+      },
+      {
+        "riId": 2,
+        "rank": 2,
+        "itemTitle": "Star Wars: Return of the Jedi"
+      },
+      {
+        "riId": 3,
+        "rank": 3,
+        "itemTitle": "Lord of the Rings: Return of the King"
+      },
+      {
+        "riId": 4,
+        "rank": 4,
+        "itemTitle": "Fight Club"
+      },
+      {
+        "riId": 5,
+        "rank": 5,
+        "itemTitle": "The Matrix"
+      },
+      {
+        "riId": 6,
+        "rank": 6,
+        "itemTitle": "Gladiator"
+      },
+      {
+        "riId": 7,
+        "rank": 7,
+        "itemTitle": "Inception"
+      },
+      {
+        "riId": 8,
+        "rank": 8,
+        "itemTitle": "The Shawshank Redemption"
+      },
+      {
+        "riId": 9,
+        "rank": 9,
+        "itemTitle": "Pulp Fiction"
+      },
+      {
+        "riId": 10,
+        "rank": 10,
+        "itemTitle": "The Godfather"
+      }
+    ]
+  }
+  

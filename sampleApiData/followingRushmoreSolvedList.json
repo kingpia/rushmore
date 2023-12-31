@@ -1,0 +1,53 @@
+[
+    {
+      "urId": 1,
+      "userId": "user1",
+      "username": "theSnachMasTer",
+      "name": "Dan",
+      "rushmoreId": "rushmore1",
+      "rushmoreTitle": "Video Games",
+      "type": "Best",
+      "gameType": "Game",
+      "completedDt": "2023-01-01T12:00:00.000Z",
+      "likeCount": 10,
+      "highScore": 1500,
+      "version": 1,
+      "solvedCount": 5,
+      "yourScore": 1200,
+      "icon": "https://example.com/avatar1.jpg"
+    },
+    {
+      "urId": 2,
+      "userId": "user2",
+      "username": "abcenceofAbrevity",
+      "name": "Matt Antonelli",
+      "rushmoreId": "rushmore2",
+      "rushmoreTitle": "Movies",
+      "type": "Favorite",
+      "gameType": "Game",
+      "completedDt": "2023-02-01T14:30:00.000Z",
+      "likeCount": 20,
+      "highScore": 500,
+      "version": 1,
+      "solvedCount": 8,
+      "yourScore": 450,
+      "icon": "https://example.com/avatar2.jpg"
+    },
+    {
+      "urId": 3,
+      "userId": "user3",
+      "username": "HDS",
+      "name": "Mike Smell",
+      "rushmoreId": "rushmore3",
+      "rushmoreTitle": "Top Books",
+      "type": "Favorite",
+      "gameType": "Game",
+      "completedDt": "2023-03-01T18:45:00.000Z",
+      "likeCount": 15,
+      "highScore": 800,
+      "version": 1,
+      "solvedCount": 10,
+      "yourScore": 750,
+      "icon": "https://example.com/avatar3.jpg"
+    }
+  ]

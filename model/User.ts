@@ -2,6 +2,8 @@ type User = {
   id: string;
   userName: string;
   name: string;
-  rushmoresCompletedCount: number;
-  rushmoresSolvedCount: number;
+  followingCount: number;
+  followerCount: number;
+  likeCount: number;
+  socialStatus: string;
 };

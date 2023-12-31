@@ -1,20 +1,14 @@
-import { StackContainerScreenProps } from "./RushmoreStackParamList";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { RushmoreTopTabContainerParamList } from "./HomeTopTabContainerParamList";
-import { YourRushmoreHomeScreen } from "../rushmore/YourRushmoreHomeScreen";
-import { FollowingRushmoreHomeScreen } from "../rushmore/FollowingRushmoreHomeScreen";
+import { RushmoreTopTabContainerParamList } from "../params/HomeTopTabContainerParamList";
+import { YourRushmoreHomeScreen } from "../../rushmore/YourRushmoreHomeScreen";
+import { FollowingRushmoreHomeScreen } from "../../rushmore/FollowingRushmoreHomeScreen";
 
 const HomeTopTab =
   createMaterialTopTabNavigator<RushmoreTopTabContainerParamList>();
 
 export const HomeTopTabContainer = () => {
   return (
-    <HomeTopTab.Navigator
-      screenOptions={{
-        tabBarLabelStyle: { fontSize: 15 },
-        tabBarStyle: { backgroundColor: "powderblue" },
-      }}
-    >
+    <HomeTopTab.Navigator screenOptions={{}}>
       <HomeTopTab.Screen
         name="YourRushmoreHomeScreen"
         component={YourRushmoreHomeScreen}

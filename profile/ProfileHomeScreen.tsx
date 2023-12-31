@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Avatar, Button, IconButton, Text } from "react-native-paper";
-import { ProfileStackParamList } from "../navigation/ProfileStackContainerParamList";
+import { ProfileStackParamList } from "../nav/params/ProfileStackParamList";
 
 type ProfileStackContainerScreenProps =
   NativeStackScreenProps<ProfileStackParamList>;
@@ -42,10 +42,14 @@ export const ProfileHomeScreen = ({
         <View>
           <Button
             mode="text"
-            onPress={() => {
-              console.log("pressed to go to following");
-              navigation.navigate("Tab", { screen: "FriendsTopTabContainer" });
-            }}
+            onPress={() =>
+              navigation.navigate("FriendsStackContainer", {
+                screen: "FriendsTopTabContainer",
+                params: {
+                  screen: "FollowingScreen",
+                },
+              })
+            }
           >
             Following
           </Button>
@@ -53,7 +57,17 @@ export const ProfileHomeScreen = ({
         </View>
         <Text style={styles.pipeSeparator}>|</Text>
         <View>
-          <Button mode="text" onPress={() => console.log("Followers")}>
+          <Button
+            mode="text"
+            onPress={() =>
+              navigation.navigate("FriendsStackContainer", {
+                screen: "FriendsTopTabContainer",
+                params: {
+                  screen: "FollowersScreen",
+                },
+              })
+            }
+          >
             Followers
           </Button>
           <Text>2</Text>
@@ -62,10 +76,14 @@ export const ProfileHomeScreen = ({
         <View>
           <Button
             mode="text"
-            onPress={() => {
-              console.log("pressed to go to following");
-              navigation.navigate("FriendsTopTab", { screen: "FriendsScreen" });
-            }}
+            onPress={() =>
+              navigation.navigate("FriendsStackContainer", {
+                screen: "FriendsTopTabContainer",
+                params: {
+                  screen: "FriendsScreen",
+                },
+              })
+            }
           >
             Friends
           </Button>

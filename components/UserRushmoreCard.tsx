@@ -1,20 +1,21 @@
 import React from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { Avatar, Card, Text } from "react-native-paper";
-import { YourCompletedRushmore } from "../model/YourCompletedRushmore";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // Make sure to import the appropriate icons library
+import { UserRushmore } from "../model/UserRushmore";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
 
-type YourCompletedRushmoreCardProps = {
-  yourCompletedRushmore: YourCompletedRushmore;
+type UserRushmoreCardProps = {
+  userRushmore: UserRushmore;
   onPress: () => void;
 };
+export const UserRushmoreCard: React.FC<UserRushmoreCardProps> = ({
+  userRushmore,
+  onPress,
+}) => {
+  console.log("UserRushmoreCardData:" + JSON.stringify(userRushmore));
+  const isGameType = userRushmore.gameType === RushmoreGameTypeEnums.GAME;
 
-export const YourCompletedRushmoreCard: React.FC<
-  YourCompletedRushmoreCardProps
-> = ({ yourCompletedRushmore, onPress }) => {
-  const isGameType =
-    yourCompletedRushmore.gameType === RushmoreGameTypeEnums.GAME;
   return (
     <TouchableOpacity onPress={onPress}>
       <Card style={styles.card}>
@@ -22,7 +23,7 @@ export const YourCompletedRushmoreCard: React.FC<
           {/* Circular Avatar */}
           <Avatar.Image
             size={60}
-            source={{ uri: yourCompletedRushmore.icon }}
+            source={{ uri: userRushmore.icon }}
             style={styles.avatar}
           />
 
@@ -30,11 +31,9 @@ export const YourCompletedRushmoreCard: React.FC<
           <View style={styles.titleUserInfoContainer}>
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.title}>
-                {yourCompletedRushmore.type}{" "}
-                {yourCompletedRushmore.rushmoreTitle}{" "}
+                {userRushmore.type} {userRushmore.rushmoreTitle}{" "}
               </Text>
-              {yourCompletedRushmore.gameType ===
-                RushmoreGameTypeEnums.GAME && (
+              {userRushmore.gameType === RushmoreGameTypeEnums.GAME && (
                 <MaterialCommunityIcons name="puzzle" size={18} color="black" />
               )}
             </View>
@@ -44,7 +43,7 @@ export const YourCompletedRushmoreCard: React.FC<
               <View style={styles.crownUsernameContainer}>
                 <MaterialCommunityIcons name="crown" size={18} color="black" />
                 <Text style={styles.username}>
-                  @{yourCompletedRushmore.highScoreUsername}
+                  @{userRushmore.highScoreUsername}
                 </Text>
               </View>
             )}
@@ -52,20 +51,12 @@ export const YourCompletedRushmoreCard: React.FC<
             {/* Additional Info */}
             <View style={styles.additionalInfoContainer}>
               <View style={styles.infoItem}>
-                <MaterialCommunityIcons name="eye" size={24} color="black" />
-                <Text variant="bodyMedium">
-                  {yourCompletedRushmore.visibility}
-                </Text>
-              </View>
-              <View style={styles.infoItem}>
                 <MaterialCommunityIcons
                   name="thumb-up"
                   size={24}
                   color="black"
                 />
-                <Text variant="bodyMedium">
-                  {yourCompletedRushmore.likeCount}
-                </Text>
+                <Text variant="bodyMedium">{userRushmore.likeCount}</Text>
               </View>
               {isGameType && (
                 <View style={styles.infoItem}>
@@ -75,7 +66,7 @@ export const YourCompletedRushmoreCard: React.FC<
                     color="black"
                   />
                   <Text variant="bodyMedium">
-                    {yourCompletedRushmore.completedCount}
+                    {userRushmore.completedCount}
                   </Text>
                 </View>
               )}

@@ -1,42 +1,86 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { FlatList, SafeAreaView } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 import { RushmoreService } from "../service/RushmoreService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { FollowingRushmoreCard } from "../components/FollowingRushmoreCard";
+import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
+import { FollowingSolvedRushmoreCard } from "../components/FollowingSolvedRushmoreCard";
+import { HomeStackParamList } from "../nav/params/HomeStackParamList";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { FollowingSolvedRushmore } from "../model/FollowingSolvedRushmore";
+import { FollowingInProgressRushmoreCard } from "../components/FollowingInProgressRushmoreCard";
+import { FollowingInProgressRushmore } from "../model/FollowingInProgressRushmore";
 
-export const FollowingRushmoreHomeScreen = () => {
-  const [value, setValue] = React.useState("");
-  const [rushmoreItems, setRushmoreItems] = useState<FollowingRushmoreCard[]>(
-    []
+type FollowingRushmoreHomeScreenProps = {
+  navigation: NativeStackNavigationProp<HomeStackParamList>;
+};
+
+export const FollowingRushmoreHomeScreen = ({
+  navigation,
+}: FollowingRushmoreHomeScreenProps) => {
+  const [value, setValue] = useState("inprogress"); // Set the initial value to "inprogress"
+
+  const [followingInProgressRushmore, setFollowingInProgressRushmore] =
+    useState<FollowingInProgressRushmore[]>([]);
+
+  const [followingSolvedRushmoreItems, setFollowingSolvedRushmoreItems] =
+    useState<FollowingSolvedRushmore[]>([]);
+
+  const fetchData = async (selectedValue: string) => {
+    console.log(`fetchData: YourRushmoreHomeScreen - ${selectedValue}`);
+
+    try {
+      if (selectedValue === "inprogress") {
+        const rushmoreService =
+          new RushmoreService<FollowingInProgressRushmore>();
+
+        const followingInProgressRushmoreItems =
+          await rushmoreService.getRushmoreItems(
+            "pia_id",
+            ApiFetchEnums.FOLLOWING_IN_PROGRESS_RUSHMORE_LIST
+          );
+        setFollowingInProgressRushmore(followingInProgressRushmoreItems);
+      } else if (selectedValue === "solved") {
+        const rushmoreService = new RushmoreService<FollowingSolvedRushmore>();
+
+        const solvedRushmoreList = await rushmoreService.getRushmoreItems(
+          "pia_id",
+          ApiFetchEnums.FOLLOWING_SOLVED_RUSHMORE_LIST
+        );
+        setFollowingSolvedRushmoreItems(solvedRushmoreList);
+      }
+    } catch (error) {
+      console.error("Error fetching Rushmore items:", error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData(value);
+    }, [value]) // Fetch data whenever the value changes
   );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // Create an instance of RushmoreService with RushmoreCard type
-      const rushmoreService = new RushmoreService<FollowingRushmoreCard>();
+  const navigateToFollowingSolvedRushmoreScreen = (
+    rushmoreItem: FollowingSolvedRushmore
+  ) => {
+    console.log("Navigate to followingsolved rushmore home screen");
+    navigation.navigate("FollowingSolvedRushmoreScreen", {
+      rushmoreItem,
+    });
+  };
 
-      try {
-        // Fetch Rushmore items
-        const youRushmoreCards = await rushmoreService.getRushmoreItems(
-          "pia_id",
-          ApiFetchEnums.FOLLOWING_RUSHMORE_IN_PROGRESS
-        );
-
-        // Set the fetched Rushmore items to the state
-        setRushmoreItems(youRushmoreCards);
-      } catch (error) {
-        console.error("Error fetching Rushmore items:", error);
-      }
-    };
-
-    fetchData(); // Call the async function immediately
-  }, []); // Empty dependency array to run the effect only once on mount
-
-  //Call to get your list here via async when page loads from a source.
+  const navigateToFollowingInProgressRushmoreScreen = (
+    rushmoreItem: FollowingInProgressRushmore
+  ) => {
+    console.log("Navigate to FollowingInProgressRushmore rushmore  screen");
+    navigation.navigate("FollowingInProgressRushmoreScreen", {
+      rushmoreItem,
+    });
+  };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <SegmentedButtons
         style={{ margin: 10 }}
         value={value}
@@ -52,23 +96,30 @@ export const FollowingRushmoreHomeScreen = () => {
           },
         ]}
       />
-      <FlatList
-        data={rushmoreItems}
-        keyExtractor={(item) => item.rushmore.toString()}
-        renderItem={({ item }) => (
-          <FollowingRushmoreCard
-            // Render RushmoreCard component with item data
-            id={item.id}
-            rushmore={item.rushmore}
-            followingFirstName={item.followingUsername}
-            yourScore={item.yourScore}
-            totalTimesCompleted={item.totalTimesCompleted}
-            highScore={item.highScore}
-            uidFollowing={item.uidFollowing}
-            followingUsername={item.followingUsername}
-          />
-        )}
-      />
+
+      {value === "inprogress" ? (
+        <FlatList
+          data={followingInProgressRushmore}
+          keyExtractor={(item) => item.rushmoreId}
+          renderItem={({ item }) => (
+            <FollowingInProgressRushmoreCard
+              followingInProgressRushmore={item}
+              onPress={() => navigateToFollowingInProgressRushmoreScreen(item)}
+            />
+          )}
+        />
+      ) : (
+        <FlatList
+          data={followingSolvedRushmoreItems}
+          keyExtractor={(item) => item.rushmoreId}
+          renderItem={({ item }) => (
+            <FollowingSolvedRushmoreCard
+              followingSolvedRushmore={item}
+              onPress={() => navigateToFollowingSolvedRushmoreScreen(item)}
+            />
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 };
