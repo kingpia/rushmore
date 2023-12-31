@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { FriendsTopTabContainerParamList } from "./FriendsTopTabContainerParamList";
-import { FriendsStackParamList } from "./FriendsStackparamList";
+import { FriendsStackParamList } from "./FriendsStackParamList";
 
 export type ProfileStackParamList = {
   ProfileHomeScreen: undefined;

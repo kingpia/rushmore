@@ -6,7 +6,7 @@
     "visibility": "OPEN",
     "gameType": "GAME",
     "createdDt": "2023-01-01T12:00:00Z",
-    "completedDt": "2023-12-01T12:00:00Z",
+    "completedDt": null,
     "likeCount": 85,
     "completedCount": 10,
     "icon": "movie_icon.png",

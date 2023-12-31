@@ -1,4 +1,5 @@
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
+import { YourCompletedRushmore } from "../model/YourCompletedRushmore";
 import {
   rushmoreListURL,
   yourCompletedRushmoreListURL,
@@ -28,6 +29,23 @@ export class RushmoreService<T> {
       return data;
     } catch (error) {
       console.error("Error fetching Rushmore items:", error);
+      throw error; // Re-throw the error for the component to handle
+    }
+  }
+
+  async getYourCompletedRushmore(
+    uid: string,
+    urId: number
+  ): Promise<YourCompletedRushmore> {
+    console.log("getYourCompletedRushmore(uid" + uid + "urId" + urId + ")");
+    try {
+      let data: YourCompletedRushmore;
+
+      data = require("../sampleApiData/rushmoreListData/yourCompletedRushmore.json");
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching getYourCompletedRushmore :", error);
       throw error; // Re-throw the error for the component to handle
     }
   }
