@@ -1,12 +1,12 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Avatar, Card, Text } from "react-native-paper";
-import { YourInProgressRushmore } from "../model/YourInProgressRushmore";
+import { UserRushmore } from "../model/UserRushmore";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // Make sure to import the appropriate icons library
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
 
 type YourInProgressRushmoreCardProps = {
-  yourInProgressRushmore: YourInProgressRushmore;
+  yourInProgressRushmore: UserRushmore;
   onPress: () => void;
 };
 

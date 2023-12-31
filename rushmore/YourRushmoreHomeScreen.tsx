@@ -8,7 +8,6 @@ import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { YourCompletedRushmoreCard } from "../components/YourCompletedRushmoreCard";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
-import { YourInProgressRushmore } from "../model/YourInProgressRushmore";
 import { YourInProgressRushmoreCard } from "../components/YourInProgressRushmoreCard";
 import { UserRushmore } from "../model/UserRushmore";
 import { categories } from "../model/Categories";
@@ -23,7 +22,7 @@ export const YourRushmoreHomeScreen = ({
 }: YourRushmoreHomeScreenProps) => {
   const [value, setValue] = useState("inprogress");
   const [yourInProgressRushmoreList, setYourInProgressRushmoreList] = useState<
-    YourInProgressRushmore[]
+    UserRushmore[]
   >([]);
   const [yourCompletedRushmoreList, setYourCompletedRushmoreList] = useState<
     UserRushmore[]
@@ -35,7 +34,7 @@ export const YourRushmoreHomeScreen = ({
 
     try {
       if (selectedValue === "inprogress") {
-        const rushmoreService = new RushmoreService<YourInProgressRushmore>();
+        const rushmoreService = new RushmoreService<UserRushmore>();
 
         const yourRushmoreCards = await rushmoreService.getRushmoreItems(
           "pia_id",
@@ -81,9 +80,7 @@ export const YourRushmoreHomeScreen = ({
     });
   };
 
-  const navigateToYourInProgressRushmore = (
-    rushmoreItem: YourInProgressRushmore
-  ) => {
+  const navigateToYourInProgressRushmore = (rushmoreItem: UserRushmore) => {
     navigation.navigate("YourInProgressRushmoreScreen", {
       rushmoreItem,
     });
