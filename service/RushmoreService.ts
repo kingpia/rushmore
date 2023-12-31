@@ -1,5 +1,5 @@
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
-import { YourCompletedRushmore } from "../model/YourCompletedRushmore";
+import { UserRushmore } from "../model/UserRushmore";
 import {
   rushmoreListURL,
   yourCompletedRushmoreListURL,
@@ -36,10 +36,10 @@ export class RushmoreService<T> {
   async getYourCompletedRushmore(
     uid: string,
     urId: number
-  ): Promise<YourCompletedRushmore> {
-    console.log("getYourCompletedRushmore(uid" + uid + "urId" + urId + ")");
+  ): Promise<UserRushmore> {
+    console.log("getYourCompletedRushmore(uid:" + uid + ", urId" + urId + ")");
     try {
-      let data: YourCompletedRushmore;
+      let data: UserRushmore;
 
       data = require("../sampleApiData/rushmoreListData/yourCompletedRushmore.json");
 

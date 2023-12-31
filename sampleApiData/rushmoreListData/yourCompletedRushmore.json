@@ -12,54 +12,54 @@
     "icon": "movie_icon.png",
     "highScoreUsername": "abSenCeOfAbReV",
     "rushmoreCategory": "Entertainment",
-    "yourCompletedRushmoreItems": [
+    "userRushmoreItemList": [
       {
-        "riId": 1,
+        "uriId": 1,
         "rank": 1,
         "itemTitle": "Jaws"
       },
       {
-        "riId": 2,
+        "uriId": 2,
         "rank": 2,
         "itemTitle": "Star Wars: Return of the Jedi"
       },
       {
-        "riId": 3,
+        "uriId": 3,
         "rank": 3,
         "itemTitle": "Lord of the Rings: Return of the King"
       },
       {
-        "riId": 4,
+        "uriId": 4,
         "rank": 4,
         "itemTitle": "Fight Club"
       },
       {
-        "riId": 5,
+        "uriId": 5,
         "rank": 5,
         "itemTitle": "The Matrix"
       },
       {
-        "riId": 6,
+        "uriId": 6,
         "rank": 6,
         "itemTitle": "Gladiator"
       },
       {
-        "riId": 7,
+        "uriId": 7,
         "rank": 7,
         "itemTitle": "Inception"
       },
       {
-        "riId": 8,
+        "uriId": 8,
         "rank": 8,
         "itemTitle": "The Shawshank Redemption"
       },
       {
-        "riId": 9,
+        "uriId": 9,
         "rank": 9,
         "itemTitle": "Pulp Fiction"
       },
       {
-        "riId": 10,
+        "uriId": 10,
         "rank": 10,
         "itemTitle": "The Godfather"
       }

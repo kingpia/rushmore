@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { SafeAreaView, View, StyleSheet, FlatList } from "react-native";
-import { Searchbar, Text } from "react-native-paper";
+import { SafeAreaView, StyleSheet, FlatList } from "react-native";
+import { Searchbar } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import { UserCard } from "../components/UserCard";
 import { FriendsService } from "../service/FriendsService";

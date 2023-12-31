@@ -2,13 +2,10 @@ import React, { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
 import { StackContainerScreenProps } from "../nav/params/HomeStackParamList";
-import { YourCompletedRushmore } from "../model/YourCompletedRushmore";
 import { RushmoreService } from "../service/RushmoreService";
-import { YourCompletedRushmoreItem } from "../model/YourCompletedRushmoreItem";
 import DraggableFlatList from "react-native-draggable-flatlist";
-import { RushmoreType } from "../model/RushmoreTypeEnums";
-import { RushmoreVisibilityEnums } from "../model/RushmoreVisibilityEnums";
-import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
+import { UserRushmore } from "../model/UserRushmore";
+import { UserRushmoreItem } from "../model/UserRushmoreItem";
 
 type YourCompletedRushmoreScreenProps =
   StackContainerScreenProps<"YourCompletedRushmoreScreen">;
@@ -17,9 +14,9 @@ export const YourCompletedRushmoreScreen = ({
   route,
 }: YourCompletedRushmoreScreenProps) => {
   const rushmoreItem = route.params?.rushmoreItem;
+  console.log("RushmoreItem:" + JSON.stringify(rushmoreItem));
 
-  const [rushmoreData, setRushmoreData] = useState<YourCompletedRushmore>();
-
+  const [rushmoreData, setRushmoreData] = useState<UserRushmore>();
   const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
@@ -27,10 +24,11 @@ export const YourCompletedRushmoreScreen = ({
       try {
         const uid = "PiA_ID"; // Replace with the actual user ID
         const urId = rushmoreItem.urId;
-        const rushmoreService = new RushmoreService<YourCompletedRushmore>();
+        const rushmoreService = new RushmoreService<UserRushmore>();
 
         const data = await rushmoreService.getYourCompletedRushmore(uid, urId);
 
+        console.log("Data from fetch: " + JSON.stringify(data));
         setRushmoreData(data);
       } catch (error) {
         console.error("Error fetching rushmore data:", error);
@@ -41,7 +39,7 @@ export const YourCompletedRushmoreScreen = ({
     fetchData();
   }, [rushmoreItem]);
 
-  const renderCardItem = ({ item }: { item: YourCompletedRushmoreItem }) => (
+  const renderCardItem = ({ item }: { item: UserRushmoreItem }) => (
     <Card style={styles.card}>
       <Card.Title title={`#${item.rank}`} subtitle={item.itemTitle} />
       {/* Add other card content as needed */}
@@ -54,15 +52,12 @@ export const YourCompletedRushmoreScreen = ({
 
   return (
     <SafeAreaView>
-      {isEditMode ? (
-        <Text>InEditMode</Text>
-      ) : (
-        <FlatList
-          data={rushmoreData?.yourCompletedRushmoreItems}
-          keyExtractor={(item) => item.riId.toString()}
-          renderItem={renderCardItem}
-        />
-      )}
+      <FlatList
+        data={rushmoreData?.userRushmoreItemList}
+        keyExtractor={(item) => item.uriId.toString()}
+        renderItem={renderCardItem}
+      />
+
       <IconButton
         icon={isEditMode ? "check" : "pencil"}
         onPress={handleEditSubmitToggle}

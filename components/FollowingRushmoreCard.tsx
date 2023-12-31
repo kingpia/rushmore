@@ -1,5 +1,5 @@
-import { SafeAreaView, View } from "react-native";
-import { Avatar, Button, Card, Text } from "react-native-paper";
+import { View } from "react-native";
+import { Card, Text } from "react-native-paper";
 
 export const FollowingRushmoreCard = (
   followingRushmoreCard: FollowingRushmoreCard

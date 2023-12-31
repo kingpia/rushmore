@@ -1,7 +1,7 @@
 import { RushmoreGameTypeEnums } from "./RushmoreGameTypeEnums";
 import { RushmoreType } from "./RushmoreTypeEnums";
 import { RushmoreVisibilityEnums } from "./RushmoreVisibilityEnums";
-import { YourCompletedRushmoreItem } from "./YourCompletedRushmoreItem";
+import { UserRushmoreItem } from "./UserRushmoreItem";
 
 export interface UserRushmore {
   urId: number; //user rushmore id
@@ -17,5 +17,5 @@ export interface UserRushmore {
   icon: string;
   highScoreUsername: string;
   rushmoreCategory: string;
-  yourCompletedRushmoreItems: YourCompletedRushmoreItem[]; //List of items.
+  userRushmoreItemList: UserRushmoreItem[]; //List of items.
 }

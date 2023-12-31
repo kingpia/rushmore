@@ -3,7 +3,6 @@ import { FlatList, SafeAreaView } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 import { RushmoreService } from "../service/RushmoreService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
-import { FollowingRushmoreCard } from "../components/FollowingRushmoreCard";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import { FollowingSolvedRushmoreCard } from "../components/FollowingSolvedRushmoreCard";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";

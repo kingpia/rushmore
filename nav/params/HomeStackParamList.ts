@@ -1,13 +1,13 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { FollowingSolvedRushmore } from "../../model/FollowingSolvedRushmore";
-import { YourCompletedRushmore } from "../../model/YourCompletedRushmore";
+import { UserRushmore } from "../../model/UserRushmore";
 import { YourInProgressRushmore } from "../../model/YourInProgressRushmore";
 import { FollowingInProgressRushmore } from "../../model/FollowingInProgressRushmore";
 
 export type HomeStackParamList = {
   HomeTopTabContainer: undefined;
   YourCompletedRushmoreScreen: {
-    rushmoreItem: YourCompletedRushmore;
+    rushmoreItem: UserRushmore;
   };
   YourInProgressRushmoreScreen: {
     rushmoreItem: YourInProgressRushmore;

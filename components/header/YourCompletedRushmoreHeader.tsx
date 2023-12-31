@@ -2,11 +2,11 @@
 
 import React from "react";
 import { View, Text } from "react-native";
-import { YourCompletedRushmore } from "../../model/YourCompletedRushmore";
+import { UserRushmore } from "../../model/UserRushmore";
 
 //NOT USED, BUT YOU COULD USE IT LATER TO CUSTOMIZE YOUR HEADERS TO HAVE SAY A "BACK instead of < and add other buttons if you want"
 type YourCompletedRushmoreHeaderProps = {
-  rushmoreItem: YourCompletedRushmore;
+  rushmoreItem: UserRushmore;
 };
 
 const YourCompltedRushmoreHeader: React.FC<

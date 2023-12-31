@@ -10,7 +10,7 @@ import { YourCompletedRushmoreCard } from "../components/YourCompletedRushmoreCa
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 import { YourInProgressRushmore } from "../model/YourInProgressRushmore";
 import { YourInProgressRushmoreCard } from "../components/YourInProgressRushmoreCard";
-import { YourCompletedRushmore } from "../model/YourCompletedRushmore";
+import { UserRushmore } from "../model/UserRushmore";
 import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 
@@ -26,7 +26,7 @@ export const YourRushmoreHomeScreen = ({
     YourInProgressRushmore[]
   >([]);
   const [yourCompletedRushmoreList, setYourCompletedRushmoreList] = useState<
-    YourCompletedRushmore[]
+    UserRushmore[]
   >([]);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
@@ -43,7 +43,7 @@ export const YourRushmoreHomeScreen = ({
         );
         setYourInProgressRushmoreList(yourRushmoreCards);
       } else if (selectedValue === "complete") {
-        const rushmoreService = new RushmoreService<YourCompletedRushmore>();
+        const rushmoreService = new RushmoreService<UserRushmore>();
 
         const completedRushmoreCards = await rushmoreService.getRushmoreItems(
           "pia_id",
@@ -74,9 +74,7 @@ export const YourRushmoreHomeScreen = ({
     }, [value])
   );
 
-  const navigateToYourCompletedRushmore = (
-    rushmoreItem: YourCompletedRushmore
-  ) => {
+  const navigateToYourCompletedRushmore = (rushmoreItem: UserRushmore) => {
     navigation.navigate("YourCompletedRushmoreScreen", {
       rushmoreItem,
       // Add other properties as needed
