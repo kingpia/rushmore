@@ -1,130 +1,298 @@
 [
   {
     "urId": 1,
-    "rushmoreId": "abc123",
-    "rushmoreTitle": "Movie",
-    "type": "Favorite",
+    "user": {
+      "id": "user1",
+      "userName": "user1_name",
+      "name": "User One",
+      "followingCount": 100,
+      "followerCount": 150,
+      "likeCount": 25,
+      "socialStatus": "Active"
+    },
+    "rushmore": {
+      "rid": "abc123",
+      "title": "Movie",
+      "rushmoreCategory": "Entertainment",
+      "type": "Favorite",
+      "timesCompleted": 50
+    },
+    "visibility": "GAME",
     "gameType": "GAME",
     "completedDt": "2023-01-01T12:00:00Z",
     "likeCount": 25,
     "completedCount": 50,
-    "highScore": 100,
-    "highScoreUsername": "moviebuff1",
+    "highScoreUser": {
+      "id": "highScoreUser1",
+      "userName": "moviebuff1",
+      "name": "moviebuff1",
+      "followingCount": 50,
+      "followerCount": 75,
+      "likeCount": 100,
+      "socialStatus": "Active"
+    },
     "version": 1,
     "solvedCount": 75,
     "icon": "https://example.com/movie-icon.jpg",
-    "rushmoreCategory": "Entertainment"
+    "userRushmoreItemList": []
   },
   {
     "urId": 2,
-    "rushmoreId": "def456",
-    "rushmoreTitle": "Book",
-    "type": "Best",
+    "user": {
+      "id": "user2",
+      "userName": "user2_name",
+      "name": "User Two",
+      "followingCount": 200,
+      "followerCount": 100,
+      "likeCount": 30,
+      "socialStatus": "Active"
+    },
+    "rushmore": {
+      "rid": "def456",
+      "title": "Book",
+      "rushmoreCategory": "Entertainment",
+      "type": "Best",
+      "timesCompleted": 40
+    },
+    "visibility": "GAME",
     "gameType": "GAME",
     "completedDt": "2023-02-15T14:30:00Z",
     "likeCount": 30,
     "completedCount": 40,
-    "highScore": 90,
-    "highScoreUsername": "booklover2",
+    "highScoreUser": {
+      "id": "highScoreUser2",
+      "userName": "booklover2",
+      "name": "booklover2",
+      "followingCount": 30,
+      "followerCount": 50,
+      "likeCount": 90,
+      "socialStatus": "Active"
+    },
     "version": 1,
     "solvedCount": 60,
     "icon": "https://example.com/book-icon.jpg",
-    "rushmoreCategory": "Entertainment"
+    "userRushmoreItemList": []
   },
   {
     "urId": 3,
-    "rushmoreId": "ghi789",
-    "rushmoreTitle": "Destination",
-    "type": "Favorite",
+    "user": {
+      "id": "user3",
+      "userName": "user3_name",
+      "name": "User Three",
+      "followingCount": 75,
+      "followerCount": 120,
+      "likeCount": 15,
+      "socialStatus": "Active"
+    },
+    "rushmore": {
+      "rid": "ghi789",
+      "title": "Destination",
+      "rushmoreCategory": "Lifestyle",
+      "type": "Favorite",
+      "timesCompleted": 30
+    },
+    "visibility": "OPEN",
     "gameType": "OPEN",
     "completedDt": "2023-03-20T10:45:00Z",
     "likeCount": 15,
     "completedCount": 30,
-    "highScore": 80,
-    "highScoreUsername": "traveler3",
+    "highScoreUser": {
+      "id": "highScoreUser3",
+      "userName": "traveler3",
+      "name": "traveler3",
+      "followingCount": 40,
+      "followerCount": 60,
+      "likeCount": 80,
+      "socialStatus": "Active"
+    },
     "version": 1,
     "solvedCount": 45,
     "icon": "https://example.com/travel-icon.jpg",
-    "rushmoreCategory": "Lifestyle"
+    "userRushmoreItemList": []
   },
   {
     "urId": 4,
-    "rushmoreId": "jkl012",
-    "rushmoreTitle": "Song",
-    "type": "Best",
+    "user": {
+      "id": "user4",
+      "userName": "user4_name",
+      "name": "User Four",
+      "followingCount": 120,
+      "followerCount": 90,
+      "likeCount": 40,
+      "socialStatus": "Active"
+    },
+    "rushmore": {
+      "rid": "jkl012",
+      "title": "Song",
+      "rushmoreCategory": "Entertainment",
+      "type": "Best",
+      "timesCompleted": 25
+    },
+    "visibility": "OPEN",
     "gameType": "OPEN",
     "completedDt": "2023-04-10T08:15:00Z",
     "likeCount": 40,
     "completedCount": 25,
-    "highScore": 95,
-    "highScoreUsername": "musiclover4",
+    "highScoreUser": {
+      "id": "highScoreUser4",
+      "userName": "musiclover4",
+      "name": "musiclover4",
+      "followingCount": 25,
+      "followerCount": 30,
+      "likeCount": 95,
+      "socialStatus": "Active"
+    },
     "version": 1,
     "solvedCount": 35,
     "icon": "https://example.com/song-icon.jpg",
-    "rushmoreCategory": "Entertainment"
+    "userRushmoreItemList": []
   },
   {
     "urId": 5,
-    "rushmoreId": "mno345",
-    "rushmoreTitle": "Food",
-    "type": "Favorite",
+    "user": {
+      "id": "user5",
+      "userName": "user5_name",
+      "name": "User Five",
+      "followingCount": 50,
+      "followerCount": 200,
+      "likeCount": 20,
+      "socialStatus": "Active"
+    },
+    "rushmore": {
+      "rid": "mno345",
+      "title": "Food",
+      "rushmoreCategory": "Food",
+      "type": "Favorite",
+      "timesCompleted": 60
+    },
+    "visibility": "GAME",
     "gameType": "GAME",
     "completedDt": "2023-05-05T16:20:00Z",
     "likeCount": 20,
     "completedCount": 60,
-    "highScore": 110,
-    "highScoreUsername": "foodie5",
+    "highScoreUser": {
+      "id": "highScoreUser5",
+      "userName": "foodie5",
+      "name": "foodie5",
+      "followingCount": 10,
+      "followerCount": 15,
+      "likeCount": 110,
+      "socialStatus": "Active"
+    },
     "version": 1,
     "solvedCount": 85,
     "icon": "https://example.com/food-icon.jpg",
-    "rushmoreCategory": "Food"
+    "userRushmoreItemList": []
   },
   {
     "urId": 6,
-    "rushmoreId": "pqr678",
-    "rushmoreTitle": "TV Show",
-    "type": "Best",
+    "user": {
+      "id": "user6",
+      "userName": "user6_name",
+      "name": "User Six",
+      "followingCount": 30,
+      "followerCount": 40,
+      "likeCount": 35,
+      "socialStatus": "Active"
+    },
+    "rushmore": {
+      "rid": "pqr678",
+      "title": "TV Show",
+      "rushmoreCategory": "Entertainment",
+      "type": "Best",
+      "timesCompleted": 55
+    },
+    "visibility": "GAME",
     "gameType": "GAME",
     "completedDt": "2023-06-25T18:00:00Z",
     "likeCount": 35,
     "completedCount": 55,
-    "highScore": 105,
-    "highScoreUsername": "tvlover6",
+    "highScoreUser": {
+      "id": "highScoreUser6",
+      "userName": "tvlover6",
+      "name": "tvlover6",
+      "followingCount": 20,
+      "followerCount": 25,
+      "likeCount": 105,
+      "socialStatus": "Active"
+    },
     "version": 1,
     "solvedCount": 70,
     "icon": "https://example.com/tv-icon.jpg",
-    "rushmoreCategory": "Entertainment"
+    "userRushmoreItemList": []
   },
   {
     "urId": 7,
-    "rushmoreId": "stu901",
-    "rushmoreTitle": "Hobby",
-    "type": "Favorite",
+    "user": {
+      "id": "user7",
+      "userName": "user7_name",
+      "name": "User Seven",
+      "followingCount": 20,
+      "followerCount": 35,
+      "likeCount": 10,
+      "socialStatus": "Active"
+    },
+    "rushmore": {
+      "rid": "stu901",
+      "title": "Hobby",
+      "rushmoreCategory": "Lifestyle",
+      "type": "Favorite",
+      "timesCompleted": 20
+    },
+    "visibility": "OPEN",
     "gameType": "OPEN",
     "completedDt": "2023-07-12T22:45:00Z",
     "likeCount": 10,
     "completedCount": 20,
-    "highScore": 75,
-    "highScoreUsername": "hobbyist7",
+    "highScoreUser": {
+      "id": "highScoreUser7",
+      "userName": "hobbyist7",
+      "name": "hobbyist7",
+      "followingCount": 15,
+      "followerCount": 20,
+      "likeCount": 75,
+      "socialStatus": "Active"
+    },
     "version": 1,
     "solvedCount": 30,
     "icon": "https://example.com/hobby-icon.jpg",
-    "rushmoreCategory": "Lifestyle"
+    "userRushmoreItemList": []
   },
   {
     "urId": 8,
-    "rushmoreId": "vwx234",
-    "rushmoreTitle": "Travel Memory",
-    "type": "Best",
+    "user": {
+      "id": "user8",
+      "userName": "user8_name",
+      "name": "User Eight",
+      "followingCount": 10,
+      "followerCount": 15,
+      "likeCount": 45,
+      "socialStatus": "Active"
+    },
+    "rushmore": {
+      "rid": "vwx234",
+      "title": "Travel Memory",
+      "rushmoreCategory": "Lifestyle",
+      "type": "Best",
+      "timesCompleted": 15
+    },
+    "visibility": "OPEN",
     "gameType": "OPEN",
     "completedDt": "2023-08-30T09:30:00Z",
     "likeCount": 45,
     "completedCount": 15,
-    "highScore": 85,
-    "highScoreUsername": "memorymaker8",
+    "highScoreUser": {
+      "id": "highScoreUser8",
+      "userName": "memorymaker8",
+      "name": "memorymaker8",
+      "followingCount": 5,
+      "followerCount": 10,
+      "likeCount": 85,
+      "socialStatus": "Active"
+    },
     "version": 1,
     "solvedCount": 40,
     "icon": "https://example.com/memory-icon.jpg",
-    "rushmoreCategory": "Lifestyle"
+    "userRushmoreItemList": []
   }
 ]

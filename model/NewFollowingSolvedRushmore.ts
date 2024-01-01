@@ -1,13 +1,9 @@
 import { RushmoreType } from "./RushmoreTypeEnums";
 import { UserRushmore } from "./UserRushmore";
+import { UserRushmoreGameSession } from "./UserRushmoreGameSession";
 
-// Interface for Rushmore object
+/* A Users Solved Rushmore*/
 export interface NewFollowingSolvedRushmore {
-  solvedUserRushmore: UserRushmore; //users rushmore that you solved
-  username: string; //solved
-  name: string; //the name of the user
-  type: RushmoreType; // Type of the Rushmore object (enum)
-  completedDt: Date;
-  score: number;
-  icon: string;
+  solvedUserRushmore: UserRushmore; //the solved user rushmore
+  userRushmoreGameSession: UserRushmoreGameSession; //the game session of the solver
 }
