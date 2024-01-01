@@ -14,9 +14,9 @@ const YourCompltedRushmoreHeader: React.FC<
 > = ({ rushmoreItem }) => {
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <Text>{rushmoreItem.type}</Text>
+      <Text>{rushmoreItem.rushmore.type}</Text>
       <Text style={{ marginHorizontal: 5 }}> </Text>
-      <Text>{rushmoreItem.rushmoreTitle}</Text>
+      <Text>{rushmoreItem.rushmore.title}</Text>
     </View>
   );
 };

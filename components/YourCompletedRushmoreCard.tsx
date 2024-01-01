@@ -30,8 +30,8 @@ export const YourCompletedRushmoreCard: React.FC<
           <View style={styles.titleUserInfoContainer}>
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.title}>
-                {yourCompletedRushmore.type}{" "}
-                {yourCompletedRushmore.rushmoreTitle}{" "}
+                {yourCompletedRushmore.rushmore.type}{" "}
+                {yourCompletedRushmore.rushmore.title}{" "}
               </Text>
               {yourCompletedRushmore.gameType ===
                 RushmoreGameTypeEnums.GAME && (
@@ -44,7 +44,7 @@ export const YourCompletedRushmoreCard: React.FC<
               <View style={styles.crownUsernameContainer}>
                 <MaterialCommunityIcons name="crown" size={18} color="black" />
                 <Text style={styles.username}>
-                  @{yourCompletedRushmore.highScoreUsername}
+                  @{yourCompletedRushmore.highScoreUser.userName}
                 </Text>
               </View>
             )}

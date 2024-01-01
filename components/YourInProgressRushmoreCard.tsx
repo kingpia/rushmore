@@ -28,8 +28,8 @@ export const YourInProgressRushmoreCard: React.FC<
           <View style={{ flex: 1 }}>
             <View style={{ flexDirection: "row" }}>
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                {yourInProgressRushmore.type}{" "}
-                {yourInProgressRushmore.rushmoreTitle}{" "}
+                {yourInProgressRushmore.rushmore.type}{" "}
+                {yourInProgressRushmore.rushmore.title}{" "}
               </Text>
               {yourInProgressRushmore.gameType ===
                 RushmoreGameTypeEnums.GAME && (

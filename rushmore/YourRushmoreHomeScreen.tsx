@@ -58,11 +58,13 @@ export const YourRushmoreHomeScreen = ({
   const countByCategory = (category: string) => {
     if (value === "inprogress") {
       return yourInProgressRushmoreList.filter(
-        (item) => category === "All" || item.rushmoreCategory === category
+        (item) =>
+          category === "All" || item.rushmore.rushmoreCategory === category
       ).length;
     } else {
       return yourCompletedRushmoreList.filter(
-        (item) => category === "All" || item.rushmoreCategory === category
+        (item) =>
+          category === "All" || item.rushmore.rushmoreCategory === category
       ).length;
     }
   };
@@ -96,7 +98,7 @@ export const YourRushmoreHomeScreen = ({
       <>
         <FlatList
           data={filteredYourInProgressRushmoreData}
-          keyExtractor={(item) => item.rushmoreId}
+          keyExtractor={(item) => item.rushmore.rid.toString()}
           renderItem={({ item }) => (
             <YourInProgressRushmoreCard
               yourInProgressRushmore={item}
@@ -112,7 +114,7 @@ export const YourRushmoreHomeScreen = ({
     return (
       <FlatList
         data={filteredCompletedInProgressRushmoreData}
-        keyExtractor={(item) => item.rushmoreId}
+        keyExtractor={(item) => item.rushmore.rid.toString()}
         renderItem={({ item }) => (
           <YourCompletedRushmoreCard
             yourCompletedRushmore={item}
@@ -126,13 +128,15 @@ export const YourRushmoreHomeScreen = ({
   const filteredYourInProgressRushmoreData =
     yourInProgressRushmoreList?.filter(
       (item) =>
-        selectedCategory === "All" || item.rushmoreCategory === selectedCategory
+        selectedCategory === "All" ||
+        item.rushmore.rushmoreCategory === selectedCategory
     ) || [];
 
   const filteredCompletedInProgressRushmoreData =
     yourCompletedRushmoreList?.filter(
       (item) =>
-        selectedCategory === "All" || item.rushmoreCategory === selectedCategory
+        selectedCategory === "All" ||
+        item.rushmore.rushmoreCategory === selectedCategory
     ) || [];
 
   return (

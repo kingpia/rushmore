@@ -1,3 +1,4 @@
+import { Rushmore } from "./Rushmore";
 import { RushmoreGameTypeEnums } from "./RushmoreGameTypeEnums";
 import { RushmoreType } from "./RushmoreTypeEnums";
 import { RushmoreVisibilityEnums } from "./RushmoreVisibilityEnums";
@@ -5,9 +6,8 @@ import { UserRushmoreItem } from "./UserRushmoreItem";
 
 export interface UserRushmore {
   urId: number; //user rushmore id
-  rushmoreId: string; //Unique id for the rushmore
-  rushmoreTitle: string; //Title of the Rushmore
-  type: RushmoreType; // Type of the Rushmore object (enum)
+  user: User; //user who owns the rushmore
+  rushmore: Rushmore;
   visibility: RushmoreVisibilityEnums;
   gameType: RushmoreGameTypeEnums;
   createdDt: Date;
@@ -15,7 +15,7 @@ export interface UserRushmore {
   likeCount: number; //0 if private
   completedCount: number; //times completed by other, almost like the popularity
   icon: string;
-  highScoreUsername: string;
-  rushmoreCategory: string;
+  highScoreUser: User;
+  version: number;
   userRushmoreItemList: UserRushmoreItem[]; //List of items.
 }

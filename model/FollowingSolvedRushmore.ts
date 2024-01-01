@@ -3,7 +3,7 @@ import { RushmoreType } from "./RushmoreTypeEnums";
 // Interface for Rushmore object
 export interface FollowingSolvedRushmore {
   urId: number; // Unique identifier for Rushmore object
-  userId: string;
+  userId: string; //user ID that who owns the rushmore.
   username: string;
   name: string; //the name of the user
   rushmoreId: string;

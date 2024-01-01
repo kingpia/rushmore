@@ -31,7 +31,7 @@ export const UserRushmoreCard: React.FC<UserRushmoreCardProps> = ({
           <View style={styles.titleUserInfoContainer}>
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.title}>
-                {userRushmore.type} {userRushmore.rushmoreTitle}{" "}
+                {userRushmore.rushmore.type} {userRushmore.rushmore.title}{" "}
               </Text>
               {userRushmore.gameType === RushmoreGameTypeEnums.GAME && (
                 <MaterialCommunityIcons name="puzzle" size={18} color="black" />
@@ -43,7 +43,7 @@ export const UserRushmoreCard: React.FC<UserRushmoreCardProps> = ({
               <View style={styles.crownUsernameContainer}>
                 <MaterialCommunityIcons name="crown" size={18} color="black" />
                 <Text style={styles.username}>
-                  @{userRushmore.highScoreUsername}
+                  @{userRushmore.highScoreUser.userName}
                 </Text>
               </View>
             )}

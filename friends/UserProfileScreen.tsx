@@ -58,7 +58,7 @@ export const UserProfileScreen = ({
   const countByCategory = (category: string): number => {
     return (
       userRushmoreData?.filter((item) =>
-        category === "All" ? true : item.rushmoreCategory === category
+        category === "All" ? true : item.rushmore.rushmoreCategory === category
       ).length || 0
     );
   };
@@ -70,7 +70,8 @@ export const UserProfileScreen = ({
 
   const filteredUserRushmoreData = userRushmoreData?.filter(
     (item) =>
-      selectedCategory === "All" || item.rushmoreCategory === selectedCategory
+      selectedCategory === "All" ||
+      item.rushmore.rushmoreCategory === selectedCategory
   );
 
   return (
