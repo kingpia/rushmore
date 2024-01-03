@@ -7,7 +7,7 @@ import { RushmoreStackParamList } from "./RushmoreStackParamList";
 export type RushmoreTabContainerParamList = {
   HomeStackContainer: undefined;
   InboxHomeScreen: undefined;
-  CreateRushmoreHomeScreen: undefined;
+  CreateRushmoreStackContainer: undefined;
   FriendsStackContainer: undefined;
   ProfileStackContainer: undefined;
 };

@@ -1,5 +1,4 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { useEffect } from "react";
 import { FollowingScreen } from "../../friends/FollowingScreen";
 import { FollowersScreen } from "../../friends/FollowersScreen";
 import { FriendsScreen } from "../../friends/FriendsScreen";

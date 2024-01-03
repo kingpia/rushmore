@@ -4,7 +4,7 @@ import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { RushmoreStackParamList } from "./RushmoreStackParamList";
 
 export type RushmoreTopTabContainerParamList = {
-  YourRushmoreHomeScreen: undefined;
+  MyRushmoreHomeScreen: undefined;
   FollowingRushmoreHomeScreen: undefined;
 };
 

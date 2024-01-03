@@ -22,6 +22,8 @@ export class RushmoreService<T> {
         data = require("../sampleApiData/followingRushmoreSolvedList.json");
       } else if (toFetch === ApiFetchEnums.USER_RUSHMORE_LIST) {
         data = require("../sampleApiData/followingRushmoreSolvedList.json");
+      } else if (toFetch === ApiFetchEnums.RUSHMORE_LIST) {
+        data = require("../sampleApiData/rushmores.json");
       } else {
         throw new Error(`Unsupported enum value: ${toFetch}`);
       }

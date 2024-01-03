@@ -1,10 +1,10 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { HomeStackParamList } from "../params/HomeStackParamList";
-import { YourCompletedRushmoreScreen } from "../../rushmore/YourCompletedRushmoreScreen";
+import { MyCompletedRushmoreScreen } from "../../rushmore/MyCompletedRushmoreScreen";
 import { HomeTopTabContainer } from "./HomeTopTabContainer";
 import { FollowingSolvedRushmoreScreen } from "../../rushmore/FollowingSolvedRushmoreScreen";
-import { YourInProgressRushmoreScreen } from "../../rushmore/YourInProgressRushmoreScreen";
+import { MyInProgressRushmoreScreen } from "../../rushmore/MyInProgressRushmoreScreen";
 import { FollowingInProgressRushmoreScreen } from "../../rushmore/FollowingInProgressRushmoreScreen";
 
 const HomeStackNavigaor = createNativeStackNavigator<HomeStackParamList>();
@@ -21,20 +21,20 @@ export const HomeStackContainer = () => {
         component={HomeTopTabContainer}
       />
       <HomeStackNavigaor.Screen
-        name="YourCompletedRushmoreScreen"
-        component={YourCompletedRushmoreScreen}
+        name="MyCompletedRushmoreScreen"
+        component={MyCompletedRushmoreScreen}
         options={({ route }) => ({
           headerTitle:
-            `${route.params?.rushmoreItem?.type} ${route.params?.rushmoreItem?.rushmoreTitle}` ||
+            `${route.params?.rushmoreItem?.rushmoreType} ${route.params?.rushmoreItem?.rushmore.title}` ||
             "Rushmore", // Set the title from navigation params
         })}
       />
       <HomeStackNavigaor.Screen
-        name="YourInProgressRushmoreScreen"
-        component={YourInProgressRushmoreScreen}
+        name="MyInProgressRushmoreScreen"
+        component={MyInProgressRushmoreScreen}
         options={({ route }) => ({
           headerTitle:
-            `${route.params?.rushmoreItem?.type} ${route.params?.rushmoreItem?.rushmoreTitle}` ||
+            `${route.params?.rushmoreItem?.rushmoreType} ${route.params?.rushmoreItem?.rushmore.title}` ||
             "Rushmore", // Set the title from navigation params
         })}
       />

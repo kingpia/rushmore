@@ -2,12 +2,12 @@ import { SafeAreaView } from "react-native";
 import { Text } from "react-native-paper";
 import { StackContainerScreenProps } from "../nav/params/HomeStackParamList";
 
-type YourInProgressRushmoreScreenProps =
-  StackContainerScreenProps<"YourInProgressRushmoreScreen">;
+type MyInProgressRushmoreScreenProps =
+  StackContainerScreenProps<"MyInProgressRushmoreScreen">;
 
-export const YourInProgressRushmoreScreen = ({
+export const MyInProgressRushmoreScreen = ({
   route,
-}: YourInProgressRushmoreScreenProps) => {
+}: MyInProgressRushmoreScreenProps) => {
   console.log(
     "YourInProgressRushmoreScreen Data:" +
       JSON.stringify(route.params.rushmoreItem)

@@ -1,6 +1,6 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { RushmoreTopTabContainerParamList } from "../params/HomeTopTabContainerParamList";
-import { YourRushmoreHomeScreen } from "../../rushmore/YourRushmoreHomeScreen";
+import { MyRushmoreHomeScreen } from "../../rushmore/MyRushmoreHomeScreen";
 import { FollowingRushmoreHomeScreen } from "../../rushmore/FollowingRushmoreHomeScreen";
 
 const HomeTopTab =
@@ -10,17 +10,17 @@ export const HomeTopTabContainer = () => {
   return (
     <HomeTopTab.Navigator screenOptions={{}}>
       <HomeTopTab.Screen
-        name="YourRushmoreHomeScreen"
-        component={YourRushmoreHomeScreen}
+        name="MyRushmoreHomeScreen"
+        component={MyRushmoreHomeScreen}
         options={{
-          tabBarLabel: "Yours",
+          tabBarLabel: "My Rushmores",
         }}
       />
       <HomeTopTab.Screen
         name="FollowingRushmoreHomeScreen"
         component={FollowingRushmoreHomeScreen}
         options={{
-          tabBarLabel: "Solving",
+          tabBarLabel: "Game Hub",
         }}
       />
     </HomeTopTab.Navigator>

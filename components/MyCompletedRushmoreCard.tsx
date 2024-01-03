@@ -5,16 +5,16 @@ import { UserRushmore } from "../model/UserRushmore";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // Make sure to import the appropriate icons library
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
 
-type YourCompletedRushmoreCardProps = {
-  yourCompletedRushmore: UserRushmore;
+type MyCompletedRushmoreCardProps = {
+  myCompletedRushmore: UserRushmore;
   onPress: () => void;
 };
 
-export const YourCompletedRushmoreCard: React.FC<
-  YourCompletedRushmoreCardProps
-> = ({ yourCompletedRushmore, onPress }) => {
+export const MyCompletedRushmoreCard: React.FC<
+  MyCompletedRushmoreCardProps
+> = ({ myCompletedRushmore, onPress }) => {
   const isGameType =
-    yourCompletedRushmore.gameType === RushmoreGameTypeEnums.GAME;
+    myCompletedRushmore.gameType === RushmoreGameTypeEnums.GAME;
   return (
     <TouchableOpacity onPress={onPress}>
       <Card style={styles.card}>
@@ -22,7 +22,7 @@ export const YourCompletedRushmoreCard: React.FC<
           {/* Circular Avatar */}
           <Avatar.Image
             size={60}
-            source={{ uri: yourCompletedRushmore.icon }}
+            source={{ uri: myCompletedRushmore.icon }}
             style={styles.avatar}
           />
 
@@ -30,11 +30,10 @@ export const YourCompletedRushmoreCard: React.FC<
           <View style={styles.titleUserInfoContainer}>
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.title}>
-                {yourCompletedRushmore.rushmore.type}{" "}
-                {yourCompletedRushmore.rushmore.title}{" "}
+                {myCompletedRushmore.rushmore.type}{" "}
+                {myCompletedRushmore.rushmore.title}{" "}
               </Text>
-              {yourCompletedRushmore.gameType ===
-                RushmoreGameTypeEnums.GAME && (
+              {myCompletedRushmore.gameType === RushmoreGameTypeEnums.GAME && (
                 <MaterialCommunityIcons name="puzzle" size={18} color="black" />
               )}
             </View>
@@ -44,7 +43,7 @@ export const YourCompletedRushmoreCard: React.FC<
               <View style={styles.crownUsernameContainer}>
                 <MaterialCommunityIcons name="crown" size={18} color="black" />
                 <Text style={styles.username}>
-                  @{yourCompletedRushmore.highScoreUser.userName}
+                  @{myCompletedRushmore.highScoreUser.userName}
                 </Text>
               </View>
             )}
@@ -54,7 +53,7 @@ export const YourCompletedRushmoreCard: React.FC<
               <View style={styles.infoItem}>
                 <MaterialCommunityIcons name="eye" size={24} color="black" />
                 <Text variant="bodyMedium">
-                  {yourCompletedRushmore.visibility}
+                  {myCompletedRushmore.visibility}
                 </Text>
               </View>
               <View style={styles.infoItem}>
@@ -64,7 +63,7 @@ export const YourCompletedRushmoreCard: React.FC<
                   color="black"
                 />
                 <Text variant="bodyMedium">
-                  {yourCompletedRushmore.likeCount}
+                  {myCompletedRushmore.likeCount}
                 </Text>
               </View>
               {isGameType && (
@@ -75,7 +74,7 @@ export const YourCompletedRushmoreCard: React.FC<
                     color="black"
                   />
                   <Text variant="bodyMedium">
-                    {yourCompletedRushmore.completedCount}
+                    {myCompletedRushmore.completedCount}
                   </Text>
                 </View>
               )}

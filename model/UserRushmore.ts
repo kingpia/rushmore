@@ -10,6 +10,7 @@ export interface UserRushmore {
   rushmore: Rushmore;
   visibility: RushmoreVisibilityEnums;
   gameType: RushmoreGameTypeEnums;
+  rushmoreType: RushmoreType;
   createdDt: Date;
   completedDt: Date;
   likeCount: number; //0 if private

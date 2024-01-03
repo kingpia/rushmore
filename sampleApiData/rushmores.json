@@ -1,0 +1,80 @@
+[
+    {
+      "rid": 1,
+      "title": "NBA Players",
+      "rushmoreCategory": "Sports",
+      "timesCompleted": 10
+    },
+    {
+      "rid": 2,
+      "title": "Movies",
+      "rushmoreCategory": "Entertainment",
+      "timesCompleted": 5
+    },
+    {
+      "rid": 3,
+      "title": "Universities",
+      "rushmoreCategory": "Education",
+      "timesCompleted": 8
+    },
+    {
+      "rid": 4,
+      "title": "Brands",
+      "rushmoreCategory": "Brands",
+      "timesCompleted": 15
+    },
+    {
+      "rid": 5,
+      "title": "Mobile Devices",
+      "rushmoreCategory": "Technology",
+      "timesCompleted": 12
+    },
+    {
+      "rid": 6,
+      "title": "Music Artists",
+      "rushmoreCategory": "Music",
+      "timesCompleted": 20
+    },
+    {
+      "rid": 7,
+      "title": "Smartest",
+      "rushmoreCategory": "People",
+      "timesCompleted": 18
+    },
+    {
+      "rid": 8,
+      "title": "President",
+      "rushmoreCategory": "Politics",
+      "timesCompleted": 7
+    },
+    {
+      "rid": 9,
+      "title": "City",
+      "rushmoreCategory": "Lifestyle",
+      "timesCompleted": 25
+    },
+    {
+        "rid": 10,
+        "title": "Female Tennis Player",
+        "rushmoreCategory": "Sports",
+        "timesCompleted": 14
+      },
+      {
+        "rid": 14,
+        "title": "Car Manufacturer",
+        "rushmoreCategory": "Lifestyle",
+        "timesCompleted": 13
+      },
+      {
+        "rid": 18,
+        "title": "Fast Food Restaurant",
+        "rushmoreCategory": "Lifestyle",
+        "timesCompleted": 28
+      },
+      {
+        "rid": 19,
+        "title": "Male Tennis Player",
+        "rushmoreCategory": "Sports",
+        "timesCompleted": 12
+      }
+  ]

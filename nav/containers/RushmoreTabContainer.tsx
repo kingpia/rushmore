@@ -2,11 +2,11 @@ import { CreateRushmoreHomeScreen } from "../../rushmore/CreateRushmoreHomeScree
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RushmoreTabContainerParamList } from "../params/RushmoreTabContainerParamList";
-import { FriendsTopTabContainer } from "./FriendsTopTabContainer";
 import { InboxHomeScreen } from "../../inbox/InboxHomeScreen";
 import { ProfileStackContainer } from "./ProfileStackContainer";
 import { HomeStackContainer } from "./HomeStackContainer";
 import { FriendsStackContainer } from "./FriendsStackContainer";
+import { CreateRushmoreStackContainer } from "./CreateRushmoreStackContainer";
 
 const Tab = createBottomTabNavigator<RushmoreTabContainerParamList>();
 
@@ -48,8 +48,8 @@ export const RushmoreTabContainer = () => {
         }}
       />
       <Tab.Screen
-        name="CreateRushmoreHomeScreen"
-        component={CreateRushmoreHomeScreen}
+        name="CreateRushmoreStackContainer"
+        component={CreateRushmoreStackContainer}
         options={{
           tabBarLabel: "",
           tabBarIcon: ({ color, size }) => {

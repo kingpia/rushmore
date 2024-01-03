@@ -5,14 +5,14 @@ import { UserRushmore } from "../model/UserRushmore";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // Make sure to import the appropriate icons library
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
 
-type YourInProgressRushmoreCardProps = {
-  yourInProgressRushmore: UserRushmore;
+type MyInProgressRushmoreCardProps = {
+  myInProgressRushmore: UserRushmore;
   onPress: () => void;
 };
 
-export const YourInProgressRushmoreCard: React.FC<
-  YourInProgressRushmoreCardProps
-> = ({ yourInProgressRushmore, onPress }) => {
+export const MyInProgressRushmoreCard: React.FC<
+  MyInProgressRushmoreCardProps
+> = ({ myInProgressRushmore, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Card style={{ margin: 2 }}>
@@ -20,7 +20,7 @@ export const YourInProgressRushmoreCard: React.FC<
           {/* Circular Avatar */}
           <Avatar.Image
             size={60}
-            source={{ uri: yourInProgressRushmore.icon }}
+            source={{ uri: myInProgressRushmore.icon }}
             style={{ marginRight: 10 }}
           />
 
@@ -28,11 +28,10 @@ export const YourInProgressRushmoreCard: React.FC<
           <View style={{ flex: 1 }}>
             <View style={{ flexDirection: "row" }}>
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                {yourInProgressRushmore.rushmore.type}{" "}
-                {yourInProgressRushmore.rushmore.title}{" "}
+                {myInProgressRushmore.rushmore.type}{" "}
+                {myInProgressRushmore.rushmore.title}{" "}
               </Text>
-              {yourInProgressRushmore.gameType ===
-                RushmoreGameTypeEnums.GAME && (
+              {myInProgressRushmore.gameType === RushmoreGameTypeEnums.GAME && (
                 <MaterialCommunityIcons name="puzzle" size={18} color="black" />
               )}
             </View>
@@ -43,7 +42,7 @@ export const YourInProgressRushmoreCard: React.FC<
               <View style={{ alignItems: "center" }}>
                 <MaterialCommunityIcons name="eye" size={24} color="black" />
                 <Text variant="bodyMedium">
-                  {yourInProgressRushmore.visibility}
+                  {myInProgressRushmore.visibility}
                 </Text>
               </View>
               <View style={{ alignItems: "center" }}>
@@ -53,7 +52,7 @@ export const YourInProgressRushmoreCard: React.FC<
                   color="black"
                 />
                 <Text variant="bodyMedium">
-                  {yourInProgressRushmore.completedCount}
+                  {myInProgressRushmore.completedCount}
                 </Text>
               </View>
             </View>

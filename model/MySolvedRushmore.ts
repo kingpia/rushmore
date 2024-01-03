@@ -1,4 +1,4 @@
-type YourSolvedRushmore = {
+type MySolvedRushmore = {
   id: string;
   followingUid: string;
   followingUsername: string;

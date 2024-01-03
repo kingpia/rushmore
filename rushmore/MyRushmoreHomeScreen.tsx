@@ -1,30 +1,30 @@
 import React, { useCallback, useState } from "react";
-import { FlatList, SafeAreaView, View } from "react-native";
+import { FlatList, SafeAreaView } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 
 import { RushmoreService } from "../service/RushmoreService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { YourCompletedRushmoreCard } from "../components/YourCompletedRushmoreCard";
+import { MyCompletedRushmoreCard } from "../components/MyCompletedRushmoreCard";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
-import { YourInProgressRushmoreCard } from "../components/YourInProgressRushmoreCard";
+import { MyInProgressRushmoreCard } from "../components/MyInProgressRushmoreCard";
 import { UserRushmore } from "../model/UserRushmore";
 import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 
-type YourRushmoreHomeScreenProps = {
+type MyRushmoreHomeScreenProps = {
   navigation: NativeStackNavigationProp<HomeStackParamList>;
 };
 
-export const YourRushmoreHomeScreen = ({
+export const MyRushmoreHomeScreen = ({
   navigation,
-}: YourRushmoreHomeScreenProps) => {
+}: MyRushmoreHomeScreenProps) => {
   const [value, setValue] = useState("inprogress");
-  const [yourInProgressRushmoreList, setYourInProgressRushmoreList] = useState<
+  const [myInProgressRushmoreList, setMyInProgressRushmoreList] = useState<
     UserRushmore[]
   >([]);
-  const [yourCompletedRushmoreList, setYourCompletedRushmoreList] = useState<
+  const [myCompletedRushmoreList, setMyCompletedRushmoreList] = useState<
     UserRushmore[]
   >([]);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
@@ -36,19 +36,19 @@ export const YourRushmoreHomeScreen = ({
       if (selectedValue === "inprogress") {
         const rushmoreService = new RushmoreService<UserRushmore>();
 
-        const yourRushmoreCards = await rushmoreService.getRushmoreItems(
+        const myInProgrssRushmoreData = await rushmoreService.getRushmoreItems(
           "pia_id",
           ApiFetchEnums.YOUR_IN_PROGRESS_RUSHMORE_LIST
         );
-        setYourInProgressRushmoreList(yourRushmoreCards);
+        setMyInProgressRushmoreList(myInProgrssRushmoreData);
       } else if (selectedValue === "complete") {
         const rushmoreService = new RushmoreService<UserRushmore>();
 
-        const completedRushmoreCards = await rushmoreService.getRushmoreItems(
+        const myCompletedRushmoreData = await rushmoreService.getRushmoreItems(
           "pia_id",
           ApiFetchEnums.YOUR_COMPLETED_RUSHMORE_LIST
         );
-        setYourCompletedRushmoreList(completedRushmoreCards);
+        setMyCompletedRushmoreList(myCompletedRushmoreData);
       }
     } catch (error) {
       console.error("Error fetching Rushmore items:", error);
@@ -57,12 +57,12 @@ export const YourRushmoreHomeScreen = ({
 
   const countByCategory = (category: string) => {
     if (value === "inprogress") {
-      return yourInProgressRushmoreList.filter(
+      return myInProgressRushmoreList.filter(
         (item) =>
           category === "All" || item.rushmore.rushmoreCategory === category
       ).length;
     } else {
-      return yourCompletedRushmoreList.filter(
+      return myCompletedRushmoreList.filter(
         (item) =>
           category === "All" || item.rushmore.rushmoreCategory === category
       ).length;
@@ -75,15 +75,15 @@ export const YourRushmoreHomeScreen = ({
     }, [value])
   );
 
-  const navigateToYourCompletedRushmore = (rushmoreItem: UserRushmore) => {
-    navigation.navigate("YourCompletedRushmoreScreen", {
+  const navigateToMyCompletedRushmore = (rushmoreItem: UserRushmore) => {
+    navigation.navigate("MyCompletedRushmoreScreen", {
       rushmoreItem,
       // Add other properties as needed
     });
   };
 
-  const navigateToYourInProgressRushmore = (rushmoreItem: UserRushmore) => {
-    navigation.navigate("YourInProgressRushmoreScreen", {
+  const navigateToMyInProgressRushmore = (rushmoreItem: UserRushmore) => {
+    navigation.navigate("MyInProgressRushmoreScreen", {
       rushmoreItem,
     });
   };
@@ -100,9 +100,9 @@ export const YourRushmoreHomeScreen = ({
           data={filteredYourInProgressRushmoreData}
           keyExtractor={(item) => item.rushmore.rid.toString()}
           renderItem={({ item }) => (
-            <YourInProgressRushmoreCard
-              yourInProgressRushmore={item}
-              onPress={() => navigateToYourInProgressRushmore(item)}
+            <MyInProgressRushmoreCard
+              myInProgressRushmore={item}
+              onPress={() => navigateToMyInProgressRushmore(item)}
             />
           )}
         />
@@ -116,9 +116,9 @@ export const YourRushmoreHomeScreen = ({
         data={filteredCompletedInProgressRushmoreData}
         keyExtractor={(item) => item.rushmore.rid.toString()}
         renderItem={({ item }) => (
-          <YourCompletedRushmoreCard
-            yourCompletedRushmore={item}
-            onPress={() => navigateToYourCompletedRushmore(item)}
+          <MyCompletedRushmoreCard
+            myCompletedRushmore={item}
+            onPress={() => navigateToMyCompletedRushmore(item)}
           />
         )}
       />
@@ -126,14 +126,14 @@ export const YourRushmoreHomeScreen = ({
   };
 
   const filteredYourInProgressRushmoreData =
-    yourInProgressRushmoreList?.filter(
+    myInProgressRushmoreList?.filter(
       (item) =>
         selectedCategory === "All" ||
         item.rushmore.rushmoreCategory === selectedCategory
     ) || [];
 
   const filteredCompletedInProgressRushmoreData =
-    yourCompletedRushmoreList?.filter(
+    myCompletedRushmoreList?.filter(
       (item) =>
         selectedCategory === "All" ||
         item.rushmore.rushmoreCategory === selectedCategory

@@ -1,6 +1,7 @@
 [
   {
     "urId": 1,
+    "rushmoreType":"Favorite",
     "user": {
       "id": "user1",
       "userName": "user1_name",
@@ -37,6 +38,7 @@
   },
   {
     "urId": 2,
+    "rushmoreType":"Best",
     "user": {
       "id": "user2",
       "userName": "user2_name",
@@ -73,6 +75,7 @@
   },
   {
     "urId": 3,
+    "rushmoreType":"Favorite",
     "user": {
       "id": "user3",
       "userName": "user3_name",
@@ -109,6 +112,7 @@
   },
   {
     "urId": 4,
+    "rushmoreType":"Best",
     "user": {
       "id": "user4",
       "userName": "user4_name",
@@ -145,6 +149,7 @@
   },
   {
     "urId": 5,
+    "rushmoreType":"Favorite",
     "user": {
       "id": "user5",
       "userName": "user5_name",
@@ -173,6 +178,7 @@
   },
   {
     "urId": 6,
+    "rushmoreType":"Best",
     "user": {
       "id": "user6",
       "userName": "user6_name",
@@ -201,6 +207,7 @@
   },
   {
     "urId": 7,
+    "rushmoreType":"Favorite",
     "user": {
       "id": "user7",
       "userName": "user7_name",
