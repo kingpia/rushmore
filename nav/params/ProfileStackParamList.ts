@@ -5,9 +5,11 @@ import { FriendsStackParamList } from "./FriendsStackParamList";
 
 export type ProfileStackParamList = {
   ProfileHomeScreen: undefined;
-  EditProfileScreen: undefined;
+  EditProfileScreen: { userData: User };
   FriendsStackContainer: NavigatorScreenParams<FriendsStackParamList>;
   FriendsTopTabContainer: NavigatorScreenParams<FriendsTopTabContainerParamList>;
+  EditNameScreen: { userData: User };
+  EditUsernameScreen: { userData: User };
 };
 
 export type StackContainerScreenProps<S extends keyof ProfileStackParamList> =

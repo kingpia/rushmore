@@ -30,7 +30,7 @@ export const MyCompletedRushmoreCard: React.FC<
           <View style={styles.titleUserInfoContainer}>
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.title}>
-                {myCompletedRushmore.rushmore.type}{" "}
+                {myCompletedRushmore.rushmoreType}{" "}
                 {myCompletedRushmore.rushmore.title}{" "}
               </Text>
               {myCompletedRushmore.gameType === RushmoreGameTypeEnums.GAME && (

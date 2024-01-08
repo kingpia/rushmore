@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Avatar, Button, Text } from "react-native-paper";
-import { FriendsService } from "../service/FriendsService";
+import { UserService } from "../service/UserService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { StackContainerScreenProps } from "../nav/params/FriendsStackParamList";
 import { UserRushmore } from "../model/UserRushmore";
@@ -22,13 +22,12 @@ export const UserProfileScreen = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const friendService = new FriendsService<User>();
+      const friendService = new UserService<User>();
 
       try {
         const user = await friendService.getUserByUserId(
           "pia_id",
-          route.params.user.id,
-          ApiFetchEnums.USER_BY_ID
+          route.params.user.id
         );
         setUserData(user);
 

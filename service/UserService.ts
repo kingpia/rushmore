@@ -1,7 +1,7 @@
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { UserRushmore } from "../model/UserRushmore";
 
-export class FriendsService<T> {
+export class UserService<T> {
   async getRushmoreItems(uid: string, toFetch: ApiFetchEnums): Promise<T[]> {
     try {
       let data: T[] = [];
@@ -42,11 +42,7 @@ export class FriendsService<T> {
     }
   }
 
-  async getUserByUserId(
-    uid: string,
-    toFetchUid: string,
-    toFetch: ApiFetchEnums
-  ): Promise<User> {
+  async getUserByUserId(uid: string, toFetchUid: string): Promise<User> {
     console.log("getUserByUserId(" + toFetchUid + ")");
     try {
       let data: User = undefined as unknown as User;

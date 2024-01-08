@@ -3,7 +3,7 @@ import { SafeAreaView, StyleSheet, FlatList } from "react-native";
 import { Searchbar } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import { UserCard } from "../components/UserCard";
-import { FriendsService } from "../service/FriendsService";
+import { UserService } from "../service/UserService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { FriendsStackParamList } from "../nav/params/FriendsStackParamList";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,7 +21,7 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
     console.log("Fetching FollowingScreen  Data");
 
     // Create an instance of RushmoreService with RushmoreCard type
-    const friendService = new FriendsService<User>();
+    const friendService = new UserService<User>();
 
     try {
       // Fetch Rushmore items

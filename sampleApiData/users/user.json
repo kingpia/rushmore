@@ -1,9 +1,9 @@
 {
     "id": 1,
-    "username": "sampleUser",
-    "name": "John Doe",
+    "userName": "shylo1",
+    "name": "Shylo Bandish",
     "followingCount": 20,
     "followerCount": 15,
-    "likeCount": 30
+    "friendCount":3
   }
   

@@ -1,4 +1,3 @@
-import { CreateRushmoreHomeScreen } from "../../rushmore/CreateRushmoreHomeScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RushmoreTabContainerParamList } from "../params/RushmoreTabContainerParamList";
@@ -13,10 +12,10 @@ const Tab = createBottomTabNavigator<RushmoreTabContainerParamList>();
 export const RushmoreTabContainer = () => {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         unmountOnBlur: true,
         headerShown: false, // Hide the header
-      }} // Add this option
+      })} // Add this option
     >
       <Tab.Screen
         name="HomeStackContainer"

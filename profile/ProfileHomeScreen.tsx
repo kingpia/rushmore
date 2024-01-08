@@ -1,8 +1,9 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Avatar, Button, IconButton, Text } from "react-native-paper";
 import { ProfileStackParamList } from "../nav/params/ProfileStackParamList";
+import { UserService } from "../service/UserService";
 
 type ProfileStackContainerScreenProps =
   NativeStackScreenProps<ProfileStackParamList>;
@@ -10,7 +11,35 @@ type ProfileStackContainerScreenProps =
 export const ProfileHomeScreen = ({
   navigation,
 }: ProfileStackContainerScreenProps) => {
+  const [userData, setUserData] = useState<User>();
   const defaultImage = require("../assets/shylo.png");
+  //Fetch Profile Information
+  //Send profile information when clicking edit profile
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const uid = "PiA_ID"; // Replace with the actual user ID
+        const userService = new UserService<User>();
+
+        const data = await userService.getUserByUserId(uid, uid);
+
+        console.log("Data from fetch: " + JSON.stringify(data));
+        setUserData(data);
+      } catch (error) {
+        console.error("Error fetching rushmore data:", error);
+        // Handle the error as needed
+      }
+    };
+
+    fetchData();
+  }, [userData]);
+
+  const navigateToEditProfileScreen = (userData: User) => {
+    navigation.navigate("EditProfileScreen", {
+      userData,
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -31,9 +60,12 @@ export const ProfileHomeScreen = ({
       </View>
 
       {/* Username */}
-      <Text style={styles.username}>@shylo</Text>
+      <Text style={styles.username}>@{userData?.userName}</Text>
       {/* Edit Profile Button */}
-      <Button mode="text" onPress={() => navigation.push("EditProfileScreen")}>
+      <Button
+        mode="text"
+        onPress={() => userData && navigateToEditProfileScreen(userData)}
+      >
         Edit Profile
       </Button>
 
@@ -53,7 +85,7 @@ export const ProfileHomeScreen = ({
           >
             Following
           </Button>
-          <Text>12</Text>
+          <Text>{userData?.followingCount}</Text>
         </View>
         <Text style={styles.pipeSeparator}>|</Text>
         <View>
@@ -70,7 +102,7 @@ export const ProfileHomeScreen = ({
           >
             Followers
           </Button>
-          <Text>2</Text>
+          <Text>{userData?.followerCount}</Text>
         </View>
         <Text style={styles.pipeSeparator}>|</Text>
         <View>
@@ -87,7 +119,7 @@ export const ProfileHomeScreen = ({
           >
             Friends
           </Button>
-          <Text>2</Text>
+          <Text>{userData?.friendCount}</Text>
         </View>
       </View>
     </View>
@@ -125,3 +157,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 });
+function UseState<T>(): any {
+  throw new Error("Function not implemented.");
+}
