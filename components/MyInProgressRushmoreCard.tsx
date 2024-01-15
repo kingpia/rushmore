@@ -2,8 +2,9 @@ import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Avatar, Card, Text } from "react-native-paper";
 import { UserRushmore } from "../model/UserRushmore";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // Make sure to import the appropriate icons library
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
+import { format } from "date-fns";
 
 type MyInProgressRushmoreCardProps = {
   myInProgressRushmore: UserRushmore;
@@ -13,6 +14,8 @@ type MyInProgressRushmoreCardProps = {
 export const MyInProgressRushmoreCard: React.FC<
   MyInProgressRushmoreCardProps
 > = ({ myInProgressRushmore, onPress }) => {
+  const formattedDate = format(myInProgressRushmore.createdDt, "MMM d yyyy");
+
   return (
     <TouchableOpacity onPress={onPress}>
       <Card style={{ margin: 2 }}>
@@ -26,14 +29,17 @@ export const MyInProgressRushmoreCard: React.FC<
 
           {/* Title and User Info */}
           <View style={{ flex: 1 }}>
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                {myInProgressRushmore.rushmore.type}{" "}
-                {myInProgressRushmore.rushmore.title}{" "}
+                {myInProgressRushmore.rushmoreType}{" "}
+                {myInProgressRushmore.rushmore.title}
               </Text>
               {myInProgressRushmore.gameType === RushmoreGameTypeEnums.GAME && (
                 <MaterialCommunityIcons name="puzzle" size={18} color="black" />
               )}
+              <Text style={{ fontSize: 12, color: "gray", marginLeft: 5 }}>
+                • {formattedDate}
+              </Text>
             </View>
             {/* Additional Info */}
             <View

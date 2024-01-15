@@ -1,5 +1,10 @@
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
+import { LetterSelectionResponse } from "../model/LetterSelectionResponse";
+import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
+import { RushmoreType } from "../model/RushmoreTypeEnums";
+import { RushmoreVisibilityEnums } from "../model/RushmoreVisibilityEnums";
 import { UserRushmore } from "../model/UserRushmore";
+import { UserRushmoreGameSession } from "../model/UserRushmoreGameSession";
 import {
   rushmoreListURL,
   yourCompletedRushmoreListURL,
@@ -51,4 +56,96 @@ export class RushmoreService<T> {
       throw error; // Re-throw the error for the component to handle
     }
   }
+
+  // Inside RushmoreService class
+  async letterSelection(
+    urgsId: number,
+    userId: string
+  ): Promise<LetterSelectionResponse> {
+    try {
+      // Simulate a pause (replace with an actual API call)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Your logic for letter selection
+      // This is just an example, replace it with your actual logic
+      const updatedScore = Math.floor(Math.random() * 100000) + 1;
+      console.log("Getting letter selection");
+      // Return the response
+      return {
+        responseCode: "SUCCESS",
+        updatedScore,
+      };
+    } catch (error) {
+      console.error("Error in letterSelection:", error);
+      throw error;
+    }
+  }
+  // New method to simulate delay and return response
+  getUserRushmoreGameSession = async (
+    urgsid: number,
+    uid: string
+  ): Promise<UserRushmoreGameSession> => {
+    // Simulate a 2-second delay
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Mock response
+    return {
+      createdDt: new Date(),
+      urgsId: 1,
+      user: {
+        id: "123",
+        userName: "testuser",
+        name: "",
+        followingCount: 0,
+        followerCount: 0,
+        friendCount: 0,
+        likeCount: 0,
+        socialStatus: "",
+      },
+      userRushmore: {
+        urId: 661,
+        user: {
+          id: "",
+          userName: "",
+          name: "",
+          followingCount: 0,
+          followerCount: 0,
+          friendCount: 0,
+          likeCount: 0,
+          socialStatus: "",
+        },
+        rushmore: {
+          rid: 0,
+          title: "",
+          rushmoreCategory: "",
+          timesCompleted: 0,
+          icon: "",
+        },
+        visibility: RushmoreVisibilityEnums.PRIVATE,
+        gameType: RushmoreGameTypeEnums.GAME,
+        rushmoreType: RushmoreType.Favorite,
+        createdDt: new Date(),
+        completedDt: new Date(),
+        likeCount: 0,
+        completedCount: 0,
+        icon: "",
+        highScoreUser: {
+          id: "",
+          userName: "",
+          name: "",
+          followingCount: 0,
+          followerCount: 0,
+          friendCount: 0,
+          likeCount: 0,
+          socialStatus: "",
+        },
+        version: 0,
+        userRushmoreItemList: [],
+      },
+      completedDt: new Date(),
+      score: 50000,
+      letterSelection: "TMX",
+      letterSelectionComplete: "N",
+    };
+  };
 }

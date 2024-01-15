@@ -5,7 +5,7 @@ import { MyCompletedRushmoreScreen } from "../../rushmore/MyCompletedRushmoreScr
 import { HomeTopTabContainer } from "./HomeTopTabContainer";
 import { FollowingSolvedRushmoreScreen } from "../../rushmore/FollowingSolvedRushmoreScreen";
 import { MyInProgressRushmoreScreen } from "../../rushmore/MyInProgressRushmoreScreen";
-import { FollowingInProgressRushmoreScreen } from "../../rushmore/FollowingInProgressRushmoreScreen";
+import { InProgressGameScreen } from "../../rushmore/InProgressGameScreen";
 
 const HomeStackNavigaor = createNativeStackNavigator<HomeStackParamList>();
 
@@ -41,15 +41,6 @@ export const HomeStackContainer = () => {
       <HomeStackNavigaor.Screen
         name="FollowingSolvedRushmoreScreen"
         component={FollowingSolvedRushmoreScreen}
-        options={({ route }) => ({
-          headerTitle:
-            `${route.params?.rushmoreItem?.type} ${route.params?.rushmoreItem?.rushmoreTitle}` ||
-            "Rushmore", // Set the title from navigation params
-        })}
-      />
-      <HomeStackNavigaor.Screen
-        name="FollowingInProgressRushmoreScreen"
-        component={FollowingInProgressRushmoreScreen}
         options={({ route }) => ({
           headerTitle:
             `${route.params?.rushmoreItem?.type} ${route.params?.rushmoreItem?.rushmoreTitle}` ||

@@ -6,6 +6,7 @@ import { RushmoreTabContainerParamList } from "../params/RushmoreTabContainerPar
 export type AppStackParamList = {
   AuthStackContainer: NavigatorScreenParams<AuthStackParamList>;
   RushmoreTabContainer: NavigatorScreenParams<RushmoreTabContainerParamList>;
+  InProgressGameScreen: undefined;
 };
 
 export type StackContainerScreenProps<S extends keyof AppStackParamList> =

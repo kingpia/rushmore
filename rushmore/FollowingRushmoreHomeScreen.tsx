@@ -10,9 +10,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { FollowingSolvedRushmore } from "../model/FollowingSolvedRushmore";
 import { FollowingInProgressRushmoreCard } from "../components/FollowingInProgressRushmoreCard";
 import { FollowingInProgressRushmore } from "../model/FollowingInProgressRushmore";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
 
 type FollowingRushmoreHomeScreenProps = {
-  navigation: NativeStackNavigationProp<HomeStackParamList>;
+  navigation: NativeStackNavigationProp<HomeStackParamList & AppStackParamList>;
 };
 
 export const FollowingRushmoreHomeScreen = ({
@@ -60,7 +61,7 @@ export const FollowingRushmoreHomeScreen = ({
     }, [value]) // Fetch data whenever the value changes
   );
 
-  const navigateToFollowingSolvedRushmoreScreen = (
+  const navigateToSolvedRushmoreScreen = (
     rushmoreItem: FollowingSolvedRushmore
   ) => {
     console.log("Navigate to followingsolved rushmore home screen");
@@ -69,13 +70,11 @@ export const FollowingRushmoreHomeScreen = ({
     });
   };
 
-  const navigateToFollowingInProgressRushmoreScreen = (
+  const navigateToInProgressRushmoreScreen = (
     rushmoreItem: FollowingInProgressRushmore
   ) => {
-    console.log("Navigate to FollowingInProgressRushmore rushmore  screen");
-    navigation.navigate("FollowingInProgressRushmoreScreen", {
-      rushmoreItem,
-    });
+    console.log("Navigate to FollowingInProgressRushmore rushmore screen");
+    navigation.navigate("InProgressGameScreen"); // Use the combined navigation prop
   };
 
   return (
@@ -103,7 +102,7 @@ export const FollowingRushmoreHomeScreen = ({
           renderItem={({ item }) => (
             <FollowingInProgressRushmoreCard
               followingInProgressRushmore={item}
-              onPress={() => navigateToFollowingInProgressRushmoreScreen(item)}
+              onPress={() => navigateToInProgressRushmoreScreen(item)}
             />
           )}
         />
@@ -114,7 +113,7 @@ export const FollowingRushmoreHomeScreen = ({
           renderItem={({ item }) => (
             <FollowingSolvedRushmoreCard
               followingSolvedRushmore={item}
-              onPress={() => navigateToFollowingSolvedRushmoreScreen(item)}
+              onPress={() => navigateToSolvedRushmoreScreen(item)}
             />
           )}
         />

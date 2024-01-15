@@ -4,6 +4,7 @@ import { Avatar, Card, Text } from "react-native-paper";
 import { UserRushmore } from "../model/UserRushmore";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // Make sure to import the appropriate icons library
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
+import { format } from "date-fns";
 
 type MyCompletedRushmoreCardProps = {
   myCompletedRushmore: UserRushmore;
@@ -13,6 +14,9 @@ type MyCompletedRushmoreCardProps = {
 export const MyCompletedRushmoreCard: React.FC<
   MyCompletedRushmoreCardProps
 > = ({ myCompletedRushmore, onPress }) => {
+
+  const formattedDate = format(myCompletedRushmore.completedDt, "MMM d yyyy");
+
   const isGameType =
     myCompletedRushmore.gameType === RushmoreGameTypeEnums.GAME;
   return (
@@ -36,6 +40,9 @@ export const MyCompletedRushmoreCard: React.FC<
               {myCompletedRushmore.gameType === RushmoreGameTypeEnums.GAME && (
                 <MaterialCommunityIcons name="puzzle" size={18} color="black" />
               )}
+              <Text style={{ fontSize: 12, color: "gray", marginLeft: 5 }}>
+                • {formattedDate}
+              </Text>
             </View>
 
             {/* Crown Icon and Username (if type is GAME) */}

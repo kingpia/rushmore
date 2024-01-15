@@ -30,9 +30,9 @@ export const CreateRushmoreStackContainer = () => {
       <CreateRushmoreStackNavigator.Screen
         name="RushmoreRankingScreen"
         component={RushmoreRankingScreen}
-        options={{
-          headerShown: true,
-        }}
+        options={({ route }) => ({
+          headerTitle: `${route.params?.userRushmore.rushmoreType} ${route.params?.userRushmore.rushmore.title}`,
+        })}
       />
     </CreateRushmoreStackNavigator.Navigator>
   );

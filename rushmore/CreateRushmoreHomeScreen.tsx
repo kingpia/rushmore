@@ -63,7 +63,6 @@ export const CreateRushmoreHomeScreen = ({
 
   return (
     <SafeAreaView>
-      <Text variant="displayMedium">Create Rushmore</Text>
       <RushmoreHorizontalView
         selectedCategory={selectedCategory}
         onPressCategory={handleCategoryPress}

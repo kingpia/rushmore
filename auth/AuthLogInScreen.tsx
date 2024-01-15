@@ -19,10 +19,6 @@ export const AuthLogInScreen = ({
   const handleLoginPress = () => {
     // Perform login logic here
     console.log("Login pressed");
-    navigation.navigate("RushmoreTabContainer", {
-      screen: "CreateRushmoreHomeScreen",
-    });
-
     // Reset the navigation stack to start fresh with RushmoreTabContainer
     navigation.reset({
       index: 0,

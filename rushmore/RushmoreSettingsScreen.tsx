@@ -1,19 +1,11 @@
 import React, { useState } from "react";
-import {
-  SafeAreaView,
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-} from "react-native";
-import {
-  Text,
-  Switch,
-  HelperText,
-  Button,
-  ActivityIndicator,
-  MD2Colors,
-} from "react-native-paper";
+import { SafeAreaView, View, StyleSheet } from "react-native";
+import { Text, SegmentedButtons, Button } from "react-native-paper";
 import { StackContainerScreenProps } from "../nav/params/CreateRushmoreStackParamList";
+import { UserRushmore } from "../model/UserRushmore";
+import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
+import { RushmoreVisibilityEnums } from "../model/RushmoreVisibilityEnums";
+import { RushmoreType } from "../model/RushmoreTypeEnums";
 
 type RushmoreSettingsScreenProps =
   StackContainerScreenProps<"RushmoreSettingsScreen">;
@@ -22,123 +14,118 @@ export const RushmoreSettingsScreen = ({
   route,
   navigation,
 }: RushmoreSettingsScreenProps) => {
-  const [selectedOption, setSelectedOption] = useState("Best");
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [rushmoreType, setRushmoreType] = useState("Game");
-  const [isLoading, setIsLoading] = useState(false);
+  let rushmore = route.params.rushmore;
+  const [isPrivate, setIsPrivate] = useState("no");
+  const [rushmoreType, setRushmoreType] = useState("favorite");
+  const [gameType, setGameType] = useState("game");
 
-  const handleOptionChange = (value: string) => {
-    setSelectedOption(value);
-  };
-
-  const handleSwitchChange = () => {
-    setIsPrivate(!isPrivate);
-  };
-
-  const handleRushmoreTypeChange = (value: string) => {
-    setRushmoreType(value);
-  };
-
-  const handleSave = async () => {
-    try {
-      setIsLoading(true); // Show loading indicator
-
-      // Perform your API call here
-      // For example, using fetch or axios
-
-      // Simulate API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Navigate to RushmoreRankingScreen
-      navigation.navigate("RushmoreRankingScreen");
-    } catch (error) {
-      console.error("Error during API call:", error);
-    } finally {
-      setIsLoading(false); // Hide loading indicator regardless of success or error
+  const handleCreatePress = () => {
+    let userRushmore: UserRushmore = {
+      rushmore: rushmore,
+      urId: 0,
+      user: {
+        id: "",
+        userName: "",
+        name: "",
+        followingCount: 0,
+        followerCount: 0,
+        friendCount: 0,
+        likeCount: 0,
+        socialStatus: ""
+      },
+      visibility: RushmoreVisibilityEnums.OPEN,
+      gameType: RushmoreGameTypeEnums.GAME,
+      rushmoreType: RushmoreType.Best,
+      createdDt: new Date,
+      completedDt: new Date,
+      likeCount: 0,
+      completedCount: 0,
+      icon: "",
+      highScoreUser: {
+        id: "",
+        userName: "",
+        name: "",
+        followingCount: 0,
+        followerCount: 0,
+        friendCount: 0,
+        likeCount: 0,
+        socialStatus: ""
+      },
+      version: 0,
+      userRushmoreItemList: []
     }
+    console.log("Create Rushmore");
+    navigation.navigate("RushmoreRankingScreen", {
+      userRushmore,
+      // Add other properties as needed
+    });
+    /*
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "RushmoreRankingScreen", }],
+    })
+    */
+
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {isLoading && (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator
-            animating={true}
-            size={100}
-            color={MD2Colors.cyanA700}
+      <View style={styles.contentContainer}>
+        <View style={styles.row}>
+          <Text style={styles.settingsText} variant="headlineSmall">Rushmore</Text>
+          <SegmentedButtons
+            value={rushmoreType}
+            onValueChange={setRushmoreType}
+            buttons={[
+              {
+                value: 'favorite',
+                label: 'Favorite',
+              },
+              { value: 'best', label: 'Best' },
+            ]}
+            style={styles.segmentedButtons}
           />
         </View>
-      )}
-
-      <View style={styles.contentContainer}>
-        {/* Title */}
-
-        {/* Best or Favorite Segment Buttons */}
-        <View style={styles.segmentButtonContainer}>
-          <Button
-            mode={selectedOption === "Best" ? "contained" : "outlined"}
-            onPress={() => handleOptionChange("Best")}
-            style={styles.segmentButton}
-          >
-            Best
-          </Button>
-          <Button
-            mode={selectedOption === "Favorite" ? "contained" : "outlined"}
-            onPress={() => handleOptionChange("Favorite")}
-            style={styles.segmentButton}
-          >
-            Favorite
+        <View style={styles.row}>
+          <Text style={styles.settingsText} variant="headlineSmall">Private</Text>
+          <SegmentedButtons
+            value={isPrivate}
+            onValueChange={setIsPrivate}
+            buttons={[
+              {
+                value: 'yes',
+                label: 'Yes',
+              },
+              { value: 'no', label: 'No' },
+            ]}
+            style={styles.segmentedButtons}
+          />
+        </View>
+        {isPrivate !== 'yes' && (
+          <View style={styles.row}>
+            <Text style={styles.settingsText} variant="headlineSmall">Type</Text>
+            <SegmentedButtons
+              value={gameType}
+              onValueChange={setGameType}
+              buttons={[
+                {
+                  value: 'game',
+                  label: 'Game',
+                },
+                { value: 'open', label: 'Open' },
+              ]}
+              style={styles.segmentedButtons}
+            />
+          </View>
+        )}
+        {/* Spacer to push Create button to the bottom */}
+        <View style={styles.spacer} />
+        {/* Create Button */}
+        <View style={styles.createButtonContainer}>
+          <Button mode="contained" onPress={handleCreatePress} style={styles.createButton}>
+            Create
           </Button>
         </View>
-
-        {/* Helper Text for Best or Favorite */}
-        <HelperText type="info">
-          {selectedOption === "Best"
-            ? `The Best ${route.params?.rushmore.title}, in your opinion.`
-            : `Your Favorite ${route.params?.rushmore.title}.`}
-        </HelperText>
-
-        {/* Private Switch */}
-        <View style={styles.switchContainer}>
-          <Text>Private</Text>
-          <Switch value={isPrivate} onValueChange={handleSwitchChange} />
-        </View>
-
-        {/* Helper Text for Private Switch */}
-        <HelperText type="info">
-          {isPrivate
-            ? "Nobody but you can see this Rushmore."
-            : "Rushmore is public."}
-        </HelperText>
-
-        {/* Game or Open Segment Buttons */}
-        <View style={styles.segmentButtonContainer}>
-          <Button
-            mode={rushmoreType === "Game" ? "contained" : "outlined"}
-            onPress={() => handleRushmoreTypeChange("Game")}
-            style={styles.segmentButton}
-          >
-            Game
-          </Button>
-          <Button
-            mode={rushmoreType === "Open" ? "contained" : "outlined"}
-            onPress={() => handleRushmoreTypeChange("Open")}
-            style={styles.segmentButton}
-          >
-            Open
-          </Button>
-        </View>
-
-        {/* Helper Text for Game or Open */}
-        <HelperText type="info">
-          {rushmoreType === "Game"
-            ? "Gamified Rushmore, let others guess and play."
-            : "Openly published for all to see. No gamification."}
-        </HelperText>
-
-        <Button mode="contained" onPress={handleSave} style={styles.saveButton}>
-          <Text>Save</Text>
-        </Button>
       </View>
     </SafeAreaView>
   );
@@ -147,31 +134,32 @@ export const RushmoreSettingsScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-  },
-  loadingContainer: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    justifyContent: "center",
-    alignItems: "center",
   },
   contentContainer: {
     flex: 1,
+    padding: 16,
   },
-  saveButton: {
-    marginTop: 16,
-  },
-  segmentButtonContainer: {
+  row: {
     flexDirection: "row",
-    marginVertical: 8,
-  },
-  segmentButton: {
-    flex: 1,
-    marginHorizontal: 4,
-  },
-  switchContainer: {
-    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 8,
+    marginBottom: 16,
+  },
+  settingsText: {
+    alignSelf: "center",
+    flex: 1,
+  },
+  segmentedButtons: {
+    flex: 2,
+    justifyContent: 'flex-end',
+  },
+  spacer: {
+    flex: 1,
+  },
+  createButtonContainer: {
+    marginTop: 16, // Optional margin from the spacer
+  },
+  createButton: {
+    width: '100%',
   },
 });
