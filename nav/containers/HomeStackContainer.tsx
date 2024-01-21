@@ -5,7 +5,6 @@ import { MyCompletedRushmoreScreen } from "../../rushmore/MyCompletedRushmoreScr
 import { HomeTopTabContainer } from "./HomeTopTabContainer";
 import { FollowingSolvedRushmoreScreen } from "../../rushmore/FollowingSolvedRushmoreScreen";
 import { MyInProgressRushmoreScreen } from "../../rushmore/MyInProgressRushmoreScreen";
-import { InProgressGameScreen } from "../../rushmore/InProgressGameScreen";
 
 const HomeStackNavigaor = createNativeStackNavigator<HomeStackParamList>();
 

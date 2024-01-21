@@ -1,4 +1,5 @@
 import { UserRushmore } from "./UserRushmore";
+import { UserRushmoreGameSessionItem } from "./UserRushmoreGameSessionItem";
 
 export interface UserRushmoreGameSession {
   createdDt: Date;
@@ -9,4 +10,5 @@ export interface UserRushmoreGameSession {
   score: number;
   letterSelection: string;
   letterSelectionComplete: string;
+  userRushmoreGameSessionItemList: UserRushmoreGameSessionItem[];
 }

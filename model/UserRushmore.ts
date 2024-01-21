@@ -17,6 +17,9 @@ export interface UserRushmore {
   completedCount: number; //times completed by other, almost like the popularity
   icon: string;
   highScoreUser: User;
+  highScore: number;
+  firstToCompleteUser: User;
+  firstToCompleteDt: Date;
   version: number;
   userRushmoreItemList: UserRushmoreItem[]; //List of items.
 }

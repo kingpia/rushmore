@@ -3,13 +3,20 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { Avatar, Button, Text } from "react-native-paper";
 import { UserService } from "../service/UserService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
-import { StackContainerScreenProps } from "../nav/params/FriendsStackParamList";
+import { FriendsStackParamList, StackContainerScreenProps } from "../nav/params/FriendsStackParamList";
 import { UserRushmore } from "../model/UserRushmore";
 import { UserRushmoreCard } from "../components/UserRushmoreCard";
 import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { RouteProp } from "@react-navigation/native";
 
-type UserProfileScreenProps = StackContainerScreenProps<"UserProfileScreen">;
+
+type UserProfileScreenProps = {
+  navigation: NativeStackNavigationProp<FriendsStackParamList & AppStackParamList>;
+  route: RouteProp<FriendsStackParamList, "UserProfileScreen">;
+};
 
 export const UserProfileScreen = ({
   route,
@@ -72,6 +79,13 @@ export const UserProfileScreen = ({
       selectedCategory === "All" ||
       item.rushmore.rushmoreCategory === selectedCategory
   );
+
+  const navigateToRushmoreGameScreen = (
+    userRushmore: UserRushmore
+  ) => {
+    console.log("Navigate to FollowingInProgressRushmore rushmore screen");
+    navigation.navigate("RushmoreGameScreen", { "urId": userRushmore.urId }); // PassurId
+  };
 
   return (
     <View style={styles.container}>
@@ -141,9 +155,7 @@ export const UserProfileScreen = ({
           renderItem={({ item }) => (
             <UserRushmoreCard
               userRushmore={item}
-              onPress={function (): void {
-                throw new Error("Function not implemented.");
-              }}
+              onPress={() => navigateToRushmoreGameScreen(item)}
             />
           )}
         />

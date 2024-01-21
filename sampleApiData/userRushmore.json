@@ -1,0 +1,53 @@
+{
+    "urId": 1,
+    "user": {
+      "id": "user123",
+      "userName": "absenceOFAbrev",
+      "name": "John Doe"
+    },
+    "rushmore": {
+      "rid": 101,
+      "title": "Favotire TV Series",
+      "rushmoreCategory": "Movies",
+      "icon": "movie_icon.png"
+    },
+    "createdDt": "2024-01-12T12:30:00Z",
+    "completedDt": "2024-01-15T18:45:00Z",
+    "likeCount": 25,
+    "completedCount": 50,
+    "icon": "rushmore_icon.png",
+    "highScore": 100,
+    "highScoreUser": {
+      "id": "high_score_user123",
+      "userName": "theSnatChMasTEr",
+      "name": "Dan"
+    },
+    "firstToCompleteUser": {
+        "id": "abc123",
+        "userName": "absenceOfAbrevtSgerBsdaeTbaA",
+        "name": "Matt"
+      },
+    "firstToCompleteDt": "2024-01-12T12:30:00Z",
+    "version": 1,
+    "userRushmoreItemList": [
+      {
+        "urgsiId": 1,
+        "urgsId": 1,
+        "uriItemTitle": "The Godfather",
+        "currentIndex": 0
+      },
+      {
+        "urgsiId": 2,
+        "urgsId": 1,
+        "uriItemTitle": "Shawshank Redemption",
+        "currentIndex": 1
+      },
+      {
+        "urgsiId": 3,
+        "urgsId": 1,
+        "uriItemTitle": "Pulp Fiction",
+        "currentIndex": 2
+      }
+    ]
+  }
+  

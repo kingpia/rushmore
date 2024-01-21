@@ -4,20 +4,30 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Avatar, Text } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"; // Import the icon library you want to use
-
+import { format } from "date-fns";
 type CustomAppBarProps = {
+    rushmoreTitle: string;
+    rushmoreType: string;
     username: string;
     avatarUri: string;
     highScorer: string;
+    highScore: number;
+    firstToCompleteDt: Date;
     firstToComplete: string;
 };
 
 const CustomAppBar: React.FC<CustomAppBarProps> = ({
+    rushmoreTitle,
+    rushmoreType,
     username,
     avatarUri,
     highScorer,
     firstToComplete,
+    highScore,
+    firstToCompleteDt
 }) => {
+    const formattedDate = format(firstToCompleteDt, "MMM d yyyy");
+
     const handleAvatarPress = () => {
         console.log("Avatar clicked!");
     };
@@ -32,7 +42,7 @@ const CustomAppBar: React.FC<CustomAppBarProps> = ({
                     </View>
                 </TouchableOpacity>
                 <View style={styles.userInfo}>
-                    <Text style={styles.username}>{`Favorite Movies`}</Text>
+                    <Text style={styles.username}>{rushmoreType} {rushmoreTitle}</Text>
                     <Text style={styles.smallUsername}>{`@${username}`}</Text>
                 </View>
             </View>
@@ -41,11 +51,11 @@ const CustomAppBar: React.FC<CustomAppBarProps> = ({
             <View style={styles.additionalInfo}>
                 <View style={styles.infoRow}>
                     <Icon name="trophy" size={18} color="gold" style={styles.icon} />
-                    <Text style={styles.infoText}>{`@${highScorer} - 850`}</Text>
+                    <Text style={styles.infoText}>{`@${highScorer} - ${highScore}`}</Text>
                 </View>
                 <View style={styles.infoRow}>
                     <Icon name="check-circle" size={18} color="green" style={styles.icon} />
-                    <Text style={styles.infoText}>{`@${firstToComplete} - Jan 20, 2023`}</Text>
+                    <Text style={styles.infoText}>{`@${firstToComplete} - ${formattedDate}`}</Text>
                 </View>
             </View>
 

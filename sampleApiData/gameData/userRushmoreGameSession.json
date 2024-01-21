@@ -1,0 +1,103 @@
+{
+      "createdDt": "2022-01-01T08:00:00Z",
+      "urgsId": 1,
+      "user": {
+        "id": "123",
+        "userName": "theSnatcHMasTeR",
+        "name": "",
+        "followingCount": 0,
+        "followerCount": 0,
+        "friendCount": 0,
+        "likeCount": 0,
+        "socialStatus": ""
+      },
+      "userRushmore": {
+        "urId": 661,
+        "user": {
+          "id": "",
+          "userName": "",
+          "name": "",
+          "followingCount": 0,
+          "followerCount": 0,
+          "friendCount": 0,
+          "likeCount": 0,
+          "socialStatus": ""
+        },
+        "rushmore": {
+          "rid": 0,
+          "title": "",
+          "rushmoreCategory": "",
+          "timesCompleted": 0,
+          "icon": ""
+        },
+        "visibility": "PUBLIC",
+        "gameType": "GAME",
+        "rushmoreType": "Favorite",
+        "createdDt": "2022-01-01T08:00:00Z",
+        "completedDt": "2022-01-01T10:00:00Z",
+        "likeCount": 0,
+        "completedCount": 0,
+        "icon": "",
+        "highScoreUser": {
+          "id": "",
+          "userName": "",
+          "name": "",
+          "followingCount": 0,
+          "followerCount": 0,
+          "friendCount": 0,
+          "likeCount": 0,
+          "socialStatus": ""
+        },
+        "highScore": 0,
+        "version": 0,
+        "userRushmoreItemList": [],
+        "firstToCompleteUser": {
+          "id": "",
+          "userName": "",
+          "name": "",
+          "followingCount": 0,
+          "followerCount": 0,
+          "friendCount": 0,
+          "likeCount": 0,
+          "socialStatus": ""
+        },
+        "firstToCompleteDt": "2022-01-01T10:00:00Z"
+      },
+      "completedDt": "2022-01-01T10:00:00Z",
+      "score": 0,
+      "letterSelection": "",
+      "letterSelectionComplete": "N",
+      "userRushmoreGameSessionItemList": [
+        {
+          "urgsiId": 1,
+          "urgsId": 1,
+          "uriItemTitle": "Game of Thrones",
+          "currentIndex": 2
+        },
+        {
+          "urgsiId": 2,
+          "urgsId": 1,
+          "uriItemTitle": "The Sopranos",
+          "currentIndex": 0
+        },
+        {
+          "urgsiId": 3,
+          "urgsId": 1,
+          "uriItemTitle": "Breaking Bad",
+          "currentIndex": 1
+        },
+        {
+          "urgsiId": 4,
+          "urgsId": 1,
+          "uriItemTitle": "South Park",
+          "currentIndex": 3
+        },
+        {
+          "urgsiId": 5,
+          "urgsId": 1,
+          "uriItemTitle": "Friends",
+          "currentIndex": 4
+        }
+      ]
+  }
+  

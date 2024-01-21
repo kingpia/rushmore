@@ -80,58 +80,28 @@ export class RushmoreService<T> {
       throw error;
     }
   }
-  // New method to simulate delay and return response
-  getUserRushmoreGameSession = async (
+
+  // Inside RushmoreService class
+  async getUserRushmoreGameSession(
     urgsid: number,
     uid: string
-  ): Promise<UserRushmoreGameSession> => {
+  ): Promise<UserRushmoreGameSession | null> {
     // Simulate a 2-second delay
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    // Mock response
-    return {
-      createdDt: new Date(),
-      urgsId: 1,
-      user: {
-        id: "123",
-        userName: "testuser",
-        name: "",
-        followingCount: 0,
-        followerCount: 0,
-        friendCount: 0,
-        likeCount: 0,
-        socialStatus: "",
-      },
-      userRushmore: {
-        urId: 661,
-        user: {
-          id: "",
-          userName: "",
-          name: "",
-          followingCount: 0,
-          followerCount: 0,
-          friendCount: 0,
-          likeCount: 0,
-          socialStatus: "",
-        },
-        rushmore: {
-          rid: 0,
-          title: "",
-          rushmoreCategory: "",
-          timesCompleted: 0,
-          icon: "",
-        },
-        visibility: RushmoreVisibilityEnums.PRIVATE,
-        gameType: RushmoreGameTypeEnums.GAME,
-        rushmoreType: RushmoreType.Favorite,
+    const isUrIdEven = urgsid % 2 === 0;
+
+    if (isUrIdEven) {
+      // If urId is even, return null
+      return null;
+    } else {
+      // Mock response for odd urId
+      return {
         createdDt: new Date(),
-        completedDt: new Date(),
-        likeCount: 0,
-        completedCount: 0,
-        icon: "",
-        highScoreUser: {
-          id: "",
-          userName: "",
+        urgsId: 1,
+        user: {
+          id: "123",
+          userName: "testuser",
           name: "",
           followingCount: 0,
           followerCount: 0,
@@ -139,13 +109,118 @@ export class RushmoreService<T> {
           likeCount: 0,
           socialStatus: "",
         },
-        version: 0,
-        userRushmoreItemList: [],
-      },
-      completedDt: new Date(),
-      score: 50000,
-      letterSelection: "TMX",
-      letterSelectionComplete: "N",
-    };
-  };
+        userRushmore: {
+          urId: 661,
+          user: {
+            id: "",
+            userName: "",
+            name: "",
+            followingCount: 0,
+            followerCount: 0,
+            friendCount: 0,
+            likeCount: 0,
+            socialStatus: "",
+          },
+          rushmore: {
+            rid: 0,
+            title: "",
+            rushmoreCategory: "",
+            timesCompleted: 0,
+            icon: "",
+          },
+          visibility: RushmoreVisibilityEnums.PRIVATE,
+          gameType: RushmoreGameTypeEnums.GAME,
+          rushmoreType: RushmoreType.Favorite,
+          createdDt: new Date(),
+          completedDt: new Date(),
+          likeCount: 0,
+          completedCount: 0,
+          icon: "",
+          highScoreUser: {
+            id: "",
+            userName: "",
+            name: "",
+            followingCount: 0,
+            followerCount: 0,
+            friendCount: 0,
+            likeCount: 0,
+            socialStatus: "",
+          },
+          highScore: 0,
+          version: 0,
+          userRushmoreItemList: [],
+          firstToCompleteUser: {
+            id: "",
+            userName: "",
+            name: "",
+            followingCount: 0,
+            followerCount: 0,
+            friendCount: 0,
+            likeCount: 0,
+            socialStatus: "",
+          },
+          firstToCompleteDt: new Date(),
+        },
+        completedDt: new Date(),
+        score: 50000,
+        letterSelection: "TMS",
+        letterSelectionComplete: "N",
+        userRushmoreGameSessionItemList: [
+          {
+            urgsiId: 1,
+            urgsId: 101,
+            uriItemTitle: "Lord of The Rings - Return of the King",
+            currentIndex: 2,
+          },
+          {
+            urgsiId: 2,
+            urgsId: 102,
+            uriItemTitle: "The Matrix",
+            currentIndex: 0,
+          },
+          {
+            urgsiId: 3,
+            urgsId: 103,
+            uriItemTitle: "Fight Club",
+            currentIndex: 1,
+          },
+        ],
+      };
+    }
+  }
+
+  // Inside RushmoreService class
+  async getUserRushmore(urId: number): Promise<UserRushmore> {
+    console.log("Getuserrushmore(urId:" + urId + ")");
+    try {
+      // Simulate a 3-second delay
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      let data: UserRushmore = require("../sampleApiData/userRushmore.json");
+      // Mock response
+      return data;
+    } catch (error) {
+      console.error("Error fetching user rushmore:", error);
+      throw error;
+    }
+  }
+
+  async startRushmoreGame(
+    urId: number,
+    uid: string
+  ): Promise<UserRushmoreGameSession> {
+    console.log("startRushmoreGame(urId:" + urId + ")");
+    try {
+      // Simulate a 3-second delay
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      //Mock Response
+      let data: UserRushmoreGameSession = require("../sampleApiData/gameData/userRushmoreGameSession.json");
+      console.log("startRushmoreGame data:" + JSON.stringify(data));
+      return data;
+    } catch (error) {
+      console.error("Error fetching user rushmore:", error);
+      throw error;
+    }
+  }
 }

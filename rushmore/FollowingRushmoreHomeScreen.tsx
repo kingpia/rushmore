@@ -71,10 +71,12 @@ export const FollowingRushmoreHomeScreen = ({
   };
 
   const navigateToInProgressRushmoreScreen = (
-    rushmoreItem: FollowingInProgressRushmore
+    followingInProgressRushmore: FollowingInProgressRushmore
   ) => {
     console.log("Navigate to FollowingInProgressRushmore rushmore screen");
-    navigation.navigate("InProgressGameScreen"); // Use the combined navigation prop
+    let urId: number = followingInProgressRushmore.urId;
+    navigation.navigate("RushmoreGameScreen", { "urId": followingInProgressRushmore.urId }); // PassurId
+
   };
 
   return (

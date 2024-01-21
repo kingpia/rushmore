@@ -33,7 +33,7 @@ export const RushmoreSettingsScreen = ({
         likeCount: 0,
         socialStatus: ""
       },
-      visibility: RushmoreVisibilityEnums.OPEN,
+      visibility: RushmoreVisibilityEnums.PUBLIC,
       gameType: RushmoreGameTypeEnums.GAME,
       rushmoreType: RushmoreType.Best,
       createdDt: new Date,
@@ -52,7 +52,19 @@ export const RushmoreSettingsScreen = ({
         socialStatus: ""
       },
       version: 0,
-      userRushmoreItemList: []
+      userRushmoreItemList: [],
+      highScore: 0,
+      firstToCompleteUser: {
+        id: "",
+        userName: "",
+        name: "",
+        followingCount: 0,
+        followerCount: 0,
+        friendCount: 0,
+        likeCount: 0,
+        socialStatus: ""
+      },
+      firstToCompleteDt: new Date(),
     }
     console.log("Create Rushmore");
     navigation.navigate("RushmoreRankingScreen", {

@@ -1,12 +1,15 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { AuthStackParamList } from "./AuthStackParamList";
 import { RushmoreTabContainerParamList } from "../params/RushmoreTabContainerParamList";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { UserRushmore } from "../../model/UserRushmore";
 
 export type AppStackParamList = {
   AuthStackContainer: NavigatorScreenParams<AuthStackParamList>;
   RushmoreTabContainer: NavigatorScreenParams<RushmoreTabContainerParamList>;
-  InProgressGameScreen: undefined;
+  RushmoreGameScreen: {
+    urId: number;
+  };
 };
 
 export type StackContainerScreenProps<S extends keyof AppStackParamList> =

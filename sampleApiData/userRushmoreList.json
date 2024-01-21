@@ -19,6 +19,7 @@
     },
     "visibility": "GAME",
     "gameType": "GAME",
+    "rushmoreType":"Favorite",
     "completedDt": "2023-01-01T12:00:00Z",
     "likeCount": 25,
     "completedCount": 50,
@@ -58,6 +59,7 @@
     "gameType": "GAME",
     "completedDt": "2023-02-15T14:30:00Z",
     "likeCount": 30,
+    "rushmoreType":"Favorite",
     "completedCount": 40,
     "highScoreUser": {
       "id": "highScoreUser2",
@@ -95,6 +97,7 @@
     "gameType": "OPEN",
     "completedDt": "2023-03-20T10:45:00Z",
     "likeCount": 15,
+    "rushmoreType":"Favorite",
     "completedCount": 30,
     "highScoreUser": {
       "id": "highScoreUser3",
@@ -130,6 +133,7 @@
     },
     "visibility": "OPEN",
     "gameType": "OPEN",
+    "rushmoreType":"Favorite",
     "completedDt": "2023-04-10T08:15:00Z",
     "likeCount": 40,
     "completedCount": 25,
@@ -169,6 +173,7 @@
     "gameType": "GAME",
     "completedDt": "2023-05-05T16:20:00Z",
     "likeCount": 20,
+    "rushmoreType":"Favorite",
     "completedCount": 60,
     "highScoreUser": {
       "id": "highScoreUser5",
@@ -206,6 +211,7 @@
     "gameType": "GAME",
     "completedDt": "2023-06-25T18:00:00Z",
     "likeCount": 35,
+    "rushmoreType":"Favorite",
     "completedCount": 55,
     "highScoreUser": {
       "id": "highScoreUser6",
@@ -240,6 +246,7 @@
       "timesCompleted": 20
     },
     "visibility": "OPEN",
+    "rushmoreType":"Favorite",
     "gameType": "OPEN",
     "completedDt": "2023-07-12T22:45:00Z",
     "likeCount": 10,
