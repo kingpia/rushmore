@@ -9,9 +9,6 @@ export type HomeStackParamList = {
   MyCompletedRushmoreScreen: {
     rushmoreItem: UserRushmore;
   };
-  MyInProgressRushmoreScreen: {
-    rushmoreItem: UserRushmore;
-  };
   FollowingSolvedRushmoreScreen: {
     rushmoreItem: FollowingSolvedRushmore;
   };

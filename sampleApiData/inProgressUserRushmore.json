@@ -7,12 +7,15 @@
     },
     "rushmore": {
       "rid": 101,
-      "title": "Favorite TV Series",
+      "title": "TV Series",
       "rushmoreCategory": "Movies",
       "icon": "movie_icon.png"
     },
+    "rushmoreType":"Favorite",
+    "gameType": "Game",
+    "visibility":"Public",
     "createdDt": "2024-01-12T12:30:00Z",
-    "completedDt": "2024-01-15T18:45:00Z",
+    "completedDt": null,
     "likeCount": 25,
     "completedCount": 50,
     "icon": "rushmore_icon.png",
@@ -31,22 +34,19 @@
     "version": 1,
     "userRushmoreItemList": [
       {
-        "urgsiId": 1,
-        "urgsId": 1,
-        "uriItemTitle": "The Godfather",
-        "currentIndex": 0
+        "uriId": 1,
+        "rank": 0,
+        "itemTitle": "The Godfather"
       },
       {
-        "urgsiId": 2,
-        "urgsId": 1,
-        "uriItemTitle": "Shawshank Redemption",
-        "currentIndex": 1
+        "uriId": 2,
+        "rank": 1,
+        "itemTitle": "Shawshank Redemption"
       },
       {
-        "urgsiId": 3,
-        "urgsId": 1,
-        "uriItemTitle": "Pulp Fiction",
-        "currentIndex": 2
+        "uriId": 3,
+        "rank": 2,
+        "itemTitle": "Pulp Fiction"
       }
     ]
   }

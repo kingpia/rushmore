@@ -1,14 +1,12 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Rushmore } from "../../model/Rushmore";
-import { UserRushmore } from "../../model/UserRushmore";
+import { NavigatorScreenParams } from "@react-navigation/native";
+import { AppStackParamList } from "./AppStackParamList";
 
 export type CreateRushmoreStackParamList = {
   CreateRushmoreHomeScreen: undefined;
   RushmoreSettingsScreen: {
     rushmore: Rushmore;
-  };
-  RushmoreRankingScreen: {
-    userRushmore: UserRushmore;
   };
 };
 

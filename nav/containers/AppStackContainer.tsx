@@ -3,6 +3,7 @@ import { AppStackParamList } from "../params/AppStackParamList";
 import { AuthStackContainer } from "./AuthStackContainer";
 import { RushmoreTabContainer } from "./RushmoreTabContainer";
 import { RushmoreGameScreen } from "../../rushmore/RushmoreGameScreen";
+import { EditUserRushmoreScreen } from "../../rushmore/EditUserRushmoreScreen";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
@@ -24,6 +25,14 @@ export const AppStackContainer = () => {
       <AppStackNavigator.Screen
         name="RushmoreGameScreen"
         component={RushmoreGameScreen}
+        options={{
+          gestureEnabled: false,
+          headerShown: false, // You can also hide the header here
+        }}
+      />
+      <AppStackNavigator.Screen
+        name="EditUserRushmoreScreen"
+        component={EditUserRushmoreScreen}
         options={{
           gestureEnabled: false,
           headerShown: false, // You can also hide the header here

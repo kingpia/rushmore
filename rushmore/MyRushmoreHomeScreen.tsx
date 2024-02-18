@@ -12,9 +12,10 @@ import { MyInProgressRushmoreCard } from "../components/MyInProgressRushmoreCard
 import { UserRushmore } from "../model/UserRushmore";
 import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
 
 type MyRushmoreHomeScreenProps = {
-  navigation: NativeStackNavigationProp<HomeStackParamList>;
+  navigation: NativeStackNavigationProp<HomeStackParamList & AppStackParamList>;
 };
 
 export const MyRushmoreHomeScreen = ({
@@ -30,7 +31,7 @@ export const MyRushmoreHomeScreen = ({
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
   const fetchData = async (selectedValue: string) => {
-    console.log(`fetchData: YourRushmoreHomeScreen - ${selectedValue}`);
+    console.log(`fetchData: YourRushdmoreHomeScreen - ${selectedValue}`);
 
     try {
       if (selectedValue === "inprogress") {
@@ -69,24 +70,26 @@ export const MyRushmoreHomeScreen = ({
     }
   };
 
+
   useFocusEffect(
     useCallback(() => {
       fetchData(value);
     }, [value])
   );
 
-  const navigateToMyCompletedRushmore = (rushmoreItem: UserRushmore) => {
-    navigation.navigate("MyCompletedRushmoreScreen", {
-      rushmoreItem,
-      // Add other properties as needed
+  const navigateToMyCompletedRushmore = (userRushmore: UserRushmore) => {
+    navigation.navigate("EditUserRushmoreScreen", {
+      userRushmore,
     });
   };
 
-  const navigateToMyInProgressRushmore = (rushmoreItem: UserRushmore) => {
-    navigation.navigate("MyInProgressRushmoreScreen", {
-      rushmoreItem,
+  const navigateToMyInProgressRushmore = (userRushmore: UserRushmore) => {
+    navigation.navigate("EditUserRushmoreScreen", {
+      userRushmore,
     });
   };
+
+
 
   const handleCategoryPress = (category: string) => {
     console.log(`Clicked on ${category}`);

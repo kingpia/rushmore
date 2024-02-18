@@ -64,7 +64,7 @@
         "firstToCompleteDt": "2022-01-01T10:00:00Z"
       },
       "completedDt": "2022-01-01T10:00:00Z",
-      "score": 0,
+      "score": 1000,
       "letterSelection": "",
       "letterSelectionComplete": "N",
       "userRushmoreGameSessionItemList": [

@@ -27,6 +27,9 @@ import { RushmoreService } from "../service/RushmoreService";
 import { UserRushmoreGameSession } from "../model/UserRushmoreGameSession";
 import { StackContainerScreenProps } from "../nav/params/AppStackParamList";
 import { UserRushmore } from "../model/UserRushmore";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"; // Import the icon library you want to use
+import { format } from "date-fns";
+
 
 const defaultImage = require("../assets/shylo.png");
 
@@ -60,6 +63,16 @@ export const RushmoreGameScreen = ({ navigation, route }: RushmoreGameScreenProp
         // Accessing urId from the FollowingInProgressRushmore object
         const urId = route.params.urId;
 
+
+        //TODO 1/28 just get the game session, it has the userRushmore in it.
+        //If it is a new UserRushmoreGameSession the urgsId will be 0.
+
+        /*
+        * If gameSession.urgsId == 0 then this is a new game session
+        * otherwise it is an existing game session.
+        * Set the data accordingly.
+        * */
+
         // Call the new method with the obtained urId
         const userRushmore: UserRushmore = await rushmoreService.getUserRushmore(urId);
         setUserRushmoreData(userRushmore);
@@ -76,59 +89,38 @@ export const RushmoreGameScreen = ({ navigation, route }: RushmoreGameScreenProp
   }, [route.params.urId]); // Include followingInProgressRushmore as a dependency if used inside the useEffect
 
 
-
-  // Fetch user rushmore game session when the component mounts
-  useEffect(() => {
-    const fetchUserRushmoreGameSession = async () => {
-      console.log("fetchUserRushmoreData");
-      try {
-        // Use the UR_ID to see if this user has a Game Session for this UR_ID.
-        const urId = route.params?.urId;
-
-        // Call the new method with the obtained urId
-        const userRushmoreGameSession: UserRushmoreGameSession | null = await rushmoreService.getUserRushmoreGameSession(
-          urId,
-          'user123'
-        );
-
-        if (userRushmoreGameSession === null) {
-          console.log("No game session found for this user and rushmore");
-          return;
-        }
-        else {
+  /*
+    // Fetch user rushmore game session when the component mounts
+    useEffect(() => {
+      const fetchUserRushmoreGameSession = async () => {
+        console.log("fetchUserRushmoreData");
+        try {
+          // Use the UR_ID to see if this user has a Game Session for this UR_ID.
+          const urId = route.params?.urId;
+  
+          // Call the new method with the obtained urId
+          const userRushmoreGameSession: UserRushmoreGameSession = await rushmoreService.getUserRushmoreGameSession(
+            urId,
+            'user123'
+          );
+  
           const letterSelectionArray = userRushmoreGameSession.letterSelection.toLowerCase().split('');
           setPressedKeys(letterSelectionArray);
           setUserRushmoreGameSessionItemList(userRushmoreGameSession.userRushmoreGameSessionItemList); // Set the data state
           setUserRushmoreGameSession(userRushmoreGameSession);
+  
+          console.log('User Rushmore Game Session:', userRushmoreGameSession);
+        } catch (error) {
+          console.error('Error fetching user rushmore game session:', error);
+        } finally {
+          setUserRushmoreGameSessionLoading(false); // Set loading to false when the async call is finished
         }
-        console.log('User Rushmore Game Session:', userRushmoreGameSession);
-      } catch (error) {
-        console.error('Error fetching user rushmore game session:', error);
-      } finally {
-        setUserRushmoreGameSessionLoading(false); // Set loading to false when the async call is finished
-      }
-    };
-
-    fetchUserRushmoreGameSession();
-  }, [route.params.urId]); // Include urId as a dependency if used inside the useEffect
-
-  const startGame = async () => {
-    console.log("Starting game");
-    setUserRushmoreGameSessionLoading(true);
-    try {
-      // Call the new method with the obtained urId
-      const gameSession: UserRushmoreGameSession = await rushmoreService.startRushmoreGame(route.params.urId, 'piaUser');
-      setUserRushmoreGameSessionItemList(gameSession.userRushmoreGameSessionItemList);
-
-      setUserRushmoreGameSession(gameSession);
-      //No letters are set so leave array empty
-      console.log("Starting:" + JSON.stringify(gameSession));
-    } catch (error) {
-      console.error('Error starting game:', error);
-    } finally {
-      setUserRushmoreGameSessionLoading(false); // Set loading to false when the async call is finished
-    }
-  };
+      };
+  
+      fetchUserRushmoreGameSession();
+    }, [route.params.urId]); // Include urId as a dependency if used inside the useEffect
+  
+  */
 
 
   const stats = {
@@ -211,11 +203,6 @@ export const RushmoreGameScreen = ({ navigation, route }: RushmoreGameScreenProp
         rushmoreTitle={userRushmoreData?.rushmore?.title?.toUpperCase() || ""}
         rushmoreType={userRushmoreData?.rushmoreType || ""}
         username={userRushmoreData?.user.userName || ""}
-        avatarUri={defaultImage.uri}
-        highScorer={userRushmoreData?.highScoreUser?.userName || ""}
-        firstToComplete={userRushmoreData?.firstToCompleteUser?.userName || ""}
-        highScore={userRushmoreData?.highScore || 0}
-        firstToCompleteDt={new Date()}
       />
 
 
@@ -229,8 +216,19 @@ export const RushmoreGameScreen = ({ navigation, route }: RushmoreGameScreenProp
         ) : (
           <>
 
-            <View style={{ flexDirection: "row-reverse" }}>
-              <Text style={styles.scoreText}>Your Score - {userRushmoreGameSession?.score}</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <View>
+                <View style={{ flexDirection: "row" }}>
+                  <Icon name="trophy" size={18} color="gold" style={styles.icon} />
+                  <Text style={styles.infoText}>{`@${userRushmoreData?.highScoreUser.userName} - ${userRushmoreData?.highScore}`}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Icon name="check-circle" size={18} color="green" style={styles.icon} />
+                  <Text style={styles.infoText}>{`@${userRushmoreData?.firstToCompleteUser?.userName} - ${format(userRushmoreData?.firstToCompleteDt ?? new Date(), "MMM d yyyy")}`}</Text>
+                </View>
+              </View>
+              <Text style={styles.scoreText}>Score - {userRushmoreGameSession?.score}</Text>
+
             </View>
 
             <DraggableFlatList
@@ -262,15 +260,9 @@ export const RushmoreGameScreen = ({ navigation, route }: RushmoreGameScreenProp
               </TouchableOpacity>
 
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                {userRushmoreGameSessionItemList.length > 0 ? (
-                  <TouchableOpacity onPress={showModal}>
-                    <IconButton icon="star" size={50} iconColor="orange" />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity onPress={startGame}>
-                    <Text style={styles.startButton}>Start</Text>
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity onPress={showModal}>
+                  <IconButton icon="star" size={50} iconColor="orange" />
+                </TouchableOpacity>
               </View>
 
               <TouchableOpacity onPress={() => console.log("Navigate or exit")}>
@@ -327,7 +319,7 @@ const styles = StyleSheet.create({
     margin: 2,
   },
   scoreText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: 'bold',
   },
   loadingContainer: {
@@ -339,6 +331,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'blue',
     fontWeight: 'bold',
+  },
+  icon: {
+    marginRight: 4,
+  },
+  infoText: {
+    fontSize: 12,
+    color: "gray",
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
   },
 });
 

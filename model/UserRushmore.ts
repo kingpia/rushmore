@@ -23,3 +23,4 @@ export interface UserRushmore {
   version: number;
   userRushmoreItemList: UserRushmoreItem[]; //List of items.
 }
+export { RushmoreVisibilityEnums, RushmoreGameTypeEnums, RushmoreType };

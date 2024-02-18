@@ -85,15 +85,17 @@ export class RushmoreService<T> {
   async getUserRushmoreGameSession(
     urgsid: number,
     uid: string
-  ): Promise<UserRushmoreGameSession | null> {
+  ): Promise<UserRushmoreGameSession> {
     // Simulate a 2-second delay
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const isUrIdEven = urgsid % 2 === 0;
 
+    //For mocking, even means new
     if (isUrIdEven) {
-      // If urId is even, return null
-      return null;
+      //New empty item
+      let data: UserRushmoreGameSession = require("../sampleApiData/gameData/userRushmoreGameSession.json");
+      return data;
     } else {
       // Mock response for odd urId
       return {
@@ -190,34 +192,25 @@ export class RushmoreService<T> {
   }
 
   // Inside RushmoreService class
-  async getUserRushmore(urId: number): Promise<UserRushmore> {
+  async getUserRushmore(
+    urId: number,
+    requestingUid: string
+  ): Promise<UserRushmore> {
     console.log("Getuserrushmore(urId:" + urId + ")");
     try {
       // Simulate a 3-second delay
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      let data: UserRushmore = require("../sampleApiData/userRushmore.json");
-      // Mock response
-      return data;
-    } catch (error) {
-      console.error("Error fetching user rushmore:", error);
-      throw error;
-    }
-  }
-
-  async startRushmoreGame(
-    urId: number,
-    uid: string
-  ): Promise<UserRushmoreGameSession> {
-    console.log("startRushmoreGame(urId:" + urId + ")");
-    try {
-      // Simulate a 3-second delay
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      //Mock Response
-      let data: UserRushmoreGameSession = require("../sampleApiData/gameData/userRushmoreGameSession.json");
-      console.log("startRushmoreGame data:" + JSON.stringify(data));
-      return data;
+      if (urId === 6661) {
+        console.log("returning completed user rushmore");
+        let data: UserRushmore = require("../sampleApiData/completedUserRushmore.json");
+        // Mock response
+        return data;
+      } else {
+        let data: UserRushmore = require("../sampleApiData/inProgressUserRushmore.json");
+        // Mock response
+        return data;
+      }
     } catch (error) {
       console.error("Error fetching user rushmore:", error);
       throw error;

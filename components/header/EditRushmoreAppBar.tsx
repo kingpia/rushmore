@@ -2,23 +2,24 @@
 
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Avatar, Text } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"; // Import the icon library you want to use
+import { Text } from "react-native-paper";
+import { format } from "date-fns";
+
 type CustomAppBarProps = {
     rushmoreTitle: string;
     rushmoreType: string;
     username: string;
+    completedDt: Date | undefined;
 };
 
 const CustomAppBar: React.FC<CustomAppBarProps> = ({
     rushmoreTitle,
     rushmoreType,
     username,
+    completedDt
 }) => {
 
-    const handleAvatarPress = () => {
-        console.log("Avatar clicked!");
-    };
+    const formattedDate = format(completedDt ?? new Date(), "MMM d yyyy");
 
     return (
         <View style={styles.container}>
@@ -26,11 +27,7 @@ const CustomAppBar: React.FC<CustomAppBarProps> = ({
             <View style={styles.userInfoContainer}>
                 <Text style={styles.title}>{rushmoreType} {rushmoreTitle}</Text>
             </View>
-            <View style={styles.userInfo}>
-                <Text style={styles.smallUsername}>{`@${username}`}</Text>
-            </View>
-
-
+            <Text>{formattedDate}</Text>
         </View>
     );
 };

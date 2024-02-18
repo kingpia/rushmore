@@ -1,14 +1,20 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import { Text, SegmentedButtons, Button } from "react-native-paper";
-import { StackContainerScreenProps } from "../nav/params/CreateRushmoreStackParamList";
+import { CreateRushmoreStackParamList, StackContainerScreenProps } from "../nav/params/CreateRushmoreStackParamList";
 import { UserRushmore } from "../model/UserRushmore";
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
 import { RushmoreVisibilityEnums } from "../model/RushmoreVisibilityEnums";
 import { RushmoreType } from "../model/RushmoreTypeEnums";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
 
-type RushmoreSettingsScreenProps =
-  StackContainerScreenProps<"RushmoreSettingsScreen">;
+
+type RushmoreSettingsScreenProps = {
+  navigation: NativeStackNavigationProp<CreateRushmoreStackParamList & AppStackParamList>;
+  route: any
+};
+
 
 export const RushmoreSettingsScreen = ({
   route,
@@ -20,63 +26,13 @@ export const RushmoreSettingsScreen = ({
   const [gameType, setGameType] = useState("game");
 
   const handleCreatePress = () => {
-    let userRushmore: UserRushmore = {
-      rushmore: rushmore,
-      urId: 0,
-      user: {
-        id: "",
-        userName: "",
-        name: "",
-        followingCount: 0,
-        followerCount: 0,
-        friendCount: 0,
-        likeCount: 0,
-        socialStatus: ""
-      },
-      visibility: RushmoreVisibilityEnums.PUBLIC,
-      gameType: RushmoreGameTypeEnums.GAME,
-      rushmoreType: RushmoreType.Best,
-      createdDt: new Date,
-      completedDt: new Date,
-      likeCount: 0,
-      completedCount: 0,
-      icon: "",
-      highScoreUser: {
-        id: "",
-        userName: "",
-        name: "",
-        followingCount: 0,
-        followerCount: 0,
-        friendCount: 0,
-        likeCount: 0,
-        socialStatus: ""
-      },
-      version: 0,
-      userRushmoreItemList: [],
-      highScore: 0,
-      firstToCompleteUser: {
-        id: "",
-        userName: "",
-        name: "",
-        followingCount: 0,
-        followerCount: 0,
-        friendCount: 0,
-        likeCount: 0,
-        socialStatus: ""
-      },
-      firstToCompleteDt: new Date(),
-    }
+    let userRushmore: UserRushmore = require("../sampleApiData/inProgressUserRushmore.json");
+
     console.log("Create Rushmore");
-    navigation.navigate("RushmoreRankingScreen", {
+    navigation.navigate("EditUserRushmoreScreen", {
       userRushmore,
-      // Add other properties as needed
     });
-    /*
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "RushmoreRankingScreen", }],
-    })
-    */
+
 
   };
 

@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { CreateRushmoreStackParamList } from "../params/CreateRushmoreStackParamList";
 import { CreateRushmoreHomeScreen } from "../../rushmore/CreateRushmoreHomeScreen";
-import { RushmoreRankingScreen } from "../../rushmore/RushmoreRankingScreen";
+import { EditUserRushmoreScreen } from "../../rushmore/EditUserRushmoreScreen";
 import { RushmoreSettingsScreen } from "../../rushmore/RushmoreSettingsScreen";
 
 export const CreateRushmoreStackContainer = () => {
@@ -25,13 +25,6 @@ export const CreateRushmoreStackContainer = () => {
         component={RushmoreSettingsScreen}
         options={({ route }) => ({
           headerTitle: `${route.params?.rushmore.title}`,
-        })}
-      />
-      <CreateRushmoreStackNavigator.Screen
-        name="RushmoreRankingScreen"
-        component={RushmoreRankingScreen}
-        options={({ route }) => ({
-          headerTitle: `${route.params?.userRushmore.rushmoreType} ${route.params?.userRushmore.rushmore.title}`,
         })}
       />
     </CreateRushmoreStackNavigator.Navigator>
