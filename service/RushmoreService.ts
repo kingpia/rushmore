@@ -9,16 +9,31 @@ import {
   rushmoreListURL,
   yourCompletedRushmoreListURL,
 } from "../sampleDataConfig";
+import axios from 'axios';
 
 export class RushmoreService<T> {
+
+
+  private baseURL = 'http://192.168.0.29:8080';
+
+
   async getRushmoreItems(uid: string, toFetch: ApiFetchEnums): Promise<T[]> {
     try {
       let data: T[] = [];
 
+      let endpoint = '';
+
       if (toFetch === ApiFetchEnums.YOUR_IN_PROGRESS_RUSHMORE_LIST) {
-        data = require("../sampleApiData/yourInProgressRushmoreList.json");
+        endpoint = `/inProgressUserRushmores/${uid}`;
+        const response = await axios.get<T[]>(`${this.baseURL}${endpoint}`);
+        return response.data;
+        //data = require("../sampleApiData/yourInProgressRushmoreList.json");
       } else if (toFetch === ApiFetchEnums.YOUR_COMPLETED_RUSHMORE_LIST) {
-        data = require("../sampleApiData/yourCompletedRushmoreList.json");
+        endpoint = `/completedUserRushmores/${uid}`;
+        const response = await axios.get<T[]>(`${this.baseURL}${endpoint}`);
+        return response.data;
+
+        //data = require("../sampleApiData/yourCompletedRushmoreList.json");
       } else if (
         toFetch === ApiFetchEnums.FOLLOWING_IN_PROGRESS_RUSHMORE_LIST
       ) {

@@ -70,7 +70,6 @@ export const MyRushmoreHomeScreen = ({
     }
   };
 
-
   useFocusEffect(
     useCallback(() => {
       fetchData(value);
@@ -88,8 +87,6 @@ export const MyRushmoreHomeScreen = ({
       userRushmore,
     });
   };
-
-
 
   const handleCategoryPress = (category: string) => {
     console.log(`Clicked on ${category}`);
