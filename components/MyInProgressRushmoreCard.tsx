@@ -4,7 +4,7 @@ import { Avatar, Card, Text } from "react-native-paper";
 import { UserRushmore } from "../model/UserRushmore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 
 type MyInProgressRushmoreCardProps = {
   myInProgressRushmore: UserRushmore;
@@ -14,7 +14,12 @@ type MyInProgressRushmoreCardProps = {
 export const MyInProgressRushmoreCard: React.FC<
   MyInProgressRushmoreCardProps
 > = ({ myInProgressRushmore, onPress }) => {
-  const formattedDate = format(myInProgressRushmore.createdDt, "MMM d yyyy");
+  const parsedCompletedDt = parse(
+    myInProgressRushmore.createdDt,
+    "EEE MMM dd HH:mm:ss 'GMT' yyyy",
+    new Date()
+  );
+  const formattedCreatedDt = format(new Date(parsedCompletedDt), "MMM d yyyy");
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -38,7 +43,7 @@ export const MyInProgressRushmoreCard: React.FC<
                 <MaterialCommunityIcons name="puzzle" size={18} color="black" />
               )}
               <Text style={{ fontSize: 12, color: "gray", marginLeft: 5 }}>
-                • {formattedDate}
+                • {formattedCreatedDt}
               </Text>
             </View>
             {/* Additional Info */}
@@ -49,16 +54,6 @@ export const MyInProgressRushmoreCard: React.FC<
                 <MaterialCommunityIcons name="eye" size={24} color="black" />
                 <Text variant="bodyMedium">
                   {myInProgressRushmore.visibility}
-                </Text>
-              </View>
-              <View style={{ alignItems: "center" }}>
-                <MaterialCommunityIcons
-                  name="check-circle"
-                  size={24}
-                  color="black"
-                />
-                <Text variant="bodyMedium">
-                  {myInProgressRushmore.completedCount}
                 </Text>
               </View>
             </View>

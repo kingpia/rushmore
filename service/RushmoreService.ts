@@ -9,19 +9,15 @@ import {
   rushmoreListURL,
   yourCompletedRushmoreListURL,
 } from "../sampleDataConfig";
-import axios from 'axios';
+import axios from "axios";
 
 export class RushmoreService<T> {
-
-
-  private baseURL = 'http://192.168.0.29:8080';
-
+  private baseURL = "http://192.168.0.29:8080";
 
   async getRushmoreItems(uid: string, toFetch: ApiFetchEnums): Promise<T[]> {
     try {
       let data: T[] = [];
-
-      let endpoint = '';
+      let endpoint = "";
 
       if (toFetch === ApiFetchEnums.YOUR_IN_PROGRESS_RUSHMORE_LIST) {
         endpoint = `/inProgressUserRushmores/${uid}`;
@@ -176,7 +172,7 @@ export class RushmoreService<T> {
             likeCount: 0,
             socialStatus: "",
           },
-          firstToCompleteDt: new Date(),
+          firstCompletedDt: new Date(),
         },
         completedDt: new Date(),
         score: 50000,

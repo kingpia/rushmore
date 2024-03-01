@@ -3,8 +3,6 @@ import { FlatList, SafeAreaView } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 
-import { RushmoreService } from "../service/RushmoreService";
-import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MyCompletedRushmoreCard } from "../components/MyCompletedRushmoreCard";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
@@ -13,6 +11,7 @@ import { UserRushmore } from "../model/UserRushmore";
 import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { RushmoreGraphService } from "../service/RushmoreGraphService";
 
 type MyRushmoreHomeScreenProps = {
   navigation: NativeStackNavigationProp<HomeStackParamList & AppStackParamList>;
@@ -34,21 +33,15 @@ export const MyRushmoreHomeScreen = ({
     console.log(`fetchData: YourRushdmoreHomeScreen - ${selectedValue}`);
 
     try {
+      const rushmoreGraphService = new RushmoreGraphService(); // Use RushmoreGraphService
+
       if (selectedValue === "inprogress") {
-        const rushmoreService = new RushmoreService<UserRushmore>();
-
-        const myInProgrssRushmoreData = await rushmoreService.getRushmoreItems(
-          "pia_id",
-          ApiFetchEnums.YOUR_IN_PROGRESS_RUSHMORE_LIST
-        );
-        setMyInProgressRushmoreList(myInProgrssRushmoreData);
+        const myInProgressRushmoreData =
+          await rushmoreGraphService.getInProgressRushmoreList("user123"); // Call new method
+        setMyInProgressRushmoreList(myInProgressRushmoreData);
       } else if (selectedValue === "complete") {
-        const rushmoreService = new RushmoreService<UserRushmore>();
-
-        const myCompletedRushmoreData = await rushmoreService.getRushmoreItems(
-          "pia_id",
-          ApiFetchEnums.YOUR_COMPLETED_RUSHMORE_LIST
-        );
+        const myCompletedRushmoreData =
+          await rushmoreGraphService.getCompletedRushmoreList("user123"); // Call new method
         setMyCompletedRushmoreList(myCompletedRushmoreData);
       }
     } catch (error) {
