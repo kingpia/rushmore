@@ -10,6 +10,7 @@ export type ProfileStackParamList = {
   FriendsTopTabContainer: NavigatorScreenParams<FriendsTopTabContainerParamList>;
   EditNameScreen: { userData: User };
   EditUsernameScreen: { userData: User };
+  AddFriendScreen: undefined;
 };
 
 export type StackContainerScreenProps<S extends keyof ProfileStackParamList> =

@@ -5,6 +5,7 @@ import { ProfileHomeScreen } from "../../profile/ProfileHomeScreen";
 import { EditProfileScreen } from "../../profile/EditProfileScreen";
 import { EditNameScreen } from "../../profile/EditNameScreen";
 import { EditUsernameScreen } from "../../profile/EditUsernameScreen";
+import AddFriendsScreen from "../../profile/AddFriendScreen";
 
 const ProfileStackNavigator =
   createNativeStackNavigator<ProfileStackParamList>();
@@ -37,6 +38,13 @@ export const ProfileStackContainer = () => {
       <ProfileStackNavigator.Screen
         name="EditUsernameScreen"
         component={EditUsernameScreen}
+        options={{
+          headerTitle: "", // Empty string to hide the title
+        }}
+      />
+      <ProfileStackNavigator.Screen
+        name="AddFriendScreen"
+        component={AddFriendsScreen}
         options={{
           headerTitle: "", // Empty string to hide the title
         }}

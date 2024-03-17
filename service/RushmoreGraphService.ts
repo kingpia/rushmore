@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { UserRushmore } from "../model/UserRushmore";
 
 export class RushmoreGraphService {
