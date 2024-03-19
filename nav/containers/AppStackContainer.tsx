@@ -35,7 +35,7 @@ export const AppStackContainer = () => {
         component={EditUserRushmoreScreen}
         options={{
           gestureEnabled: false,
-          headerShown: false, // You can also hide the header here
+          headerShown: true, // You can also hide the header here
         }}
       />
     </AppStackNavigator.Navigator>

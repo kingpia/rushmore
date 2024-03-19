@@ -4,6 +4,13 @@ import { View } from "react-native";
 import { Avatar, Button, Card, IconButton, Text } from "react-native-paper";
 import { UserService } from "../service/UserService";
 
+export enum FollowingStatus {
+  FOLLOWING = "FOLLOWING",
+  NOT_FOLLOWING = "NOT_FOLLOWING",
+  REQUESTED = "REQUESTED",
+  FRIEND = "FRIEND",
+}
+
 type UserCardProps = {
   user: User;
   onPressFollow: (followedUid: string) => void; // Callback to handle follow action
@@ -22,6 +29,22 @@ const UserCard: React.FC<UserCardProps> = ({
       onUnfollow(user.uid);
     } else {
       onPressFollow(user.uid);
+    }
+  };
+
+  // Determine button text based on following status
+  const getButtonText = () => {
+    switch (user.followingStatus) {
+      case FollowingStatus.FOLLOWING:
+        return "Following";
+      case FollowingStatus.NOT_FOLLOWING:
+        return "Follow";
+      case FollowingStatus.REQUESTED:
+        return "Requested";
+      case FollowingStatus.FRIEND:
+        return "Friend";
+      default:
+        return "Follow";
     }
   };
 

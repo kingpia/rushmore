@@ -3,7 +3,10 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { Avatar, Button, Text } from "react-native-paper";
 import { UserService } from "../service/UserService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
-import { FriendsStackParamList, StackContainerScreenProps } from "../nav/params/FriendsStackParamList";
+import {
+  FriendsStackParamList,
+  StackContainerScreenProps,
+} from "../nav/params/FriendsStackParamList";
 import { UserRushmore } from "../model/UserRushmore";
 import { UserRushmoreCard } from "../components/UserRushmoreCard";
 import { categories } from "../model/Categories";
@@ -12,9 +15,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { RouteProp } from "@react-navigation/native";
 
-
 type UserProfileScreenProps = {
-  navigation: NativeStackNavigationProp<FriendsStackParamList & AppStackParamList>;
+  navigation: NativeStackNavigationProp<
+    FriendsStackParamList & AppStackParamList
+  >;
   route: RouteProp<FriendsStackParamList, "UserProfileScreen">;
 };
 
@@ -22,7 +26,7 @@ export const UserProfileScreen = ({
   route,
   navigation,
 }: UserProfileScreenProps) => {
-  const [userData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<SocialUser>();
   const [userRushmoreData, setUserRushmoreData] = useState<UserRushmore[]>();
   const defaultImage = require("../assets/shylo.png");
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
@@ -34,19 +38,19 @@ export const UserProfileScreen = ({
       try {
         const user = await friendService.getUserByUserId(
           "pia_id",
-          route.params.user.id
+          route.params.user.uid
         );
         setUserData(user);
 
         const userRushmoreData = await friendService.getUserRushmoreList(
           "pia_id",
-          route.params.user.id,
+          route.params.user.uid,
           ApiFetchEnums.USER_RUSHMORE_LIST
         );
         setUserRushmoreData(userRushmoreData);
 
         navigation.setOptions({
-          title: route.params.user.name,
+          title: route.params.user.nickName,
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -54,7 +58,7 @@ export const UserProfileScreen = ({
     };
 
     fetchData();
-  }, [route.params.user.id, navigation]);
+  }, [route.params.user.uid, navigation]);
 
   const handleCategoryPress = (category: string) => {
     console.log(`Clicked on ${category}`);
@@ -80,11 +84,9 @@ export const UserProfileScreen = ({
       item.rushmore.rushmoreCategory === selectedCategory
   );
 
-  const navigateToRushmoreGameScreen = (
-    userRushmore: UserRushmore
-  ) => {
+  const navigateToRushmoreGameScreen = (userRushmore: UserRushmore) => {
     console.log("Navigate to FollowingInProgressRushmore rushmore screen");
-    navigation.navigate("RushmoreGameScreen", { "urId": userRushmore.urId }); // PassurId
+    navigation.navigate("RushmoreGameScreen", { urId: userRushmore.urId }); // PassurId
   };
 
   return (
@@ -133,11 +135,6 @@ export const UserProfileScreen = ({
           <View style={styles.centeredText}>
             <Text style={styles.buttonText}>Followers</Text>
             <Text style={styles.buttonText}>{userData?.followerCount}</Text>
-          </View>
-          <Text style={styles.pipeSeparator}>|</Text>
-          <View style={styles.centeredText}>
-            <Text style={styles.buttonText}>Likes</Text>
-            <Text style={styles.buttonText}>{userData?.likeCount}</Text>
           </View>
         </View>
 

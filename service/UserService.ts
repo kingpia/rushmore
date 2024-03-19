@@ -48,7 +48,7 @@ export class UserService<T> {
     }
   }
 
-  async getUserByUserId(uid: string, toFetchUid: string): Promise<User> {
+  async getUserByUserId(uid: string, toFetchUid: string): Promise<SocialUser> {
     try {
       const response = await axios.post(`${this.baseURL}/graphql`, {
         query: `
@@ -161,19 +161,19 @@ export class UserService<T> {
     }
   }
 
-  async getFollowersUserList(uid: string): Promise<User[]> {
+  async getFollowersUserList(uid: string): Promise<SocialUser[]> {
     try {
       const response = await axios.post(`${this.baseURL}/graphql`, {
         query: `
         query {
          getFollowersUserList(uid: "${uid}") {
           followersCount
-          following
           followingCount
           nickName
           profileImagePath
           uid
           userName
+          socialRelationship
         }
       }
       `,
@@ -185,19 +185,42 @@ export class UserService<T> {
     }
   }
 
-  async getFollowingUserList(uid: string): Promise<User[]> {
+  async getFollowingUserList(uid: string): Promise<SocialUser[]> {
     try {
       const response = await axios.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           getFollowingUserList(uid: "${uid}") {
           followersCount
-          following
+          nickName
+          profileImagePath
+          uid
+          userName
+          socialRelationship
+        }
+      }
+      `,
+      });
+      return response.data.data.getFollowingUserList;
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+      throw error;
+    }
+  }
+
+  async getSocialUserByUid(uid: string): Promise<SocialUser> {
+    try {
+      const response = await axios.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          socialUserByUid(uid: "${uid}") {
+          followersCount
           followingCount
           nickName
           profileImagePath
           uid
           userName
+          socialRelationship
         }
       }
       `,

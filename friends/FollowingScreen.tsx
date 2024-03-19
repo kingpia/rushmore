@@ -1,11 +1,17 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { SafeAreaView, StyleSheet, Animated } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Animated,
+  TouchableOpacity,
+} from "react-native";
 import { ActivityIndicator, Searchbar } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import { UserService } from "../service/UserService";
 import { FriendsStackParamList } from "../nav/params/FriendsStackParamList";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import UserCard from "../components/UserCard";
+import SocialUserFollowingCard from "../components/SocialUserFollowingCard";
 
 type FollowingScreenProps = {
   navigation: NativeStackNavigationProp<FriendsStackParamList>;
@@ -14,12 +20,13 @@ type FollowingScreenProps = {
 const userService = new UserService(); // Instantiate UserService
 
 export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
-  const [followingList, setFollowingList] = useState<User[]>([]);
+  const [followingList, setFollowingList] = useState<SocialUser[]>([]);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [loading, setLoading] = useState<boolean>(true);
   const [fadeAnim] = useState(new Animated.Value(0)); // Initial value for opacity: 0
 
   const onChangeSearch = (query: string) => setSearchQuery(query);
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -48,7 +55,7 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
     }).start();
   }, [fadeAnim]);
 
-  const navigateToUserProfileScreen = (user: User) => {
+  const navigateToUserProfileScreen = (user: SocialUser) => {
     console.log("navigateToUserProfileScreen");
 
     navigation.navigate("UserProfileScreen", {
@@ -106,11 +113,13 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
           keyExtractor={(item) => item.uid}
           style={[styles.flatList, { opacity: fadeAnim }]}
           renderItem={({ item }) => (
-            <UserCard
-              user={item}
-              onPressFollow={followUser}
-              onUnfollow={unfollowUser}
-            />
+            <TouchableOpacity onPress={() => navigateToUserProfileScreen(item)}>
+              <SocialUserFollowingCard
+                user={item}
+                onPressFollow={followUser}
+                onUnfollow={unfollowUser}
+              />
+            </TouchableOpacity>
           )}
         />
       )}
