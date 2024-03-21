@@ -3,12 +3,13 @@ import { View, StyleSheet, FlatList, Keyboard, ScrollView } from "react-native";
 import { Searchbar, Button, ActivityIndicator } from "react-native-paper"; // Import ActivityIndicator from react-native-paper
 import { UserService } from "../service/UserService";
 import UserCard from "../components/UserCard";
+import SocialUserFollowingCard from "../components/SocialUserFollowingCard";
 
 const userService = new UserService(); // Instantiate UserService
 
 const AddFriendsScreen = () => {
   const [searchText, setSearchText] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<User[]>([]); // Assuming the shape of your user data
+  const [searchResults, setSearchResults] = useState<SocialUser[]>([]); // Assuming the shape of your user data
   const [loading, setLoading] = useState<boolean>(false); // Track loading state
 
   const searchbarRef = useRef<any>(null); // Ref to Searchbar component
@@ -111,7 +112,7 @@ const AddFriendsScreen = () => {
           data={searchResults}
           keyExtractor={(item) => item.uid}
           renderItem={({ item }) => (
-            <UserCard
+            <SocialUserFollowingCard
               user={item}
               onPressFollow={followUser}
               onUnfollow={unfollowUser}

@@ -214,7 +214,7 @@ export const ProfileHomeScreen = ({
               >
                 Followers
               </Button>
-              <Text>{userData?.followerCount}</Text>
+              <Text>{userData?.followersCount}</Text>
             </View>
             <Text style={styles.pipeSeparator}>|</Text>
             <View>

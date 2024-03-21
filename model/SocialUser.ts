@@ -3,8 +3,8 @@ type SocialUser = {
   userName: string;
   nickName: string;
   profileImagePath: string;
-  followerCount: number;
+  followersCount: number;
   followingCount: number;
-  socialRelationship: string;
   userRushmoreCount: number;
+  socialRelationship: SocialRelationship;
 };

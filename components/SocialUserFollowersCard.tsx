@@ -2,14 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Avatar, Button, Card, IconButton, Text } from "react-native-paper";
-import { UserService } from "../service/UserService";
-
-export enum SocialRelationship {
-  FOLLOWING = "FOLLOWING",
-  NOT_FOLLOWING = "NOT_FOLLOWING",
-  REQUESTED = "REQUESTED",
-  FRIEND = "FRIEND",
-}
 
 type SocialUserFollowersCardProps = {
   user: SocialUser;
@@ -31,21 +23,23 @@ const SocialUserFollowersCard: React.FC<SocialUserFollowersCardProps> = ({
     updateButtonText(user.socialRelationship);
   }, [user.socialRelationship]);
 
-  const updateButtonText = (status: string) => {
-    console.log("Status:" + status);
-    switch (status) {
-      case SocialRelationship.FRIEND:
-        setButtonText("Friends");
-        break;
-      case SocialRelationship.FOLLOWING:
-        setButtonText("Follow back");
-        break;
-      case SocialRelationship.REQUESTED:
-        setButtonText("Follow");
-        break;
-      default:
-        setButtonText("");
-        break;
+  const updateButtonText = (relationship: SocialRelationship) => {
+    console.log(
+      "Status: USER:" +
+        user.userName +
+        ", Relationship" +
+        JSON.stringify(relationship)
+    );
+    console.log("isFollowing:" + relationship.isFollowing);
+    console.log("isFollowed:" + relationship.isFollowed);
+    if (relationship.isFollowing && relationship.isFollowed) {
+      setButtonText("Friends");
+    } else if (relationship.isFollowing && !relationship.isFollowed) {
+      setButtonText("Follow back");
+    } else if (!relationship.isFollowing && relationship.isFollowed) {
+      setButtonText("Following");
+    } else {
+      setButtonText("Follow");
     }
   };
 

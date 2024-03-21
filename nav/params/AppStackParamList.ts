@@ -13,6 +13,7 @@ export type AppStackParamList = {
   EditUserRushmoreScreen: {
     userRushmore: UserRushmore;
   };
+  UserProfileScreen: { user: SocialUser };
 };
 
 export type StackContainerScreenProps<S extends keyof AppStackParamList> =

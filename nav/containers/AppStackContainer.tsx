@@ -4,16 +4,13 @@ import { AuthStackContainer } from "./AuthStackContainer";
 import { RushmoreTabContainer } from "./RushmoreTabContainer";
 import { RushmoreGameScreen } from "../../rushmore/RushmoreGameScreen";
 import { EditUserRushmoreScreen } from "../../rushmore/EditUserRushmoreScreen";
+import { UserProfileScreen } from "../../friends/UserProfileScreen";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
 export const AppStackContainer = () => {
   return (
-    <AppStackNavigator.Navigator
-      screenOptions={{
-        headerBackTitleVisible: false, // Hide the back button label
-      }}
-    >
+    <AppStackNavigator.Navigator>
       <AppStackNavigator.Screen
         name="AuthStackContainer"
         component={AuthStackContainer}
@@ -35,6 +32,13 @@ export const AppStackContainer = () => {
         component={EditUserRushmoreScreen}
         options={{
           gestureEnabled: false,
+          headerShown: true, // You can also hide the header here
+        }}
+      />
+      <AppStackNavigator.Screen
+        name="UserProfileScreen"
+        component={UserProfileScreen} // Added here
+        options={{
           headerShown: true, // You can also hide the header here
         }}
       />

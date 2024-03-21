@@ -4,13 +4,6 @@ import { View, StyleSheet } from "react-native";
 import { Avatar, Button, Card, IconButton, Text } from "react-native-paper";
 import { UserService } from "../service/UserService";
 
-export enum SocialRelationship {
-  FOLLOWING = "FOLLOWING",
-  NOT_FOLLOWING = "NOT_FOLLOWING",
-  REQUESTED = "REQUESTED",
-  FRIEND = "FRIEND",
-}
-
 type SocialUserFolloweingCardProps = {
   user: SocialUser;
   onPressFollow: (followedUid: string) => void; // Callback to handle follow action
@@ -32,21 +25,23 @@ const SocialUserFollowingCard: React.FC<SocialUserFolloweingCardProps> = ({
     updateButtonText(user.socialRelationship);
   }, [user.socialRelationship]);
 
-  const updateButtonText = (status: string) => {
-    console.log("Status:" + status);
-    switch (status) {
-      case SocialRelationship.FRIEND:
-        setButtonText("Friends");
-        break;
-      case SocialRelationship.NOT_FOLLOWING:
-        setButtonText("Following");
-        break;
-      case SocialRelationship.REQUESTED:
-        setButtonText("Follow");
-        break;
-      default:
-        setButtonText("");
-        break;
+  const updateButtonText = (relationship: SocialRelationship) => {
+    console.log("isFollowing:" + relationship.isFollowing);
+    console.log("isFollowed:" + relationship.isFollowed);
+
+    //If isFollowing and isFollowed are both true, setButtonText("Friends")
+    //If isFollowing is true and isFollowed is false setButtonText("Follow back")
+    //If isFollowing is false and isFollowed is true setButtonText("Following")
+    //If isFollowing is false and isFollowed is false setButtonText("Follow");
+
+    if (relationship.isFollowing && relationship.isFollowed) {
+      setButtonText("Friends");
+    } else if (relationship.isFollowing && !relationship.isFollowed) {
+      setButtonText("Follow back");
+    } else if (!relationship.isFollowing && relationship.isFollowed) {
+      setButtonText("Following");
+    } else {
+      setButtonText("Follow");
     }
   };
 

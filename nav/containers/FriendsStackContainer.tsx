@@ -19,10 +19,6 @@ export const FriendsStackContainer = () => {
         name="FriendsTopTabContainer"
         component={FriendsTopTabContainer}
       />
-      <FriendsStackNavigator.Screen
-        name="UserProfileScreen"
-        component={UserProfileScreen}
-      />
     </FriendsStackNavigator.Navigator>
   );
 };

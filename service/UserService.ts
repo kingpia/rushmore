@@ -54,6 +54,8 @@ export class UserService<T> {
         query: `
         query {
           socialUserByUid(uid: "${toFetchUid}") {
+            followersCount
+            followingCount
             nickName
             profileImagePath
             uid
@@ -62,6 +64,12 @@ export class UserService<T> {
         }
         `,
       });
+
+      console.log(
+        "getUserByUserId:",
+        JSON.stringify(response.data.data.socialUserByUid)
+      );
+
       //console.log("OUTPUT:" + JSON.stringify(response.data));
       return response.data.data.socialUserByUid;
     } catch (error) {
@@ -101,17 +109,27 @@ export class UserService<T> {
     }
   }
 
-  async getUsersByNickName(uid: string, searchString: string): Promise<User[]> {
+  async getUsersByNickName(
+    uid: string,
+    searchString: string
+  ): Promise<SocialUser[]> {
     try {
       const response = await axios.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           getUserByNickName(searchString: "${searchString}", uid: "${uid}") {
-            userName
+            followersCount
+            following
+            followingCount
             nickName
             profileImagePath
-            following
+            socialRelationship {
+              isFollowed
+              isFollowing
+            }
             uid
+            userRushmoreCount
+            userName
           }
         }
         `,
@@ -171,9 +189,13 @@ export class UserService<T> {
           followingCount
           nickName
           profileImagePath
+          socialRelationship {
+            isFollowed
+            isFollowing
+          }
           uid
           userName
-          socialRelationship
+          userRushmoreCount
         }
       }
       `,
@@ -191,16 +213,26 @@ export class UserService<T> {
         query: `
         query {
           getFollowingUserList(uid: "${uid}") {
-          followersCount
-          nickName
-          profileImagePath
-          uid
-          userName
-          socialRelationship
+            followersCount
+            following
+            followingCount
+            nickName
+            profileImagePath
+            socialRelationship {
+              isFollowed
+              isFollowing
+            }
+            uid
+            userName
+            userRushmoreCount
         }
       }
       `,
       });
+      console.log(
+        "getFollowingUserList:" +
+          JSON.stringify(response.data.data.getFollowingUserList)
+      );
       return response.data.data.getFollowingUserList;
     } catch (error) {
       console.error("Error unfollowing user:", error);

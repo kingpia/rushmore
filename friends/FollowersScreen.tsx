@@ -7,15 +7,13 @@ import {
 } from "react-native";
 import { ActivityIndicator, Searchbar } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
-import UserCard from "../components/UserCard";
 import { UserService } from "../service/UserService";
-import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { FriendsStackParamList } from "../nav/params/FriendsStackParamList";
 import SocialUserFollowersCard from "../components/SocialUserFollowersCard";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
 
 type FollowersScreenProps = {
-  navigation: NativeStackNavigationProp<FriendsStackParamList>;
+  navigation: NativeStackNavigationProp<AppStackParamList>;
 };
 
 const userService = new UserService(); // Instantiate UserService

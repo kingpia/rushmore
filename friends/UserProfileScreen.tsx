@@ -16,10 +16,8 @@ import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { RouteProp } from "@react-navigation/native";
 
 type UserProfileScreenProps = {
-  navigation: NativeStackNavigationProp<
-    FriendsStackParamList & AppStackParamList
-  >;
-  route: RouteProp<FriendsStackParamList, "UserProfileScreen">;
+  navigation: NativeStackNavigationProp<AppStackParamList>;
+  route: RouteProp<AppStackParamList, "UserProfileScreen">;
 };
 
 export const UserProfileScreen = ({
@@ -134,7 +132,7 @@ export const UserProfileScreen = ({
           <Text style={styles.pipeSeparator}>|</Text>
           <View style={styles.centeredText}>
             <Text style={styles.buttonText}>Followers</Text>
-            <Text style={styles.buttonText}>{userData?.followerCount}</Text>
+            <Text style={styles.buttonText}>{userData?.followersCount}</Text>
           </View>
         </View>
 
