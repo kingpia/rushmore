@@ -13,7 +13,6 @@ export const UserRushmoreCard: React.FC<UserRushmoreCardProps> = ({
   userRushmore,
   onPress,
 }) => {
-  console.log("UserRushmoreCardData:" + JSON.stringify(userRushmore));
   const isGameType = userRushmore.gameType === RushmoreGameTypeEnums.GAME;
 
   return (

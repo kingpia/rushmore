@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import { Text, TextInput, Button } from "react-native-paper";
-import { StackContainerScreenProps } from "../nav/params/ProfileStackParamList";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { RouteProp } from "@react-navigation/native";
 
-type EditNameScreenProps = StackContainerScreenProps<"EditNameScreen">;
+type EditNameScreenProps = {
+  navigation: NativeStackNavigationProp<EditNameScreenProps>;
+  route: RouteProp<AppStackParamList, "EditNameScreen">;
+};
 
 export const EditNameScreen = ({ route, navigation }: EditNameScreenProps) => {
-  const [name, setName] = useState<string>(route.params?.userData.name || "");
+  const [name, setName] = useState<string>(
+    route.params?.userData.nickName || ""
+  );
 
   const handleClearName = () => {
     setName("");

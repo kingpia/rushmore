@@ -6,21 +6,25 @@ import {
   Button,
   IconButton,
   ActivityIndicator,
+  Appbar,
+  Menu,
 } from "react-native-paper";
-import { ProfileStackParamList } from "../nav/params/ProfileStackParamList";
 import { UserService } from "../service/UserService";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
 import { ErrorMessage } from "../components/error/ErrorMessage";
 import { IMAGE_UPDATE_ERROR_MESSAGE } from "../constants/ErrorMessages";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { SettingsStackParamList } from "../nav/params/SettingsStackParamList";
 
-type ProfileStackContainerScreenProps =
-  NativeStackScreenProps<ProfileStackParamList>;
+type ProfileStackContainerScreenProps = NativeStackScreenProps<
+  SettingsStackParamList & AppStackParamList
+>;
 
 export const ProfileHomeScreen = ({
   navigation,
 }: ProfileStackContainerScreenProps) => {
-  const [userData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<SocialUser>();
   const defaultImage = require("../assets/shylo.png");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [profileImage, setProfileImage] = useState<string | undefined>(
@@ -29,6 +33,7 @@ export const ProfileHomeScreen = ({
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const userService = new UserService<User>();
+  const [menuVisible, setMenuVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,9 +51,28 @@ export const ProfileHomeScreen = ({
     fetchData();
   }, []);
 
-  const navigateToEditProfileScreen = (userData: User) => {
-    navigation.navigate("EditProfileScreen", {
-      userData,
+  const navigateToEditProfileScreen = (userData: SocialUser) => {
+    navigation.push("EditProfileScreen", {
+      user: userData,
+    });
+  };
+
+  const navigateToFollowingScreen = (userData: SocialUser) => {
+    navigation.push("UserNetworkTopTabContainer", {
+      screen: "FollowingScreen",
+      user: userData,
+    });
+  };
+  const navigateToFollowersScreen = (userData: SocialUser) => {
+    navigation.push("UserNetworkTopTabContainer", {
+      screen: "FollowersScreen",
+      user: userData,
+    });
+  };
+  const navigateToFriendsScreen = (userData: SocialUser) => {
+    navigation.push("UserNetworkTopTabContainer", {
+      screen: "FriendsScreen",
+      user: userData,
     });
   };
 
@@ -132,8 +156,36 @@ export const ProfileHomeScreen = ({
     setErrorModalVisible(false);
   };
 
+  const closeMenu = () => {
+    setMenuVisible(false);
+  };
+
+  const handleSettingsPress = () => {
+    closeMenu();
+    navigation.navigate("ProfileSettingsScreen");
+  };
+
+  const handleMenuPress = () => {
+    setMenuVisible(true);
+  };
+
   return (
-    <View style={styles.container}>
+    <View>
+      {userData && (
+        <Appbar.Header statusBarHeight={0}>
+          <Appbar.Content title={userData?.nickName} />
+          <Menu
+            visible={menuVisible}
+            onDismiss={closeMenu}
+            anchor={
+              <IconButton icon="dots-vertical" onPress={handleMenuPress} />
+            }
+          >
+            <Menu.Item onPress={handleSettingsPress} title="Settings" />
+          </Menu>
+        </Appbar.Header>
+      )}
+
       {isLoading ? (
         <ActivityIndicator animating={true} size="large" />
       ) : (
@@ -186,14 +238,7 @@ export const ProfileHomeScreen = ({
             <View>
               <Button
                 mode="text"
-                onPress={() =>
-                  navigation.navigate("FriendsStackContainer", {
-                    screen: "FriendsTopTabContainer",
-                    params: {
-                      screen: "FollowingScreen",
-                    },
-                  })
-                }
+                onPress={() => userData && navigateToFollowingScreen(userData)}
               >
                 Following
               </Button>
@@ -203,14 +248,7 @@ export const ProfileHomeScreen = ({
             <View>
               <Button
                 mode="text"
-                onPress={() =>
-                  navigation.navigate("FriendsStackContainer", {
-                    screen: "FriendsTopTabContainer",
-                    params: {
-                      screen: "FollowersScreen",
-                    },
-                  })
-                }
+                onPress={() => userData && navigateToFollowersScreen(userData)}
               >
                 Followers
               </Button>
@@ -220,18 +258,11 @@ export const ProfileHomeScreen = ({
             <View>
               <Button
                 mode="text"
-                onPress={() =>
-                  navigation.navigate("FriendsStackContainer", {
-                    screen: "FriendsTopTabContainer",
-                    params: {
-                      screen: "FriendsScreen",
-                    },
-                  })
-                }
+                onPress={() => userData && navigateToFriendsScreen(userData)}
               >
                 Friends
               </Button>
-              <Text>{userData?.friendCount}</Text>
+              <Text>{userData?.friendsCount}</Text>
             </View>
           </View>
 

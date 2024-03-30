@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import { Text, TextInput, Button } from "react-native-paper";
-import { StackContainerScreenProps } from "../nav/params/ProfileStackParamList";
+import { StackContainerScreenProps } from "../nav/params/SettingsStackParamList";
+import { RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
 
-type EditUsernameScreenProps = StackContainerScreenProps<"EditUsernameScreen">;
-
+type EditUsernameScreenProps = {
+  navigation: NativeStackNavigationProp<EditUsernameScreenProps>;
+  route: RouteProp<AppStackParamList, "EditUsernameScreen">;
+};
 export const EditUsernameScreen = ({
   route,
   navigation,

@@ -13,7 +13,15 @@ export type AppStackParamList = {
   EditUserRushmoreScreen: {
     userRushmore: UserRushmore;
   };
+  EditProfileScreen: { user: SocialUser };
+  EditNameScreen: { userData: SocialUser };
+  EditUsernameScreen: { userData: SocialUser };
+  AddFriendScreen: undefined;
+  UserNetworkTopTabContainer: { user: SocialUser };
   UserProfileScreen: { user: SocialUser };
+  TermsAndPolicyScreen: undefined;
+  ProfileSettingsScreen: undefined;
+  AccountScreen: undefined;
 };
 
 export type StackContainerScreenProps<S extends keyof AppStackParamList> =

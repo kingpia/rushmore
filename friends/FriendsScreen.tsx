@@ -5,7 +5,7 @@ import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEff
 import { UserCard } from "../components/UserCard";
 import { UserService } from "../service/UserService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
-import { FriendsStackParamList } from "../nav/params/FriendsStackParamList";
+import { FriendsStackParamList } from "../nav/params/UserNetworkStackParamList";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type FriendsScreenProps = {

@@ -42,7 +42,12 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
   useFocusEffect(
     useCallback(() => {
       fetchData();
-    }, []) // Empty dependency array to run the effect only once when the component mounts
+      const unsubscribe = navigation.addListener("state", (e) => {
+        console.log("Current navigation state:", e.data.state);
+      });
+
+      return unsubscribe;
+    }, [navigation]) // Empty dependency array to run the effect only once when the component mounts
   );
 
   useEffect(() => {
@@ -57,7 +62,7 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
   const navigateToUserProfileScreen = (user: SocialUser) => {
     console.log("navigateToUserProfileScreen");
 
-    navigation.navigate("UserProfileScreen", {
+    navigation.push("UserProfileScreen", {
       user,
     });
   };

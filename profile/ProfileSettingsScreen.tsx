@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { List, Divider } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { Appbar } from "react-native-paper";
 
 type ProfileSettingsScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -12,29 +13,31 @@ const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   navigation,
 }) => {
   const handleAccountPress = () => {
-    // Handle navigation to Account screen
+    navigation.push("AccountScreen"); // Navigate to AccountScreen
   };
 
   const handleTermsAndPolicyPress = () => {
-    // Handle navigation to Terms and Policy screen
+    navigation.push("TermsAndPolicyScreen"); // Navigate to AccountScreen
   };
 
   const handleLogoutPress = () => {
-    // Handle logout action
+    console.log("Logout Pressed. implement Me");
   };
 
   return (
     <View style={styles.container}>
       <List.Item
         title="Account"
-        onPress={handleAccountPress}
+        onPress={handleAccountPress} // Call handleAccountPress onPress
         left={(props) => <List.Icon {...props} icon="account" />}
+        right={() => <List.Icon icon="chevron-right" />}
       />
       <Divider />
       <List.Item
         title="Terms and Policy"
         onPress={handleTermsAndPolicyPress}
         left={(props) => <List.Icon {...props} icon="file-document" />}
+        right={() => <List.Icon icon="chevron-right" />}
       />
       <Divider />
       <List.Item

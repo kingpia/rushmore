@@ -2,35 +2,35 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { FollowingScreen } from "../../friends/FollowingScreen";
 import { FollowersScreen } from "../../friends/FollowersScreen";
 import { FriendsScreen } from "../../friends/FriendsScreen";
-import { FriendsTopTabContainerParamList } from "../params/FriendsTopTabContainerParamList";
+import { UserNetworkTopTabContainerParamList } from "../params/UserNetworkTopTabContainerParamList";
 
-const FriendsTopTab =
-  createMaterialTopTabNavigator<FriendsTopTabContainerParamList>();
+const UserNetworkTopTab =
+  createMaterialTopTabNavigator<UserNetworkTopTabContainerParamList>();
 
-export const FriendsTopTabContainer = () => {
+export const UserNetworkTopTabContainer = () => {
   return (
-    <FriendsTopTab.Navigator screenOptions={{}}>
-      <FriendsTopTab.Screen
+    <UserNetworkTopTab.Navigator screenOptions={{}}>
+      <UserNetworkTopTab.Screen
         name="FollowingScreen"
         component={FollowingScreen}
         options={{
           tabBarLabel: "Following",
         }}
       />
-      <FriendsTopTab.Screen
+      <UserNetworkTopTab.Screen
         name="FollowersScreen"
         component={FollowersScreen}
         options={{
           tabBarLabel: "Followers",
         }}
       />
-      <FriendsTopTab.Screen
+      <UserNetworkTopTab.Screen
         name="FriendsScreen"
         component={FriendsScreen}
         options={{
           tabBarLabel: "Friends",
         }}
       />
-    </FriendsTopTab.Navigator>
+    </UserNetworkTopTab.Navigator>
   );
 };

@@ -3,17 +3,13 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { Avatar, Button, Text } from "react-native-paper";
 import { UserService } from "../service/UserService";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
-import {
-  FriendsStackParamList,
-  StackContainerScreenProps,
-} from "../nav/params/FriendsStackParamList";
 import { UserRushmore } from "../model/UserRushmore";
 import { UserRushmoreCard } from "../components/UserRushmoreCard";
 import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 
 type UserProfileScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -28,6 +24,16 @@ export const UserProfileScreen = ({
   const [userRushmoreData, setUserRushmoreData] = useState<UserRushmore[]>();
   const defaultImage = require("../assets/shylo.png");
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const unsubscribe = navigation.addListener("state", (e) => {
+        console.log("Current navigation state:", e.data.state);
+      });
+
+      return unsubscribe;
+    }, [navigation])
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,10 +52,6 @@ export const UserProfileScreen = ({
           ApiFetchEnums.USER_RUSHMORE_LIST
         );
         setUserRushmoreData(userRushmoreData);
-
-        navigation.setOptions({
-          title: route.params.user.nickName,
-        });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -126,12 +128,32 @@ export const UserProfileScreen = ({
 
         <View style={styles.buttonContainer}>
           <View style={styles.centeredText}>
-            <Text style={styles.buttonText}>Following</Text>
+            <Button
+              mode="text"
+              onPress={() =>
+                navigation.push("UserNetworkTopTabContainer", {
+                  user: userData,
+                  screen: "FollowingScreen", // Specify the screen to navigate to
+                })
+              }
+            >
+              Following
+            </Button>
             <Text style={styles.buttonText}>{userData?.followingCount}</Text>
           </View>
           <Text style={styles.pipeSeparator}>|</Text>
           <View style={styles.centeredText}>
-            <Text style={styles.buttonText}>Followers</Text>
+            <Button
+              mode="text"
+              onPress={() =>
+                navigation.push("UserNetworkTopTabContainer", {
+                  user: userData,
+                  screen: "FollowersScreen", // Specify the screen to navigate to
+                })
+              }
+            >
+              Followers
+            </Button>
             <Text style={styles.buttonText}>{userData?.followersCount}</Text>
           </View>
         </View>

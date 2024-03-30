@@ -65,11 +65,6 @@ export class UserService<T> {
         `,
       });
 
-      console.log(
-        "getUserByUserId:",
-        JSON.stringify(response.data.data.socialUserByUid)
-      );
-
       //console.log("OUTPUT:" + JSON.stringify(response.data));
       return response.data.data.socialUserByUid;
     } catch (error) {
@@ -229,10 +224,7 @@ export class UserService<T> {
       }
       `,
       });
-      console.log(
-        "getFollowingUserList:" +
-          JSON.stringify(response.data.data.getFollowingUserList)
-      );
+
       return response.data.data.getFollowingUserList;
     } catch (error) {
       console.error("Error unfollowing user:", error);

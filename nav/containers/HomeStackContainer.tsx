@@ -13,6 +13,7 @@ export const HomeStackContainer = () => {
     <HomeStackNavigaor.Navigator
       screenOptions={{
         headerBackTitleVisible: false, // Hide the back button label
+        headerShown: false, // Hide the back button label
       }}
     >
       <HomeStackNavigaor.Screen
