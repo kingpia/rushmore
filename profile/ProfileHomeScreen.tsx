@@ -1,5 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
+
 import { View, StyleSheet, Modal, Text, TouchableOpacity } from "react-native";
 import {
   Avatar,
@@ -8,6 +10,7 @@ import {
   ActivityIndicator,
   Appbar,
   Menu,
+  Divider,
 } from "react-native-paper";
 import { UserService } from "../service/UserService";
 import * as ImagePicker from "expo-image-picker";
@@ -16,10 +19,25 @@ import { ErrorMessage } from "../components/error/ErrorMessage";
 import { IMAGE_UPDATE_ERROR_MESSAGE } from "../constants/ErrorMessages";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { SettingsStackParamList } from "../nav/params/SettingsStackParamList";
+import { MyRushmoreListsComponent } from "../components/MyRushmoreListsComponent";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 type ProfileStackContainerScreenProps = NativeStackScreenProps<
   SettingsStackParamList & AppStackParamList
 >;
+
+const Tab = createMaterialTopTabNavigator();
+
+const ProfileTabs = () => {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Lists" component={MyRushmoreListsComponent} />
+      <Tab.Screen name="Puzzle" component={MyRushmoreListsComponent} />
+      <Tab.Screen name="Bookmark" component={MyRushmoreListsComponent} />
+      <Tab.Screen name="Like" component={MyRushmoreListsComponent} />
+    </Tab.Navigator>
+  );
+};
 
 export const ProfileHomeScreen = ({
   navigation,
@@ -35,21 +53,31 @@ export const ProfileHomeScreen = ({
   const userService = new UserService<User>();
   const [menuVisible, setMenuVisible] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const uid = "6662";
-        const data = await userService.getUserByUserId(uid, uid);
-        setUserData(data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching rushmore data:", error);
-        setIsLoading(false);
-      }
-    };
+  // Inside ProfileHomeScreen component
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("Use Effect Running");
+      const fetchData = async () => {
+        console.log("Fetching user Data:");
+        try {
+          const uid = "6662";
+          const data = await userService.getUserByUserId(uid, uid);
+          console.log("UserData" + JSON.stringify(data));
+          setUserData(data);
+          setIsLoading(false);
+        } catch (error) {
+          console.error("Error fetching rushmore data:", error);
+          setIsLoading(false);
+        }
+      };
 
-    fetchData();
-  }, []);
+      fetchData();
+
+      return () => {
+        // Cleanup function if needed
+      };
+    }, [])
+  );
 
   const navigateToEditProfileScreen = (userData: SocialUser) => {
     navigation.push("EditProfileScreen", {
@@ -190,7 +218,7 @@ export const ProfileHomeScreen = ({
         <ActivityIndicator animating={true} size="large" />
       ) : (
         <>
-          <View style={styles.avatarContainer}>
+          <View style={styles.container}>
             <Avatar.Image
               size={150}
               source={{
@@ -208,22 +236,22 @@ export const ProfileHomeScreen = ({
 
           <Text style={styles.username}>@{userData?.userName}</Text>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <View>
-              <Button
-                mode="contained"
-                onPress={() =>
-                  userData && navigateToEditProfileScreen(userData)
-                }
-              >
-                Edit Profile
-              </Button>
-            </View>
+          <View style={styles.actionButtons}>
+            <Button
+              mode="contained"
+              onPress={() => userData && navigateToEditProfileScreen(userData)}
+              style={{
+                marginRight: 3, // Add margin to the right of the "Edit Profile" button
+              }}
+            >
+              Edit Profile
+            </Button>
+            <Button
+              mode="contained"
+              onPress={() => userData && navigateToEditProfileScreen(userData)}
+            >
+              Share Profile
+            </Button>
 
             {/* Add Friend Button */}
             <IconButton
@@ -234,8 +262,12 @@ export const ProfileHomeScreen = ({
             />
           </View>
 
-          <View style={styles.buttonContainer}>
-            <View>
+          <View style={styles.networkButtons}>
+            <View
+              style={{
+                alignItems: "center",
+              }}
+            >
               <Button
                 mode="text"
                 onPress={() => userData && navigateToFollowingScreen(userData)}
@@ -244,8 +276,11 @@ export const ProfileHomeScreen = ({
               </Button>
               <Text>{userData?.followingCount}</Text>
             </View>
-            <Text style={styles.pipeSeparator}>|</Text>
-            <View>
+            <View
+              style={{
+                alignItems: "center",
+              }}
+            >
               <Button
                 mode="text"
                 onPress={() => userData && navigateToFollowersScreen(userData)}
@@ -254,17 +289,16 @@ export const ProfileHomeScreen = ({
               </Button>
               <Text>{userData?.followersCount}</Text>
             </View>
-            <Text style={styles.pipeSeparator}>|</Text>
-            <View>
-              <Button
-                mode="text"
-                onPress={() => userData && navigateToFriendsScreen(userData)}
-              >
-                Friends
-              </Button>
-              <Text>{userData?.friendsCount}</Text>
-            </View>
+            <View
+              style={{
+                alignItems: "center",
+              }}
+            ></View>
           </View>
+          <Divider style={{ marginTop: 10 }} />
+          {/* Add the tab navigator */}
+          <ProfileTabs />
+          <MyRushmoreListsComponent navigation={navigation} />
 
           <Modal
             visible={isModalVisible}
@@ -311,18 +345,12 @@ export const ProfileHomeScreen = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
+    alignSelf: "center",
+  },
+  actionButtons: {
+    flexDirection: "row",
     alignItems: "center",
-    padding: 20,
-  },
-  avatarContainer: {
-    position: "relative",
-    marginBottom: 10,
-  },
-  avatar: {
-    marginBottom: 10,
-    borderRadius: 75,
+    alignSelf: "center",
   },
   plusIcon: {
     position: "absolute",
@@ -338,14 +366,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
+    alignSelf: "center",
   },
-  buttonContainer: {
+  networkButtons: {
     flexDirection: "row",
+    alignSelf: "center",
+    alignContent: "center",
   },
-  pipeSeparator: {
-    marginHorizontal: 5,
-    fontSize: 20,
-  },
+
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -365,5 +393,6 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-around",
+    alignSelf: "center",
   },
 });

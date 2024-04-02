@@ -20,7 +20,7 @@ export const HomeTopTabContainer = () => {
         name="FollowingRushmoreHomeScreen"
         component={FollowingRushmoreHomeScreen}
         options={{
-          tabBarLabel: "Game Hub",
+          tabBarLabel: "Following",
         }}
       />
     </HomeTopTab.Navigator>

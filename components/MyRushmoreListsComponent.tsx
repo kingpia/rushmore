@@ -1,26 +1,25 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { FlatList, SafeAreaView, ActivityIndicator } from "react-native";
+import React, { useCallback, useState } from "react";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
-import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
-
+import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import { MyCompletedRushmoreCard } from "../components/MyCompletedRushmoreCard";
-import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 import { MyInProgressRushmoreCard } from "../components/MyInProgressRushmoreCard";
 import { UserRushmore } from "../model/UserRushmore";
 import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
-import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { RushmoreGraphService } from "../service/RushmoreGraphService";
-import { MyRushmoreListsComponent } from "../components/MyRushmoreListsComponent";
+import { HomeStackParamList } from "../nav/params/HomeStackParamList";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
 
-type MyRushmoreHomeScreenProps = {
+type MyRushmoreListsComponentProps = {
   navigation: NativeStackNavigationProp<HomeStackParamList & AppStackParamList>;
 };
 
-export const MyRushmoreHomeScreen = ({
-  navigation,
-}: MyRushmoreHomeScreenProps) => {
+export const MyRushmoreListsComponent: React.FC<
+  MyRushmoreListsComponentProps
+> = ({ navigation }) => {
   const [value, setValue] = useState("inprogress");
   const [myInProgressRushmoreList, setMyInProgressRushmoreList] = useState<
     UserRushmore[]
@@ -29,10 +28,10 @@ export const MyRushmoreHomeScreen = ({
     UserRushmore[]
   >([]);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
-  /*
+  const [isLoading, setLoading] = useState(true);
 
   const fetchData = async (selectedValue: string) => {
-    console.log(`fetchData: MyRushmoreHomeScreen - ${selectedValue}`);
+    setLoading(true); // Set loading to true when fetching data
 
     try {
       const rushmoreGraphService = new RushmoreGraphService();
@@ -47,6 +46,9 @@ export const MyRushmoreHomeScreen = ({
         setMyCompletedRushmoreList(myCompletedRushmoreData);
       }
       setLoading(false); // Set loading to false after fetching data
+      // Calculate category counts after setting the state
+      // Update category counts
+      countByCategory(selectedCategory);
     } catch (error) {
       console.error("Error fetching Rushmore items:", error);
       setLoading(false); // Set loading to false in case of error
@@ -54,35 +56,23 @@ export const MyRushmoreHomeScreen = ({
   };
 
   const countByCategory = (category: string) => {
-    console.log("Count by category");
     if (value === "inprogress") {
       return myInProgressRushmoreList.filter(
-        (item) =>
-          category === "All" || item.rushmore.rushmoreCategory === category
+        (item) => category === "All" || item.rushmore.category === category
       ).length;
     } else {
       return myCompletedRushmoreList.filter(
-        (item) =>
-          category === "All" || item.rushmore.rushmoreCategory === category
+        (item) => category === "All" || item.rushmore.category === category
       ).length;
     }
   };
-  
 
   useFocusEffect(
     useCallback(() => {
       fetchData(value);
     }, [value])
   );
-  */
 
-  /*
-  useEffect(() => {
-    fetchData(value);
-  }, [value]); // Use useEffect instead of useFocusEffect
-  */
-
-  /*
   const navigateToMyCompletedRushmore = (userRushmore: UserRushmore) => {
     navigation.navigate("EditUserRushmoreScreen", {
       userRushmore,
@@ -96,24 +86,21 @@ export const MyRushmoreHomeScreen = ({
   };
 
   const handleCategoryPress = (category: string) => {
-    console.log(`Clicked on ${category}`);
     setSelectedCategory(category);
   };
 
   const renderInProgressRushmoreList = () => {
     return (
-      <>
-        <FlatList
-          data={filteredYourInProgressRushmoreData}
-          keyExtractor={(item) => item.rushmore.rid.toString()}
-          renderItem={({ item }) => (
-            <MyInProgressRushmoreCard
-              myInProgressRushmore={item}
-              onPress={() => navigateToMyInProgressRushmore(item)}
-            />
-          )}
-        />
-      </>
+      <FlatList
+        data={filteredYourInProgressRushmoreData}
+        keyExtractor={(item) => item.rushmore.rid.toString()}
+        renderItem={({ item }) => (
+          <MyInProgressRushmoreCard
+            myInProgressRushmore={item}
+            onPress={() => navigateToMyInProgressRushmore(item)}
+          />
+        )}
+      />
     );
   };
 
@@ -131,26 +118,47 @@ export const MyRushmoreHomeScreen = ({
       />
     );
   };
-  
 
   const filteredYourInProgressRushmoreData =
     myInProgressRushmoreList?.filter(
       (item) =>
         selectedCategory === "All" ||
-        item.rushmore.rushmoreCategory === selectedCategory
+        item.rushmore.category === selectedCategory
     ) || [];
 
   const filteredCompletedInProgressRushmoreData =
     myCompletedRushmoreList?.filter(
       (item) =>
         selectedCategory === "All" ||
-        item.rushmore.rushmoreCategory === selectedCategory
+        item.rushmore.category === selectedCategory
     ) || [];
-    */
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <MyRushmoreListsComponent navigation={navigation} />
-    </SafeAreaView>
+    <View>
+      <RushmoreHorizontalView
+        selectedCategory={selectedCategory}
+        onPressCategory={handleCategoryPress}
+        countByCategory={countByCategory}
+      />
+      <SegmentedButtons
+        style={{ margin: 10 }}
+        value={value}
+        onValueChange={setValue}
+        buttons={[
+          {
+            value: "inprogress",
+            label: "In-Progress",
+          },
+          {
+            value: "complete",
+            label: "Completed",
+          },
+        ]}
+      />
+
+      {value === "inprogress"
+        ? renderInProgressRushmoreList()
+        : renderCompletedRushmoreList()}
+    </View>
   );
 };

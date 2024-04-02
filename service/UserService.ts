@@ -30,30 +30,59 @@ export class UserService<T> {
     }
   }
 
-  async getUserRushmoreList(
-    uid: string,
-    toFetchUid: string,
-    toFetch: ApiFetchEnums
-  ): Promise<UserRushmore[]> {
-    //console.log("getUserByUserId(" + toFetchUid + ")");
-    try {
-      let data: UserRushmore[] = [];
-
-      data = require("../sampleApiData/userRushmoreList.json");
-
-      return data;
-    } catch (error) {
-      console.error("Error fetching Rushmore items:", error);
-      throw error; // Re-throw the error for the component to handle
-    }
-  }
-
-  async getUserByUserId(uid: string, toFetchUid: string): Promise<SocialUser> {
+  async getUserRushmoreList(uid: string): Promise<UserRushmore[]> {
+    console.log("GetUserRushmoreList UID:" + uid);
     try {
       const response = await axios.post(`${this.baseURL}/graphql`, {
         query: `
         query {
-          socialUserByUid(uid: "${toFetchUid}") {
+          userRushmoresByUid(uid: "${uid}") {
+            completedCount
+            completedDt
+            createdBy
+            firstCompletedDt
+            firstCompletedUid
+            gameType
+            firstCompletedUser {
+              nickName
+              uid
+              userName
+            }
+            urId
+            highScoreUser {
+              nickName
+              uid
+              userName
+            }
+            rushmore {
+              category
+              icon
+              rid
+              title
+            }
+            highScore
+            highScoreUid
+            likeCount
+            rushmoreType
+            userId
+          }
+        }
+        `,
+      });
+
+      return response.data.data.userRushmoresByUid;
+    } catch (error) {
+      console.error("Error fetching user by user ID:", error);
+      throw error;
+    }
+  }
+
+  async getUserByUserId(uid: string): Promise<SocialUser> {
+    try {
+      const response = await axios.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          socialUserByUid(uid: "${uid}") {
             followersCount
             followingCount
             nickName

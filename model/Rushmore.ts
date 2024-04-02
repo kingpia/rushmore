@@ -4,7 +4,7 @@ import { RushmoreType } from "./RushmoreTypeEnums";
 export interface Rushmore {
   rid: number; // Unique identifier for Rushmore object
   title: string;
-  rushmoreCategory: string;
+  category: string;
   timesCompleted: number;
   icon: string;
 }

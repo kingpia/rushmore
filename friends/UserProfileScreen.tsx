@@ -37,20 +37,16 @@ export const UserProfileScreen = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const friendService = new UserService<User>();
+      const userService = new UserService<User>();
 
       try {
-        const user = await friendService.getUserByUserId(
-          "pia_id",
-          route.params.user.uid
-        );
+        const user = await userService.getUserByUserId(route.params.user.uid);
         setUserData(user);
 
-        const userRushmoreData = await friendService.getUserRushmoreList(
-          "pia_id",
-          route.params.user.uid,
-          ApiFetchEnums.USER_RUSHMORE_LIST
+        const userRushmoreData = await userService.getUserRushmoreList(
+          route.params.user.uid
         );
+        console.log("User Profile Data:" + JSON.stringify(user));
         setUserRushmoreData(userRushmoreData);
       } catch (error) {
         console.error("Error fetching data:", error);

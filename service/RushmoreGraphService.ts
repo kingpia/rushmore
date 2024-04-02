@@ -4,12 +4,13 @@ import { UserRushmore } from "../model/UserRushmore";
 export class RushmoreGraphService {
   private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
 
-  async getInProgressRushmoreList(uid: string): Promise<UserRushmore[]> {
+  async getMyInProgressRushmoreList(): Promise<UserRushmore[]> {
+    console.log("getMyInprogressRushmores");
     try {
       const response = await axios.post(`${this.baseURL}/graphql`, {
         query: `
         query {
-            inProgressUserRushmoresByUid(uid: "${uid}") {
+            myInProgressUserRushmores {
                 createdDt
                 gameType
                 rushmoreType
@@ -27,26 +28,28 @@ export class RushmoreGraphService {
         `,
       });
       console.log(
-        "OUTPUT:" +
-          JSON.stringify(response.data.data.inProgressUserRushmoresByUid)
+        "OUTPUT:" + JSON.stringify(response.data.data.myInProgressUserRushmores)
       );
-      return response.data.data.inProgressUserRushmoresByUid;
+      return response.data.data.myInProgressUserRushmores;
     } catch (error) {
       console.error("Error fetching in-progress Rushmore list:", error);
       throw error;
     }
   }
 
-  async getCompletedRushmoreList(uid: string): Promise<UserRushmore[]> {
+  async getMyCompletedRushmoreList(): Promise<UserRushmore[]> {
+    console.log("getMyCompletedRushmoreList");
+
     try {
       const response = await axios.post(`${this.baseURL}/graphql`, {
         query: `
         query {
-            completedUserRushmoresByUid(uid: "${uid}") {
+            myCompletedUserRushmores {
                 rushmore {
                     title
                     rid
                     icon
+                    category
                   }
                   completedCount
                   completedDt
@@ -73,7 +76,7 @@ export class RushmoreGraphService {
       });
       console.log("OUTPUT:" + response.data);
 
-      return response.data.data.completedUserRushmoresByUid;
+      return response.data.data.myCompletedUserRushmores;
     } catch (error) {
       console.error("Error fetching completed Rushmore list:", error);
       throw error;
