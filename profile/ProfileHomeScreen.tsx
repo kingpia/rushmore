@@ -61,7 +61,7 @@ export const ProfileHomeScreen = ({
         console.log("Fetching user Data:");
         try {
           const uid = "6662";
-          const data = await userService.getUserByUserId(uid, uid);
+          const data = await userService.getUserByUserId(uid);
           console.log("UserData" + JSON.stringify(data));
           setUserData(data);
           setIsLoading(false);

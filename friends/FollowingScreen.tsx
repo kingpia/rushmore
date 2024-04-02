@@ -9,7 +9,7 @@ import { ActivityIndicator, Searchbar } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import { UserService } from "../service/UserService";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import SocialUserFollowingCard from "../components/SocialUserFollowingCard";
+import SocialUserCard from "../components/SocialUserCard";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 
 type FollowingScreenProps = {
@@ -70,12 +70,6 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
   const followUser = async (followedUid: string) => {
     try {
       const updatedUser = await userService.followUser("6662", followedUid);
-      // Update the user's following status in searchResults
-      setFollowingList((prevResults) =>
-        prevResults.map((user) =>
-          user.uid === followedUid ? { ...user, following: "Y" } : user
-        )
-      );
     } catch (error) {
       console.error("Error following user:", error);
     }
@@ -84,12 +78,6 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
   const unfollowUser = async (followedUid: string) => {
     try {
       const updatedUser = await userService.unfollowUser("6662", followedUid);
-      // Update the user's following status in searchResults
-      setFollowingList((prevResults) =>
-        prevResults.map((user) =>
-          user.uid === followedUid ? { ...user, following: "N" } : user
-        )
-      );
     } catch (error) {
       console.error("Error unfollowing user:", error);
     }
@@ -118,7 +106,7 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
           style={[styles.flatList, { opacity: fadeAnim }]}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => navigateToUserProfileScreen(item)}>
-              <SocialUserFollowingCard
+              <SocialUserCard
                 user={item}
                 onPressFollow={followUser}
                 onUnfollow={unfollowUser}

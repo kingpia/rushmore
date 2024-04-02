@@ -89,6 +89,10 @@ export class UserService<T> {
             profileImagePath
             uid
             userName
+            socialRelationship {
+              isFollowed
+              isFollowing
+            }
           }
         }
         `,

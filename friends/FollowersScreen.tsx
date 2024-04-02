@@ -9,7 +9,7 @@ import { ActivityIndicator, Searchbar } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import { UserService } from "../service/UserService";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import SocialUserFollowersCard from "../components/SocialUserFollowersCard";
+import SocialUserCard from "../components/SocialUserCard";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 
 type FollowersScreenProps = {
@@ -64,11 +64,6 @@ export const FollowersScreen = ({ navigation }: FollowersScreenProps) => {
     try {
       const updatedUser = await userService.followUser("6662", followedUid);
       // Update the user's following status in searchResults
-      setFollowersList((prevResults) =>
-        prevResults.map((user) =>
-          user.uid === followedUid ? { ...user, following: "Y" } : user
-        )
-      );
     } catch (error) {
       console.error("Error following user:", error);
     }
@@ -78,11 +73,6 @@ export const FollowersScreen = ({ navigation }: FollowersScreenProps) => {
     try {
       const updatedUser = await userService.unfollowUser("6662", followedUid);
       // Update the user's following status in searchResults
-      setFollowersList((prevResults) =>
-        prevResults.map((user) =>
-          user.uid === followedUid ? { ...user, following: "N" } : user
-        )
-      );
     } catch (error) {
       console.error("Error unfollowing user:", error);
     }
@@ -110,7 +100,7 @@ export const FollowersScreen = ({ navigation }: FollowersScreenProps) => {
           style={[styles.flatList, { opacity: fadeAnim }]}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => navigateToUserProfileScreen(item)}>
-              <SocialUserFollowersCard
+              <SocialUserCard
                 user={item}
                 onPressFollow={followUser}
                 onUnfollow={unfollowUser}

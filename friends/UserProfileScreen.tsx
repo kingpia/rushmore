@@ -10,6 +10,7 @@ import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
+import { getSocialNetworkButtonText } from "../utils/SocialUtils";
 
 type UserProfileScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -24,6 +25,8 @@ export const UserProfileScreen = ({
   const [userRushmoreData, setUserRushmoreData] = useState<UserRushmore[]>();
   const defaultImage = require("../assets/shylo.png");
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [socialButtonText, setSocialButtonText] = useState<string>("");
+  const userService = new UserService<User>();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -37,8 +40,6 @@ export const UserProfileScreen = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const userService = new UserService<User>();
-
       try {
         const user = await userService.getUserByUserId(route.params.user.uid);
         setUserData(user);
@@ -48,6 +49,9 @@ export const UserProfileScreen = ({
         );
         console.log("User Profile Data:" + JSON.stringify(user));
         setUserRushmoreData(userRushmoreData);
+        setSocialButtonText(
+          getSocialNetworkButtonText(user.socialRelationship)
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -64,7 +68,7 @@ export const UserProfileScreen = ({
   const countByCategory = (category: string): number => {
     return (
       userRushmoreData?.filter((item) =>
-        category === "All" ? true : item.rushmore.rushmoreCategory === category
+        category === "All" ? true : item.rushmore.category === category
       ).length || 0
     );
   };
@@ -76,13 +80,52 @@ export const UserProfileScreen = ({
 
   const filteredUserRushmoreData = userRushmoreData?.filter(
     (item) =>
-      selectedCategory === "All" ||
-      item.rushmore.rushmoreCategory === selectedCategory
+      selectedCategory === "All" || item.rushmore.category === selectedCategory
   );
 
   const navigateToRushmoreGameScreen = (userRushmore: UserRushmore) => {
     console.log("Navigate to FollowingInProgressRushmore rushmore screen");
     navigation.navigate("RushmoreGameScreen", { urId: userRushmore.urId }); // PassurId
+  };
+
+  const followUser = async (followedUid: string) => {
+    try {
+      const updatedUser = await userService.followUser("6662", followedUid);
+    } catch (error) {
+      console.error("Error following user:", error);
+    }
+  };
+
+  const unfollowUser = async (followedUid: string) => {
+    try {
+      const updatedUser = await userService.unfollowUser("6662", followedUid);
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+    }
+  };
+
+  const handleSocialAction = () => {
+    console.log("handlesocialAction");
+    switch (socialButtonText) {
+      case "Follow back":
+        followUser(userData?.uid ?? "");
+        setSocialButtonText("Friends");
+        break;
+      case "Friends":
+        unfollowUser(userData?.uid ?? "");
+        setSocialButtonText("Follow back");
+        break;
+      case "Follow":
+        followUser(userData?.uid ?? "");
+        setSocialButtonText("Following");
+        break;
+      case "Following":
+        unfollowUser(userData?.uid ?? "");
+        setSocialButtonText("Follow");
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -99,26 +142,16 @@ export const UserProfileScreen = ({
 
         <View style={{ flexDirection: "row" }}>
           <Button
-            icon="message-text"
-            mode="outlined"
-            onPress={() => {
-              // Add functionality for handling message button press
-            }}
+            mode={
+              socialButtonText === "Following" || socialButtonText === "Friends"
+                ? "contained-tonal"
+                : "contained"
+            }
+            onPress={handleSocialAction}
             style={styles.button}
             labelStyle={styles.buttonLabel}
           >
-            Message
-          </Button>
-
-          <Button
-            mode="contained"
-            onPress={() => {
-              // Add functionality for handling follow/unfollow/friend button press
-            }}
-            style={styles.button}
-            labelStyle={styles.buttonLabel}
-          >
-            Unfollow
+            {socialButtonText}
           </Button>
         </View>
 

@@ -1,49 +1,27 @@
-// UserCard.js
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Avatar, Button, Card, IconButton, Text } from "react-native-paper";
-import { UserService } from "../service/UserService";
+import { getSocialNetworkButtonText } from "../utils/SocialUtils";
 
-type SocialUserFolloweingCardProps = {
+type SocialUserCardProps = {
   user: SocialUser;
   onPressFollow: (followedUid: string) => void; // Callback to handle follow action
   onUnfollow: (followedUid: string) => void; // Callback to handle unfollow action
 };
 
-const SocialUserFollowingCard: React.FC<SocialUserFolloweingCardProps> = ({
+const SocialUserCard: React.FC<SocialUserCardProps> = ({
   user,
   onPressFollow,
   onUnfollow,
 }) => {
   const defaultImage = require("../assets/shylo.png");
-
   const [buttonText, setButtonText] = useState<string>("");
 
   useEffect(() => {
     // Update button text based on the initial relationship status
     console.log("should be updating button tnext here:");
-    updateButtonText(user.socialRelationship);
+    setButtonText(getSocialNetworkButtonText(user.socialRelationship));
   }, [user.socialRelationship]);
-
-  const updateButtonText = (relationship: SocialRelationship) => {
-    console.log("isFollowing:" + relationship.isFollowing);
-    console.log("isFollowed:" + relationship.isFollowed);
-
-    //If isFollowing and isFollowed are both true, setButtonText("Friends")
-    //If isFollowing is true and isFollowed is false setButtonText("Follow back")
-    //If isFollowing is false and isFollowed is true setButtonText("Following")
-    //If isFollowing is false and isFollowed is false setButtonText("Follow");
-
-    if (relationship.isFollowing && relationship.isFollowed) {
-      setButtonText("Friends");
-    } else if (relationship.isFollowing && !relationship.isFollowed) {
-      setButtonText("Follow back");
-    } else if (!relationship.isFollowing && relationship.isFollowed) {
-      setButtonText("Following");
-    } else {
-      setButtonText("Follow");
-    }
-  };
 
   const handleSocialAction = () => {
     console.log("handlesocialAction");
@@ -68,13 +46,6 @@ const SocialUserFollowingCard: React.FC<SocialUserFolloweingCardProps> = ({
         break;
     }
   };
-
-  //const handleSocialAction = () => {
-  //TODO. if button text is Follow Back then calll follow and button switches to Friends.
-  //TODO. if user.socialRelatinshiop is NOT_FOLLOWING then call unFollow method and button text switches to Follow
-  //TODO. if uwer.socialRelationship is Friends, then call unFollow, button switches to Follow Back
-  //TODO UPDATE the button txt. If you Unfollow you need to switch to Follow or Follow Back
-  //};
 
   return (
     <Card style={styles.card}>
@@ -138,4 +109,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SocialUserFollowingCard;
+export default SocialUserCard;

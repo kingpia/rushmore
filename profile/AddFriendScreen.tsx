@@ -3,7 +3,7 @@ import { View, StyleSheet, FlatList, Keyboard, ScrollView } from "react-native";
 import { Searchbar, Button, ActivityIndicator } from "react-native-paper"; // Import ActivityIndicator from react-native-paper
 import { UserService } from "../service/UserService";
 import UserCard from "../components/UserCard";
-import SocialUserFollowingCard from "../components/SocialUserFollowingCard";
+import SocialUserCard from "../components/SocialUserCard";
 
 const userService = new UserService(); // Instantiate UserService
 
@@ -112,7 +112,7 @@ const AddFriendsScreen = () => {
           data={searchResults}
           keyExtractor={(item) => item.uid}
           renderItem={({ item }) => (
-            <SocialUserFollowingCard
+            <SocialUserCard
               user={item}
               onPressFollow={followUser}
               onUnfollow={unfollowUser}
