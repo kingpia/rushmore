@@ -21,6 +21,8 @@ import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { SettingsStackParamList } from "../nav/params/SettingsStackParamList";
 import { MyRushmoreListsComponent } from "../components/MyRushmoreListsComponent";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import FollowingRushmoreListsComponent from "../components/FollowingRushmoreListsComponent";
 
 type ProfileStackContainerScreenProps = NativeStackScreenProps<
   SettingsStackParamList & AppStackParamList
@@ -30,11 +32,63 @@ const Tab = createMaterialTopTabNavigator();
 
 const ProfileTabs = () => {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Lists" component={MyRushmoreListsComponent} />
-      <Tab.Screen name="Puzzle" component={MyRushmoreListsComponent} />
-      <Tab.Screen name="Bookmark" component={MyRushmoreListsComponent} />
-      <Tab.Screen name="Like" component={MyRushmoreListsComponent} />
+    <Tab.Navigator
+      screenOptions={{
+        tabBarLabelStyle: { fontSize: 12 },
+      }}
+    >
+      <Tab.Screen
+        name="Lists"
+        component={MyRushmoreListsComponent}
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color }) => {
+            return (
+              <MaterialCommunityIcons
+                name="format-list-numbered"
+                size={24}
+                color={color}
+              />
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Puzzle"
+        component={FollowingRushmoreListsComponent}
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color }) => {
+            return (
+              <MaterialCommunityIcons name="puzzle" size={24} color={color} />
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Bookmark"
+        component={MyRushmoreListsComponent}
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color }) => {
+            return (
+              <MaterialCommunityIcons name="bookmark" size={24} color={color} />
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Like"
+        component={MyRushmoreListsComponent}
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color }) => {
+            return (
+              <MaterialCommunityIcons name="heart" size={24} color={color} />
+            );
+          },
+        }}
+      />
     </Tab.Navigator>
   );
 };
@@ -50,7 +104,7 @@ export const ProfileHomeScreen = ({
   );
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const userService = new UserService<User>();
+  const userService = new UserService<SocialUser>();
   const [menuVisible, setMenuVisible] = useState(false);
 
   // Inside ProfileHomeScreen component
@@ -198,7 +252,7 @@ export const ProfileHomeScreen = ({
   };
 
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
       {userData && (
         <Appbar.Header statusBarHeight={0}>
           <Appbar.Content title={userData?.nickName} />
@@ -296,9 +350,7 @@ export const ProfileHomeScreen = ({
             ></View>
           </View>
           <Divider style={{ marginTop: 10 }} />
-          {/* Add the tab navigator */}
           <ProfileTabs />
-          <MyRushmoreListsComponent navigation={navigation} />
 
           <Modal
             visible={isModalVisible}
@@ -346,6 +398,7 @@ export const ProfileHomeScreen = ({
 const styles = StyleSheet.create({
   container: {
     alignSelf: "center",
+    margin: 5,
   },
   actionButtons: {
     flexDirection: "row",

@@ -1,8 +1,15 @@
 // UserService.ts
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { UserRushmore } from "../model/UserRushmore";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import FormData from "form-data";
+
+interface GraphQLError {
+  message: string;
+  locations: { line: number; column: number }[];
+  path: string[];
+  extensions: { classification: string };
+}
 
 export class UserService<T> {
   private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
@@ -285,6 +292,92 @@ export class UserService<T> {
       return response.data.data.getFollowingUserList;
     } catch (error) {
       console.error("Error unfollowing user:", error);
+      throw error;
+    }
+  }
+
+  async updateUserName(userName: string): Promise<SocialUser> {
+    try {
+      const response: AxiosResponse<{
+        data: { updateUserName: SocialUser };
+        errors?: GraphQLError[];
+      }> = await axios.post(`${this.baseURL}/graphql`, {
+        query: `
+            mutation {
+              updateUserName(userName: "${userName}") {
+                uid
+                userName
+                nickName
+              }
+            }
+          `,
+      });
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        var errorMessage = "";
+
+        //Problem here, which error do we display, we are assuming only 1
+        response.data.errors.forEach((error: GraphQLError) => {
+          console.error("GraphQL error:", error.message);
+          // You can also log additional information such as error locations and path if needed
+          console.error("Error locations:", error.locations);
+          console.error("Error path:", error.path);
+          errorMessage = error.message;
+        });
+
+        // Throw an error or handle the errors as needed
+        throw new Error(errorMessage);
+      }
+
+      // No errors, return the user data
+      return response.data.data.updateUserName;
+    } catch (error) {
+      // Handle network errors or unexpected errors
+      console.error("Error updating user name:", error);
+      throw error;
+    }
+  }
+
+  async updateNickName(nickName: string): Promise<SocialUser> {
+    try {
+      const response: AxiosResponse<{
+        data: { updateUserNickName: SocialUser };
+        errors?: GraphQLError[];
+      }> = await axios.post(`${this.baseURL}/graphql`, {
+        query: `
+            mutation {
+              updateUserNickName(nickName: "${nickName}") {
+                uid
+                userName
+                nickName
+              }
+            }
+          `,
+      });
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        var errorMessage = "";
+
+        //Problem here, which error do we display, we are assuming only 1
+        response.data.errors.forEach((error: GraphQLError) => {
+          console.error("GraphQL error:", error.message);
+          // You can also log additional information such as error locations and path if needed
+          console.error("Error locations:", error.locations);
+          console.error("Error path:", error.path);
+          errorMessage = error.message;
+        });
+
+        // Throw an error or handle the errors as needed
+        throw new Error(errorMessage);
+      }
+
+      // No errors, return the user data
+      return response.data.data.updateUserNickName;
+    } catch (error) {
+      // Handle network errors or unexpected errors
+      console.error("Error updating user name:", error);
       throw error;
     }
   }

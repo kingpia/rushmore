@@ -17,6 +17,7 @@ export const EditProfileScreen = ({
   route,
 }: EditProfileScreenProps) => {
   let userData = route.params?.user;
+  console.log("userData:" + JSON.stringify(userData));
 
   const defaultImage = require("../assets/shylo.png");
 

@@ -12,37 +12,43 @@ import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { RushmoreGraphService } from "../service/RushmoreGraphService";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { FollowingSolvedRushmoreCard } from "../components/FollowingSolvedRushmoreCard";
+import { FollowingSolvedRushmore } from "../model/FollowingSolvedRushmore";
+import { FollowingInProgressRushmore } from "../model/FollowingInProgressRushmore";
 
-type MyRushmoreListsComponentProps = {
+type FollowingGameHubScreenProps = {
   navigation: NativeStackNavigationProp<HomeStackParamList & AppStackParamList>;
 };
 
-export const MyRushmoreListsComponent: React.FC<
-  MyRushmoreListsComponentProps
-> = ({ navigation }) => {
+export const FollowingGameHubScreen: React.FC<FollowingGameHubScreenProps> = ({
+  navigation,
+}) => {
   const [value, setValue] = useState("inprogress");
-  const [myInProgressRushmoreList, setMyInProgressRushmoreList] = useState<
-    UserRushmore[]
-  >([]);
-  const [myCompletedRushmoreList, setMyCompletedRushmoreList] = useState<
-    UserRushmore[]
-  >([]);
+  const [
+    myInProgressUserRushmoreGameList,
+    setMyInProgressUserRushmoreGameList,
+  ] = useState<UserRushmore[]>([]);
+  const [myCompletedUserRushmoreGameList, setMyCompletedUserRushmoreGameList] =
+    useState<UserRushmore[]>([]);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [isLoading, setLoading] = useState(true);
 
+  const rushmoreGraphService = new RushmoreGraphService();
+
   const fetchData = async (selectedValue: string) => {
     setLoading(true); // Set loading to true when fetching data
-    const rushmoreGraphService = new RushmoreGraphService();
 
     try {
       if (selectedValue === "inprogress") {
-        const myInProgressRushmoreData =
+        //TODO: FIX THIS
+        const myInProgressUserRushmoreGameData =
           await rushmoreGraphService.getMyInProgressRushmoreList();
-        setMyInProgressRushmoreList(myInProgressRushmoreData);
+        setMyInProgressUserRushmoreGameList(myInProgressUserRushmoreGameData);
       } else if (selectedValue === "complete") {
-        const myCompletedRushmoreData =
+        //TODO FIX THIS
+        const myCompletedUserRushmoreGameData =
           await rushmoreGraphService.getMyCompletedRushmoreList();
-        setMyCompletedRushmoreList(myCompletedRushmoreData);
+        setMyCompletedUserRushmoreGameList(myCompletedUserRushmoreGameData);
       }
       setLoading(false); // Set loading to false after fetching data
       // Calculate category counts after setting the state
@@ -56,11 +62,11 @@ export const MyRushmoreListsComponent: React.FC<
 
   const countByCategory = (category: string) => {
     if (value === "inprogress") {
-      return myInProgressRushmoreList.filter(
+      return myInProgressUserRushmoreGameList.filter(
         (item) => category === "All" || item.rushmore.category === category
       ).length;
     } else {
-      return myCompletedRushmoreList.filter(
+      return myCompletedUserRushmoreGameList.filter(
         (item) => category === "All" || item.rushmore.category === category
       ).length;
     }
@@ -72,13 +78,17 @@ export const MyRushmoreListsComponent: React.FC<
     }, [value])
   );
 
-  const navigateToMyCompletedRushmore = (userRushmore: UserRushmore) => {
+  const navigateToMyCompletedUserRushmoreGame = (
+    userRushmore: UserRushmore
+  ) => {
     navigation.navigate("EditUserRushmoreScreen", {
       userRushmore,
     });
   };
 
-  const navigateToMyInProgressRushmore = (userRushmore: UserRushmore) => {
+  const navigateToMyInProgressUserRushmoreGame = (
+    userRushmore: UserRushmore
+  ) => {
     navigation.navigate("EditUserRushmoreScreen", {
       userRushmore,
     });
@@ -88,7 +98,7 @@ export const MyRushmoreListsComponent: React.FC<
     setSelectedCategory(category);
   };
 
-  const renderInProgressRushmoreList = () => {
+  const renderInProgressUserRushmoreGameList = () => {
     return (
       <FlatList
         data={filteredYourInProgressRushmoreData}
@@ -96,37 +106,58 @@ export const MyRushmoreListsComponent: React.FC<
         renderItem={({ item }) => (
           <MyInProgressRushmoreCard
             myInProgressRushmore={item}
-            onPress={() => navigateToMyInProgressRushmore(item)}
+            onPress={() => navigateToMyInProgressUserRushmoreGame(item)}
           />
         )}
       />
     );
   };
 
-  const renderCompletedRushmoreList = () => {
+  const renderCompletedUserRushmoreGameList = () => {
     return (
       <FlatList
         data={filteredCompletedInProgressRushmoreData}
         keyExtractor={(item) => item.rushmore.rid.toString()}
         renderItem={({ item }) => (
-          <MyCompletedRushmoreCard
-            myCompletedRushmore={item}
-            onPress={() => navigateToMyCompletedRushmore(item)}
+          <FollowingSolvedRushmoreCard
+            followingSolvedRushmore={undefined}
+            onPress={function (): void {
+              throw new Error("Function not implemented.");
+            }}
           />
         )}
       />
     );
   };
 
+  const navigateToSolvedRushmoreScreen = (
+    rushmoreItem: FollowingSolvedRushmore
+  ) => {
+    console.log("Navigate to followingsolved rushmore home screen");
+    navigation.navigate("FollowingSolvedRushmoreScreen", {
+      rushmoreItem,
+    });
+  };
+
+  const navigateToInProgressRushmoreScreen = (
+    followingInProgressRushmore: FollowingInProgressRushmore
+  ) => {
+    console.log("Navigate to FollowingInProgressRushmore rushmore screen");
+    let urId: number = followingInProgressRushmore.urId;
+    navigation.navigate("RushmoreGameScreen", {
+      urId: followingInProgressRushmore.urId,
+    }); // PassurId
+  };
+
   const filteredYourInProgressRushmoreData =
-    myInProgressRushmoreList?.filter(
+    myInProgressUserRushmoreGameList?.filter(
       (item) =>
         selectedCategory === "All" ||
         item.rushmore.category === selectedCategory
     ) || [];
 
   const filteredCompletedInProgressRushmoreData =
-    myCompletedRushmoreList?.filter(
+    myCompletedUserRushmoreGameList?.filter(
       (item) =>
         selectedCategory === "All" ||
         item.rushmore.category === selectedCategory

@@ -62,7 +62,7 @@ export const AppStackContainer = () => {
         component={EditProfileScreen}
         options={({ route }) => ({
           headerShown: true,
-          headerTitle: "", // Empty string to hide the title
+          headerTitle: "Edit Profile", // Empty string to hide the title
         })}
       />
 
