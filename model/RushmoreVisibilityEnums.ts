@@ -1,4 +1,4 @@
 export enum RushmoreVisibilityEnums {
-  PRIVATE = "Private",
-  PUBLIC = "Public",
+  PRIVATE = "PRIVATE",
+  PUBLIC = "PUBLIC",
 }

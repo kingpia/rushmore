@@ -3,7 +3,6 @@ import { View, StyleSheet } from "react-native";
 import { List, Divider } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
-import { Appbar } from "react-native-paper";
 
 type ProfileSettingsScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;

@@ -3,7 +3,6 @@ import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 import { Card, IconButton } from "react-native-paper";
 import { StackContainerScreenProps } from "../nav/params/HomeStackParamList";
 import { RushmoreService } from "../service/RushmoreService";
-import DraggableFlatList from "react-native-draggable-flatlist";
 import { UserRushmore } from "../model/UserRushmore";
 import { UserRushmoreItem } from "../model/UserRushmoreItem";
 

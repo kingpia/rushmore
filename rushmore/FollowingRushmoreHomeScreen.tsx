@@ -7,9 +7,6 @@ import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEff
 import { FollowingSolvedRushmoreCard } from "../components/FollowingSolvedRushmoreCard";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { FollowingSolvedRushmore } from "../model/FollowingSolvedRushmore";
-import { FollowingInProgressRushmoreCard } from "../components/FollowingInProgressRushmoreCard";
-import { FollowingInProgressRushmore } from "../model/FollowingInProgressRushmore";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import FollowingRushmoreListsComponent from "../components/FollowingRushmoreListsComponent";
 

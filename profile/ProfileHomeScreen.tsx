@@ -23,6 +23,8 @@ import { MyRushmoreListsComponent } from "../components/MyRushmoreListsComponent
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import FollowingRushmoreListsComponent from "../components/FollowingRushmoreListsComponent";
+import { MyBookmarkedListsComponent } from "../components/MyBookmarkedListComponent";
+import { MyLikedListsComponent } from "../components/MyLikedListComponent";
 
 type ProfileStackContainerScreenProps = NativeStackScreenProps<
   SettingsStackParamList & AppStackParamList
@@ -67,7 +69,7 @@ const ProfileTabs = () => {
       />
       <Tab.Screen
         name="Bookmark"
-        component={MyRushmoreListsComponent}
+        component={MyBookmarkedListsComponent}
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => {
@@ -79,7 +81,7 @@ const ProfileTabs = () => {
       />
       <Tab.Screen
         name="Like"
-        component={MyRushmoreListsComponent}
+        component={MyLikedListsComponent}
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => {

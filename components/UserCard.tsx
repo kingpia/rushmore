@@ -2,7 +2,6 @@
 import React from "react";
 import { View } from "react-native";
 import { Avatar, Button, Card, IconButton, Text } from "react-native-paper";
-import { UserService } from "../service/UserService";
 
 export enum FollowingStatus {
   FOLLOWING = "FOLLOWING",

@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import { Text, SegmentedButtons, Button } from "react-native-paper";
-import { CreateRushmoreStackParamList, StackContainerScreenProps } from "../nav/params/CreateRushmoreStackParamList";
+import {
+  CreateRushmoreStackParamList,
+  StackContainerScreenProps,
+} from "../nav/params/CreateRushmoreStackParamList";
 import { UserRushmore } from "../model/UserRushmore";
-import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
-import { RushmoreVisibilityEnums } from "../model/RushmoreVisibilityEnums";
-import { RushmoreType } from "../model/RushmoreTypeEnums";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 
-
 type RushmoreSettingsScreenProps = {
-  navigation: NativeStackNavigationProp<CreateRushmoreStackParamList & AppStackParamList>;
-  route: any
+  navigation: NativeStackNavigationProp<
+    CreateRushmoreStackParamList & AppStackParamList
+  >;
+  route: any;
 };
-
 
 export const RushmoreSettingsScreen = ({
   route,
@@ -32,55 +32,59 @@ export const RushmoreSettingsScreen = ({
     navigation.navigate("EditUserRushmoreScreen", {
       userRushmore,
     });
-
-
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>
         <View style={styles.row}>
-          <Text style={styles.settingsText} variant="headlineSmall">Rushmore</Text>
+          <Text style={styles.settingsText} variant="headlineSmall">
+            Rushmore
+          </Text>
           <SegmentedButtons
             value={rushmoreType}
             onValueChange={setRushmoreType}
             buttons={[
               {
-                value: 'favorite',
-                label: 'Favorite',
+                value: "favorite",
+                label: "Favorite",
               },
-              { value: 'best', label: 'Best' },
+              { value: "best", label: "Best" },
             ]}
             style={styles.segmentedButtons}
           />
         </View>
         <View style={styles.row}>
-          <Text style={styles.settingsText} variant="headlineSmall">Private</Text>
+          <Text style={styles.settingsText} variant="headlineSmall">
+            Private
+          </Text>
           <SegmentedButtons
             value={isPrivate}
             onValueChange={setIsPrivate}
             buttons={[
               {
-                value: 'yes',
-                label: 'Yes',
+                value: "yes",
+                label: "Yes",
               },
-              { value: 'no', label: 'No' },
+              { value: "no", label: "No" },
             ]}
             style={styles.segmentedButtons}
           />
         </View>
-        {isPrivate !== 'yes' && (
+        {isPrivate !== "yes" && (
           <View style={styles.row}>
-            <Text style={styles.settingsText} variant="headlineSmall">Type</Text>
+            <Text style={styles.settingsText} variant="headlineSmall">
+              Type
+            </Text>
             <SegmentedButtons
               value={gameType}
               onValueChange={setGameType}
               buttons={[
                 {
-                  value: 'game',
-                  label: 'Game',
+                  value: "game",
+                  label: "Game",
                 },
-                { value: 'open', label: 'Open' },
+                { value: "open", label: "Open" },
               ]}
               style={styles.segmentedButtons}
             />
@@ -90,7 +94,11 @@ export const RushmoreSettingsScreen = ({
         <View style={styles.spacer} />
         {/* Create Button */}
         <View style={styles.createButtonContainer}>
-          <Button mode="contained" onPress={handleCreatePress} style={styles.createButton}>
+          <Button
+            mode="contained"
+            onPress={handleCreatePress}
+            style={styles.createButton}
+          >
             Create
           </Button>
         </View>
@@ -119,7 +127,7 @@ const styles = StyleSheet.create({
   },
   segmentedButtons: {
     flex: 2,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   spacer: {
     flex: 1,
@@ -128,6 +136,6 @@ const styles = StyleSheet.create({
     marginTop: 16, // Optional margin from the spacer
   },
   createButton: {
-    width: '100%',
+    width: "100%",
   },
 });

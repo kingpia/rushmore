@@ -1,17 +1,18 @@
 import React, { useCallback, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
-import { SegmentedButtons } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
+
+import { FlatList, View, StyleSheet } from "react-native";
+import { SegmentedButtons } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { MyCompletedRushmoreCard } from "../components/MyCompletedRushmoreCard";
 import { MyInProgressRushmoreCard } from "../components/MyInProgressRushmoreCard";
-import { UserRushmore } from "../model/UserRushmore";
 import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
-import { RushmoreGraphService } from "../service/RushmoreGraphService";
+import { RushmoreService } from "../service/RushmoreService";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import UserRushmoreListComponent from "./UserRushmoreListComponent";
+import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 
 type MyRushmoreListsComponentProps = {
   navigation: NativeStackNavigationProp<HomeStackParamList & AppStackParamList>;
@@ -22,27 +23,34 @@ export const MyRushmoreListsComponent: React.FC<
 > = ({ navigation }) => {
   const [value, setValue] = useState("inprogress");
   const [myInProgressRushmoreList, setMyInProgressRushmoreList] = useState<
-    UserRushmore[]
+    UserRushmoreDTO[]
   >([]);
   const [myCompletedRushmoreList, setMyCompletedRushmoreList] = useState<
-    UserRushmore[]
+    UserRushmoreDTO[]
   >([]);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [isLoading, setLoading] = useState(true);
 
   const fetchData = async (selectedValue: string) => {
     setLoading(true); // Set loading to true when fetching data
-    const rushmoreGraphService = new RushmoreGraphService();
+    const rushmoreService = new RushmoreService();
 
     try {
       if (selectedValue === "inprogress") {
         const myInProgressRushmoreData =
-          await rushmoreGraphService.getMyInProgressRushmoreList();
+          await rushmoreService.getMyInProgressRushmoreList();
         setMyInProgressRushmoreList(myInProgressRushmoreData);
+        console.log(
+          "MyInProgressRushmoreData:" + JSON.stringify(myInProgressRushmoreData)
+        );
       } else if (selectedValue === "complete") {
         const myCompletedRushmoreData =
-          await rushmoreGraphService.getMyCompletedRushmoreList();
+          await rushmoreService.getMyCompletedRushmoreList();
         setMyCompletedRushmoreList(myCompletedRushmoreData);
+        console.log(
+          "setMyCompletedRushmoreList:" +
+            JSON.stringify(myCompletedRushmoreData)
+        );
       }
       setLoading(false); // Set loading to false after fetching data
       // Calculate category counts after setting the state
@@ -57,11 +65,13 @@ export const MyRushmoreListsComponent: React.FC<
   const countByCategory = (category: string) => {
     if (value === "inprogress") {
       return myInProgressRushmoreList.filter(
-        (item) => category === "All" || item.rushmore.category === category
+        (item) =>
+          category === "All" || item.userRushmore.rushmore.category === category
       ).length;
     } else {
       return myCompletedRushmoreList.filter(
-        (item) => category === "All" || item.rushmore.category === category
+        (item) =>
+          category === "All" || item.userRushmore.rushmore.category === category
       ).length;
     }
   };
@@ -72,13 +82,13 @@ export const MyRushmoreListsComponent: React.FC<
     }, [value])
   );
 
-  const navigateToMyCompletedRushmore = (userRushmore: UserRushmore) => {
+  const navigateToMyCompletedRushmore = (userRushmore: UserRushmoreDTO) => {
     navigation.navigate("EditUserRushmoreScreen", {
       userRushmore,
     });
   };
 
-  const navigateToMyInProgressRushmore = (userRushmore: UserRushmore) => {
+  const navigateToMyInProgressRushmore = (userRushmore: UserRushmoreDTO) => {
     navigation.navigate("EditUserRushmoreScreen", {
       userRushmore,
     });
@@ -87,12 +97,13 @@ export const MyRushmoreListsComponent: React.FC<
   const handleCategoryPress = (category: string) => {
     setSelectedCategory(category);
   };
+  const renderItemSeparator = () => <View style={styles.divider} />;
 
   const renderInProgressRushmoreList = () => {
     return (
       <FlatList
         data={filteredYourInProgressRushmoreData}
-        keyExtractor={(item) => item.rushmore.rid.toString()}
+        keyExtractor={(item) => item.userRushmore.rushmore.rid.toString()}
         renderItem={({ item }) => (
           <MyInProgressRushmoreCard
             myInProgressRushmore={item}
@@ -107,13 +118,14 @@ export const MyRushmoreListsComponent: React.FC<
     return (
       <FlatList
         data={filteredCompletedInProgressRushmoreData}
-        keyExtractor={(item) => item.rushmore.rid.toString()}
+        keyExtractor={(item) => item.userRushmore.rushmore.rid.toString()}
         renderItem={({ item }) => (
-          <MyCompletedRushmoreCard
-            myCompletedRushmore={item}
+          <UserRushmoreListComponent
+            userRushmoreDTO={item}
             onPress={() => navigateToMyCompletedRushmore(item)}
           />
         )}
+        ItemSeparatorComponent={renderItemSeparator}
       />
     );
   };
@@ -122,14 +134,14 @@ export const MyRushmoreListsComponent: React.FC<
     myInProgressRushmoreList?.filter(
       (item) =>
         selectedCategory === "All" ||
-        item.rushmore.category === selectedCategory
+        item.userRushmore.rushmore.category === selectedCategory
     ) || [];
 
   const filteredCompletedInProgressRushmoreData =
     myCompletedRushmoreList?.filter(
       (item) =>
         selectedCategory === "All" ||
-        item.rushmore.category === selectedCategory
+        item.userRushmore.rushmore.category === selectedCategory
     ) || [];
 
   return (
@@ -161,3 +173,10 @@ export const MyRushmoreListsComponent: React.FC<
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  divider: {
+    height: 1,
+    backgroundColor: "#CCCCCC",
+  },
+});

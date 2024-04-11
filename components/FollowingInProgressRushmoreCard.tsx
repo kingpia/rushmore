@@ -1,19 +1,19 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Avatar, Card, Text } from "react-native-paper";
-import { FollowingInProgressRushmore } from "../model/FollowingInProgressRushmore";
+import { UserRushmoreGameSession } from "../model/UserRushmoreGameSession";
 
 type FollowingInProgressRushmoreCardProps = {
-  followingInProgressRushmore: FollowingInProgressRushmore;
+  inProgressUserRushmoreGameSession: UserRushmoreGameSession;
   onPress: () => void;
 };
 
 export const FollowingInProgressRushmoreCard: React.FC<
   FollowingInProgressRushmoreCardProps
-> = ({ followingInProgressRushmore, onPress }) => {
+> = ({ inProgressUserRushmoreGameSession, onPress }) => {
   console.log(
     "FollowingInProgressRushmoreCard:" +
-      JSON.stringify(followingInProgressRushmore)
+      JSON.stringify(inProgressUserRushmoreGameSession)
   );
 
   return (
@@ -23,18 +23,26 @@ export const FollowingInProgressRushmoreCard: React.FC<
           {/* Circular Avatar */}
           <Avatar.Image
             size={60}
-            source={{ uri: followingInProgressRushmore.icon }}
+            source={{
+              uri: inProgressUserRushmoreGameSession.userRushmore.rushmore.icon,
+            }}
             style={{ marginRight: 10 }}
           />
 
           {/* Title and User Info */}
           <View style={{ flex: 1 }}>
             <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-              {followingInProgressRushmore.type}{" "}
-              {followingInProgressRushmore.rushmoreTitle}
+              {inProgressUserRushmoreGameSession.userRushmore.rushmoreType}{" "}
+              {inProgressUserRushmoreGameSession.userRushmore.rushmore.title}
             </Text>
 
-            <Text>@{followingInProgressRushmore.username}</Text>
+            <Text>
+              @
+              {
+                inProgressUserRushmoreGameSession.userRushmore.ownerUser
+                  .userName
+              }
+            </Text>
 
             {/* Additional Info */}
             <View
@@ -43,19 +51,22 @@ export const FollowingInProgressRushmoreCard: React.FC<
               <View>
                 <Text variant="bodyMedium">Current Score</Text>
                 <Text variant="bodyMedium">
-                  {followingInProgressRushmore.currentScore}
+                  {inProgressUserRushmoreGameSession.score}
                 </Text>
               </View>
               <View>
                 <Text variant="bodyMedium">High Score</Text>
                 <Text variant="bodyMedium">
-                  {followingInProgressRushmore.highScore}
+                  {inProgressUserRushmoreGameSession.userRushmore.highScore}
                 </Text>
               </View>
               <View>
                 <Text variant="bodyMedium">Solved Count</Text>
                 <Text variant="bodyMedium">
-                  {followingInProgressRushmore.solvedCount}
+                  {
+                    inProgressUserRushmoreGameSession.userRushmore
+                      .completedCount
+                  }
                 </Text>
               </View>
             </View>

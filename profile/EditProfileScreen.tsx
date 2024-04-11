@@ -2,7 +2,6 @@ import React from "react";
 import { SafeAreaView, View, Text, StyleSheet } from "react-native";
 import { Avatar, Button, List, Divider } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { StackContainerScreenProps } from "../nav/params/SettingsStackParamList";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, FlatList, Keyboard, ScrollView } from "react-native";
 import { Searchbar, Button, ActivityIndicator } from "react-native-paper"; // Import ActivityIndicator from react-native-paper
 import { UserService } from "../service/UserService";
-import UserCard from "../components/UserCard";
 import SocialUserCard from "../components/SocialUserCard";
 
 const userService = new UserService(); // Instantiate UserService

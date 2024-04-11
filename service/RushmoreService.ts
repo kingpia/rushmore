@@ -4,6 +4,7 @@ import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
 import { RushmoreType } from "../model/RushmoreTypeEnums";
 import { RushmoreVisibilityEnums } from "../model/RushmoreVisibilityEnums";
 import { UserRushmore } from "../model/UserRushmore";
+import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import { UserRushmoreGameSession } from "../model/UserRushmoreGameSession";
 import {
   rushmoreListURL,
@@ -12,7 +13,7 @@ import {
 import axios from "axios";
 
 export class RushmoreService<T> {
-  private baseURL = "http://192.168.0.29:8080";
+  private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
 
   async getRushmoreItems(uid: string, toFetch: ApiFetchEnums): Promise<T[]> {
     try {
@@ -224,6 +225,352 @@ export class RushmoreService<T> {
       }
     } catch (error) {
       console.error("Error fetching user rushmore:", error);
+      throw error;
+    }
+  }
+
+  async getMyInProgressUserRushmoreGameSessions(): Promise<
+    UserRushmoreGameSession[]
+  > {
+    try {
+      const response = await axios.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          myInProgressUserRushmoreGameSessions {
+            completedDt
+            score
+            updatedBy
+            updatedDt
+            urgsId
+            userId
+            letterSelection
+            letterSelectionComplete
+            userRushmore {
+              gameType
+              completedCount
+              highScore
+              highScoreUid
+              highScoreUser {
+                nickName
+                uid
+                userName
+              }
+              rushmore {
+                category
+                icon
+                rid
+                title
+              }
+              rushmoreType
+              urId
+              userId
+              version
+              ownerUser {
+                nickName
+                uid
+                userName
+              }
+            }
+          }
+      }
+      `,
+      });
+      return response.data.data.myInProgressUserRushmoreGameSessions;
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+      throw error;
+    }
+  }
+
+  async getMySolvedUserRushmoreGameSessions(): Promise<
+    UserRushmoreGameSession[]
+  > {
+    try {
+      const response = await axios.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          mySolvedUserRushmoreGameSessions {
+            completedDt
+            score
+            updatedBy
+            updatedDt
+            urgsId
+            userId
+            letterSelection
+            letterSelectionComplete
+            userRushmore {
+              gameType
+              completedCount
+              highScore
+              highScoreUid
+              highScoreUser {
+                nickName
+                uid
+                userName
+              }
+              rushmore {
+                category
+                icon
+                rid
+                title
+              }
+              rushmoreType
+              urId
+              userId
+              version
+              ownerUser {
+                nickName
+                uid
+                userName
+              }
+            }
+          }
+      }
+      `,
+      });
+      return response.data.data.mySolvedUserRushmoreGameSessions;
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+      throw error;
+    }
+  }
+
+  async getMyBookmarkedUserRushmores(): Promise<UserRushmoreDTO[]> {
+    console.log("getMyBookmarkedUserRushmores");
+    try {
+      const response = await axios.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          myBookmarkedUserRushmores {
+            userRushmore {
+              completedCount
+              firstCompletedDt
+              firstCompletedUid
+              firstCompletedUser {
+                nickName
+                uid
+                userName
+              }
+              gameType
+              highScore
+              highScoreUid
+              highScoreUser {
+                nickName
+                uid
+                userName
+              }
+              likeCount
+              ownerUser {
+                userName
+                uid
+              }
+              rushmore {
+                category
+                icon
+                rid
+                title
+              }
+              rushmoreType
+              urId
+              completedDt
+              version
+            }
+            userRushmoreGameSession {
+              score
+              urgsId
+              completedDt
+              createdDt
+            }
+          }
+      }
+      `,
+      });
+      return response.data.data.myBookmarkedUserRushmores;
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+      throw error;
+    }
+  }
+
+  async getMyLikedUserRushmores(): Promise<UserRushmoreDTO[]> {
+    try {
+      const response = await axios.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          myLikedUserRushmores {
+            userRushmore {
+              completedCount
+              firstCompletedDt
+              firstCompletedUid
+              firstCompletedUser {
+                nickName
+                uid
+                userName
+              }
+              gameType
+              highScore
+              highScoreUid
+              highScoreUser {
+                nickName
+                uid
+                userName
+              }
+              likeCount
+              ownerUser {
+                userName
+                uid
+              }
+              rushmore {
+                category
+                icon
+                rid
+                title
+              }
+              rushmoreType
+              urId
+              completedDt
+              version
+            }
+            userRushmoreGameSession {
+              score
+              urgsId
+              completedDt
+              createdDt
+            }
+          }
+      }
+      `,
+      });
+      return response.data.data.myLikedUserRushmores;
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+      throw error;
+    }
+  }
+
+  async getMyInProgressRushmoreList(): Promise<UserRushmoreDTO[]> {
+    console.log("getMyInprogressRushmores");
+    try {
+      const response = await axios.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+            myInProgressUserRushmores {
+              userRushmore {
+                createdDt
+                completedDt
+                highScore
+                highScoreUid
+                highScoreUser {
+                  nickName
+                  uid
+                  userName
+                }
+                likeCount
+                rushmore {
+                  category
+                  icon
+                  rid
+                  title
+                }
+                rushmoreType
+                gameType
+                urId
+                version
+                visibility
+                firstCompletedDt
+                firstCompletedUid
+                firstCompletedUser {
+                  nickName
+                  uid
+                  userName
+                }
+              }
+              userRushmoreGameSession {
+                urgsId
+                userId
+                userRushmoreId
+                completedDt
+                score
+                letterSelection
+                letterSelectionComplete
+                createdDt
+                createdBy
+                updatedDt
+                updatedBy
+              }
+            }
+        }
+        `,
+      });
+      console.log(
+        "OUTPUT:" + JSON.stringify(response.data.data.myInProgressUserRushmores)
+      );
+      return response.data.data.myInProgressUserRushmores;
+    } catch (error) {
+      console.error("Error fetching in-progress Rushmore list:", error);
+      throw error;
+    }
+  }
+
+  async getMyCompletedRushmoreList(): Promise<UserRushmoreDTO[]> {
+    console.log("getMyCompletedRushmoreList");
+
+    try {
+      const response = await axios.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          myCompletedUserRushmores {
+            userRushmore {
+              completedDt
+              highScore
+              highScoreUid
+              highScoreUser {
+                nickName
+                uid
+                userName
+              }
+              likeCount
+              rushmore {
+                category
+                icon
+                rid
+                title
+              }
+              rushmoreType
+              completedCount
+              urId
+              version
+              visibility
+              firstCompletedDt
+              firstCompletedUid
+              firstCompletedUser {
+                nickName
+                uid
+                userName
+              }
+            }
+            userRushmoreGameSession {
+              urgsId
+              userId
+              userRushmoreId
+              completedDt
+              score
+              letterSelection
+              letterSelectionComplete
+              createdDt
+              createdBy
+              updatedDt
+              updatedBy
+            }
+          }
+        }
+      `,
+      });
+      console.log("OUTPUT:" + response.data);
+
+      return response.data.data.myCompletedUserRushmores;
+    } catch (error) {
+      console.error("Error fetching completed Rushmore list:", error);
       throw error;
     }
   }

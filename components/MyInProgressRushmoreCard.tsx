@@ -1,65 +1,102 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { Avatar, Card, Text } from "react-native-paper";
-import { UserRushmore } from "../model/UserRushmore";
+import { RushmoreVisibilityEnums, UserRushmore } from "../model/UserRushmore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
 import { format, parse } from "date-fns";
+import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 
 type MyInProgressRushmoreCardProps = {
-  myInProgressRushmore: UserRushmore;
+  myInProgressRushmore: UserRushmoreDTO;
   onPress: () => void;
 };
 
 export const MyInProgressRushmoreCard: React.FC<
   MyInProgressRushmoreCardProps
 > = ({ myInProgressRushmore, onPress }) => {
-  const parsedCompletedDt = parse(
-    myInProgressRushmore.createdDt,
+  const { visibility, gameType } = myInProgressRushmore.userRushmore;
+  const parsedCreatedDt = parse(
+    myInProgressRushmore.userRushmore.createdDt,
     "EEE MMM dd HH:mm:ss 'GMT' yyyy",
     new Date()
   );
-  const formattedCreatedDt = format(new Date(parsedCompletedDt), "MMM d yyyy");
+
+  const formattedCreatedDt = format(parsedCreatedDt, "MMM d yyyy");
+
+  let visibilityIcon;
+  if (visibility === RushmoreVisibilityEnums.PUBLIC) {
+    visibilityIcon = <MaterialCommunityIcons name="eye" size={17} />;
+  } else {
+    visibilityIcon = <MaterialCommunityIcons name="lock" size={17} />;
+  }
+
+  let gameTypeIcon;
+  if (gameType === RushmoreGameTypeEnums.GAME) {
+    gameTypeIcon = <MaterialCommunityIcons name="puzzle" size={17} />;
+  } else {
+    gameTypeIcon = <MaterialCommunityIcons name="earth" size={17} />;
+  }
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <Card style={{ margin: 2 }}>
-        <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
-          {/* Circular Avatar */}
-          <Avatar.Image
-            size={60}
-            source={{ uri: myInProgressRushmore.icon }}
-            style={{ marginRight: 10 }}
-          />
-
-          {/* Title and User Info */}
-          <View style={{ flex: 1 }}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                {myInProgressRushmore.rushmoreType}{" "}
-                {myInProgressRushmore.rushmore.title}
-              </Text>
-              {myInProgressRushmore.gameType === RushmoreGameTypeEnums.GAME && (
-                <MaterialCommunityIcons name="puzzle" size={18} color="black" />
-              )}
-              <Text style={{ fontSize: 12, color: "gray", marginLeft: 5 }}>
-                • {formattedCreatedDt}
-              </Text>
-            </View>
-            {/* Additional Info */}
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-around" }}
-            >
-              <View style={{ alignItems: "center" }}>
-                <MaterialCommunityIcons name="eye" size={24} color="black" />
-                <Text variant="bodyMedium">
-                  {myInProgressRushmore.visibility}
-                </Text>
-              </View>
-            </View>
+      <View style={styles.container}>
+        <View style={styles.title_row}>
+          <Text variant="titleMedium" style={styles.text}>
+            {myInProgressRushmore.userRushmore.rushmoreType}{" "}
+            {myInProgressRushmore.userRushmore.rushmore.title}
+            <Text style={styles.bullet}> • </Text>
+            <Text variant="bodySmall">{formattedCreatedDt}</Text>
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text variant="titleSmall">Visibility: </Text>
+            {visibilityIcon}
           </View>
-        </Card.Content>
-      </Card>
+
+          <Text>|</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text variant="titleSmall">Type: </Text>
+            {gameTypeIcon}
+          </View>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 };
+const styles = StyleSheet.create({
+  container: {
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  title_row: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  bullet: {
+    marginRight: 5,
+    fontSize: 20,
+  },
+  text: {
+    flex: 1,
+  },
+  score: {
+    fontWeight: "bold",
+  },
+  itemContainer: {
+    width: "50%", // Set to half of the container width to have equal space for both items
+    padding: 5,
+  },
+  itemContent: {
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "gray",
+    padding: 10,
+    borderRadius: 5,
+  },
+  border: {
+    borderColor: "gray",
+  },
+});

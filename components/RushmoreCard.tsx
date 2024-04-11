@@ -1,9 +1,7 @@
 import React from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { Avatar, Card, Text } from "react-native-paper";
-import { UserRushmore } from "../model/UserRushmore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
 import { Rushmore } from "../model/Rushmore";
 
 type RushmoreCardProps = {

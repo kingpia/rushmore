@@ -1,16 +1,16 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Avatar, Card, Text } from "react-native-paper";
-import { FollowingSolvedRushmore } from "../model/FollowingSolvedRushmore";
+import { UserRushmoreGameSession } from "../model/UserRushmoreGameSession";
 
 type FollowingSolvedRushmoreCardProps = {
-  followingSolvedRushmore: FollowingSolvedRushmore;
+  solvedUserRushmoreGameSession: UserRushmoreGameSession;
   onPress: () => void;
 };
 
 export const FollowingSolvedRushmoreCard: React.FC<
   FollowingSolvedRushmoreCardProps
-> = ({ followingSolvedRushmore, onPress }) => {
+> = ({ solvedUserRushmoreGameSession, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Card style={{ margin: 2 }}>
@@ -18,17 +18,21 @@ export const FollowingSolvedRushmoreCard: React.FC<
           {/* Circular Avatar */}
           <Avatar.Image
             size={60}
-            source={{ uri: followingSolvedRushmore.icon }}
+            source={{
+              uri: solvedUserRushmoreGameSession.userRushmore.rushmore.icon,
+            }}
             style={{ marginRight: 10 }}
           />
 
           {/* Title and User Info */}
           <View style={{ flex: 1 }}>
             <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-              {followingSolvedRushmore.type}{" "}
-              {followingSolvedRushmore.rushmoreTitle}
+              {solvedUserRushmoreGameSession.userRushmore.rushmoreType}{" "}
+              {solvedUserRushmoreGameSession.userRushmore.rushmore.title}
             </Text>
-            <Text>@{followingSolvedRushmore.username}</Text>
+            <Text>
+              @{solvedUserRushmoreGameSession.userRushmore.ownerUser.userName}
+            </Text>
 
             {/* Additional Info */}
             <View
@@ -37,19 +41,19 @@ export const FollowingSolvedRushmoreCard: React.FC<
               <View>
                 <Text variant="bodyMedium">Your Score</Text>
                 <Text variant="bodyMedium">
-                  {followingSolvedRushmore.yourScore}
+                  {solvedUserRushmoreGameSession.score}
                 </Text>
               </View>
               <View>
                 <Text variant="bodyMedium">High Score</Text>
                 <Text variant="bodyMedium">
-                  {followingSolvedRushmore.highScore}
+                  {solvedUserRushmoreGameSession.userRushmore.highScore}
                 </Text>
               </View>
               <View>
                 <Text variant="bodyMedium">Solved Count</Text>
                 <Text variant="bodyMedium">
-                  {followingSolvedRushmore.solvedCount}
+                  {solvedUserRushmoreGameSession.userRushmore.completedCount}
                 </Text>
               </View>
             </View>

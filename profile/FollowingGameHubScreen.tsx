@@ -4,12 +4,11 @@ import { SegmentedButtons } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { MyCompletedRushmoreCard } from "../components/MyCompletedRushmoreCard";
 import { MyInProgressRushmoreCard } from "../components/MyInProgressRushmoreCard";
 import { UserRushmore } from "../model/UserRushmore";
 import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
-import { RushmoreGraphService } from "../service/RushmoreGraphService";
+import { RushmoreService } from "../service/RushmoreService";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { FollowingSolvedRushmoreCard } from "../components/FollowingSolvedRushmoreCard";
@@ -33,7 +32,7 @@ export const FollowingGameHubScreen: React.FC<FollowingGameHubScreenProps> = ({
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [isLoading, setLoading] = useState(true);
 
-  const rushmoreGraphService = new RushmoreGraphService();
+  const rushmoreService = new RushmoreService();
 
   const fetchData = async (selectedValue: string) => {
     setLoading(true); // Set loading to true when fetching data
@@ -42,12 +41,12 @@ export const FollowingGameHubScreen: React.FC<FollowingGameHubScreenProps> = ({
       if (selectedValue === "inprogress") {
         //TODO: FIX THIS
         const myInProgressUserRushmoreGameData =
-          await rushmoreGraphService.getMyInProgressRushmoreList();
+          await rushmoreService.getMyInProgressRushmoreList();
         setMyInProgressUserRushmoreGameList(myInProgressUserRushmoreGameData);
       } else if (selectedValue === "complete") {
         //TODO FIX THIS
         const myCompletedUserRushmoreGameData =
-          await rushmoreGraphService.getMyCompletedRushmoreList();
+          await rushmoreService.getMyCompletedRushmoreList();
         setMyCompletedUserRushmoreGameList(myCompletedUserRushmoreGameData);
       }
       setLoading(false); // Set loading to false after fetching data

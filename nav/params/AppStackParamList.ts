@@ -3,6 +3,7 @@ import { AuthStackParamList } from "./AuthStackParamList";
 import { RushmoreTabContainerParamList } from "../params/RushmoreTabContainerParamList";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { UserRushmore } from "../../model/UserRushmore";
+import { UserRushmoreDTO } from "../../model/UserRushmoreDTO";
 
 export type AppStackParamList = {
   AuthStackContainer: NavigatorScreenParams<AuthStackParamList>;
@@ -11,7 +12,7 @@ export type AppStackParamList = {
     urId: number;
   };
   EditUserRushmoreScreen: {
-    userRushmore: UserRushmore;
+    userRushmore: UserRushmoreDTO;
   };
   EditProfileScreen: { user: SocialUser };
   EditNameScreen: { userData: SocialUser };

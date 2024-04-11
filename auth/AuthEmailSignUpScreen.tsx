@@ -13,6 +13,7 @@ import DateTimePicker, {
 import { useState, useEffect } from "react";
 import { TextInput } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import { Auth } from "aws-amplify";
 
 export const AuthEmailSignUpScreen = () => {
   //TODO: On the of all the fields, you need to enable or disable "send code" or "next"
@@ -100,7 +101,7 @@ export const AuthEmailSignUpScreen = () => {
 
   const validatePassword = (password: string) => {
     const passwordRegex =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/;
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&_])[A-Za-z\d@$!%*#?&_]{8,20}$/;
     return passwordRegex.test(password);
   };
 
@@ -173,6 +174,29 @@ export const AuthEmailSignUpScreen = () => {
     const isValidCode = codeRegex.test(code);
 
     setCodeError(isValidCode ? null : "Alphanumeric characters only");
+  };
+
+  // Function to handle sending verification code
+  const handleSendCode = async (
+    email: string,
+    password: string,
+    dob: string
+  ) => {
+    try {
+      await Auth.signUp({
+        username: email,
+        password: password,
+        attributes: {
+          email: email,
+          birthdate: dob,
+        },
+      });
+      console.log("Verification code sent successfully");
+      // Handle success (e.g., show confirmation message to the user)
+    } catch (error) {
+      console.error("Error sending verification code:", error);
+      // Handle error (e.g., display error message to the user)
+    }
   };
 
   return (

@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, Button, Dialog, IconButton, Portal, Text, TextInput } from "react-native-paper";
-import SwipeableItem, { OpenDirection, useSwipeableItemParams } from 'react-native-swipeable-item';
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import {
+  ActivityIndicator,
+  Button,
+  Dialog,
+  IconButton,
+  Portal,
+  Text,
+  TextInput,
+} from "react-native-paper";
 
 import UserRushmoreSettingsColumn from "../components/UserRushmoreSettingsColumn";
 
@@ -10,7 +16,12 @@ const rushmoreService = new RushmoreService(); // Create an instance of Rushmore
 
 import { StackContainerScreenProps } from "../nav/params/AppStackParamList";
 import { RushmoreService } from "../service/RushmoreService";
-import { RushmoreGameTypeEnums, RushmoreType, RushmoreVisibilityEnums, UserRushmore } from "../model/UserRushmore";
+import {
+  RushmoreGameTypeEnums,
+  RushmoreType,
+  RushmoreVisibilityEnums,
+  UserRushmore,
+} from "../model/UserRushmore";
 import EditRushmoreAppBar from "../components/header/EditRushmoreAppBar";
 import { UserRushmoreItem } from "../model/UserRushmoreItem";
 import DraggableFlatList, {
@@ -21,7 +32,6 @@ import UserRushmoreStatsColumn from "../components/UserRushmoreStatsColumn";
 
 type EditUserRushmoreScreenProps =
   StackContainerScreenProps<"EditUserRushmoreScreen">;
-
 
 export const EditUserRushmoreScreen = ({
   route,
@@ -43,10 +53,11 @@ export const EditUserRushmoreScreen = ({
   const showEditModal = () => setIsEditModalVisible(true);
   const hideEditModal = () => setIsEditModalVisible(false);
 
-
   const showAddItemModal = () => setIsAddItemModalVisible(true);
-  const hideAddItemModal = () => { setAddItemText(""); setIsAddItemModalVisible(false) };
-
+  const hideAddItemModal = () => {
+    setAddItemText("");
+    setIsAddItemModalVisible(false);
+  };
 
   useEffect(() => {
     const fetchUserRushmore = async () => {
@@ -102,8 +113,7 @@ export const EditUserRushmoreScreen = ({
     setUserRushmore((prevUserRushmore) => ({
       ...prevUserRushmore!,
       visibility:
-        prevUserRushmore!.visibility ===
-          RushmoreVisibilityEnums.PUBLIC
+        prevUserRushmore!.visibility === RushmoreVisibilityEnums.PUBLIC
           ? RushmoreVisibilityEnums.PRIVATE
           : RushmoreVisibilityEnums.PUBLIC,
     }));
@@ -192,7 +202,8 @@ export const EditUserRushmoreScreen = ({
       const currentDate = new Date();
       console.log("Current date:", currentDate);
       const daysRemaining = Math.floor(
-        (currentDate.getTime() - completedDate.getTime()) / (1000 * 60 * 60 * 24)
+        (currentDate.getTime() - completedDate.getTime()) /
+          (1000 * 60 * 60 * 24)
       );
       console.log("Days remaining:", daysRemaining);
       if (daysRemaining < 30) {
@@ -265,27 +276,33 @@ export const EditUserRushmoreScreen = ({
               />
             </View>
           )}
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <TouchableOpacity onPress={handleExitPress}>
               <IconButton icon="exit-to-app" size={30} />
             </TouchableOpacity>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <TouchableOpacity onPress={showModal}>
-                <IconButton
-                  icon="star"
-                  size={30}
-                  disabled={!isEditMode}
-                />
+                <IconButton icon="star" size={30} disabled={!isEditMode} />
               </TouchableOpacity>
               <TouchableOpacity onPress={showAddItemModal}>
-                <IconButton
-                  icon="plus"
-                  size={30}
-                  disabled={!isEditMode}
-                />
+                <IconButton icon="plus" size={30} disabled={!isEditMode} />
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => canEdit() ? toggleEditMode() : showEditModal()}>
+            <TouchableOpacity
+              onPress={() => (canEdit() ? toggleEditMode() : showEditModal())}
+            >
               <IconButton icon={isEditMode ? "floppy" : "pencil"} size={30} />
             </TouchableOpacity>
           </View>
@@ -299,7 +316,8 @@ export const EditUserRushmoreScreen = ({
               Confirm the following settings:
             </Text>
             <Text style={styles.modalText}>
-              Rushmore Category: {userRushmore?.rushmore?.rushmoreCategory || ""}
+              Rushmore Category:{" "}
+              {userRushmore?.rushmore?.rushmoreCategory || ""}
             </Text>
             <Text style={styles.modalText}>
               Rushmore Type: {userRushmore?.rushmoreType || ""}
@@ -313,14 +331,22 @@ export const EditUserRushmoreScreen = ({
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={hideModal}>Cancel</Button>
-            <Button onPress={() => { hideModal(); saveUserRushmore(); }}>Complete</Button>
+            <Button
+              onPress={() => {
+                hideModal();
+                saveUserRushmore();
+              }}
+            >
+              Complete
+            </Button>
           </Dialog.Actions>
         </Dialog>
         <Dialog visible={isEditModalVisible} onDismiss={hideEditModal}>
           <Dialog.Title>Cannot Modify Rushmore</Dialog.Title>
           <Dialog.Content>
             <Text style={styles.modalText}>
-              Cannot modify Rushmore. A Rushmore must be active for 30 days after completion before it can be modified.
+              Cannot modify Rushmore. A Rushmore must be active for 30 days
+              after completion before it can be modified.
             </Text>
           </Dialog.Content>
           <Dialog.Actions>

@@ -2,7 +2,6 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/MaterialIcons";
 
 const AccountScreen: React.FC = () => {
   const navigation = useNavigation();

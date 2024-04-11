@@ -2,12 +2,11 @@ import React, { useState, useCallback } from "react";
 import { FlatList, SafeAreaView } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 import { RushmoreService } from "../service/RushmoreService";
-import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { useFocusEffect } from "@react-navigation/native";
 import { FollowingSolvedRushmoreCard } from "../components/FollowingSolvedRushmoreCard";
 import { FollowingInProgressRushmoreCard } from "../components/FollowingInProgressRushmoreCard";
-import { FollowingInProgressRushmore } from "../model/FollowingInProgressRushmore";
-import { FollowingSolvedRushmore } from "../model/FollowingSolvedRushmore";
+import { categories } from "../model/Categories";
+import { UserRushmoreGameSession } from "../model/UserRushmoreGameSession";
 
 type FollowingRushmoreListsComponentProps = {
   navigation: any; // Change the type according to your navigation props
@@ -17,31 +16,59 @@ const FollowingRushmoreListsComponent = ({
   navigation,
 }: FollowingRushmoreListsComponentProps) => {
   const [value, setValue] = useState("inprogress");
-  const [followingInProgressRushmore, setFollowingInProgressRushmore] =
-    useState<FollowingInProgressRushmore[]>([]);
-  const [followingSolvedRushmoreItems, setFollowingSolvedRushmoreItems] =
-    useState<FollowingSolvedRushmore[]>([]);
+  const [
+    followingInProgressUserRushmoreList,
+    setFollowingInProgressUserRushmoreList,
+  ] = useState<UserRushmoreGameSession[]>([]);
+  const [
+    followingSolvedUserRushmoreGameList,
+    setFollowingSolvedUserRushmoreGameList,
+  ] = useState<UserRushmoreGameSession[]>([]);
+
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [isLoading, setLoading] = useState(true);
 
   const fetchData = async (selectedValue: string) => {
+    setLoading(true); // Set loading to true when fetching data
+
     try {
       const rushmoreService = new RushmoreService<any>();
       let data: any[] = [];
 
       if (selectedValue === "inprogress") {
-        data = await rushmoreService.getRushmoreItems(
-          "pia_id",
-          ApiFetchEnums.FOLLOWING_IN_PROGRESS_RUSHMORE_LIST
+        //TODO API TO GET the users in progress UserRushmoreGameSessions
+        data = await rushmoreService.getMyInProgressUserRushmoreGameSessions();
+        console.log(
+          "getMyInProgressUserRushmoreGameSessions:" + JSON.stringify(data)
         );
-        setFollowingInProgressRushmore(data);
+        setFollowingInProgressUserRushmoreList(data);
       } else if (selectedValue === "solved") {
-        data = await rushmoreService.getRushmoreItems(
-          "pia_id",
-          ApiFetchEnums.FOLLOWING_SOLVED_RUSHMORE_LIST
+        //TODO API TO GET the users completed UserRushmoreGameSessions
+        data = await rushmoreService.getMySolvedUserRushmoreGameSessions();
+        console.log(
+          "getMySolvedUserRushmoreGameSessions:" + JSON.stringify(data)
         );
-        setFollowingSolvedRushmoreItems(data);
+
+        setFollowingSolvedUserRushmoreGameList(data);
       }
+      setLoading(false); // Set loading to false after fetching data
     } catch (error) {
       console.error("Error fetching Rushmore items:", error);
+      setLoading(false); // Set loading to false in case of error
+    }
+  };
+
+  const countByCategory = (category: string) => {
+    if (value === "inprogress") {
+      return followingInProgressUserRushmoreList.filter(
+        (item) =>
+          category === "All" || item.userRushmore.rushmore.category === category
+      ).length;
+    } else {
+      return followingSolvedUserRushmoreGameList.filter(
+        (item) =>
+          category === "All" || item.userRushmore.rushmore.category === category
+      ).length;
     }
   };
 
@@ -52,7 +79,7 @@ const FollowingRushmoreListsComponent = ({
   );
 
   const navigateToSolvedRushmoreScreen = (
-    rushmoreItem: FollowingSolvedRushmore
+    rushmoreItem: UserRushmoreGameSession
   ) => {
     navigation.navigate("FollowingSolvedRushmoreScreen", {
       rushmoreItem,
@@ -60,11 +87,15 @@ const FollowingRushmoreListsComponent = ({
   };
 
   const navigateToInProgressRushmoreScreen = (
-    followingInProgressRushmore: FollowingInProgressRushmore
+    followingInProgressRushmore: UserRushmoreGameSession
   ) => {
     navigation.navigate("RushmoreGameScreen", {
-      urId: followingInProgressRushmore.urId,
+      urId: followingInProgressRushmore.userRushmore.urId,
     });
+  };
+
+  const handleCategoryPress = (category: string) => {
+    setSelectedCategory(category);
   };
 
   return (
@@ -87,22 +118,22 @@ const FollowingRushmoreListsComponent = ({
 
       {value === "inprogress" ? (
         <FlatList
-          data={followingInProgressRushmore}
-          keyExtractor={(item) => item.rushmoreId}
+          data={followingInProgressUserRushmoreList}
+          keyExtractor={(item) => item.urgsId.toString()}
           renderItem={({ item }) => (
             <FollowingInProgressRushmoreCard
-              followingInProgressRushmore={item}
+              inProgressUserRushmoreGameSession={item}
               onPress={() => navigateToInProgressRushmoreScreen(item)}
             />
           )}
         />
       ) : (
         <FlatList
-          data={followingSolvedRushmoreItems}
-          keyExtractor={(item) => item.rushmoreId}
+          data={followingSolvedUserRushmoreGameList}
+          keyExtractor={(item) => item.urgsId.toString()}
           renderItem={({ item }) => (
             <FollowingSolvedRushmoreCard
-              followingSolvedRushmore={item}
+              solvedUserRushmoreGameSession={item}
               onPress={() => navigateToSolvedRushmoreScreen(item)}
             />
           )}

@@ -7,6 +7,7 @@ import { UserRushmoreItem } from "./UserRushmoreItem";
 export interface UserRushmore {
   urId: number; //user rushmore id
   rushmore: Rushmore;
+  ownerUser: SocialUser;
   visibility: RushmoreVisibilityEnums;
   gameType: RushmoreGameTypeEnums;
   rushmoreType: RushmoreType;
@@ -18,7 +19,7 @@ export interface UserRushmore {
   highScoreUser: User;
   highScore: number;
   firstCompletedUser: User;
-  firstCompletedDt: Date;
+  firstCompletedDt: string;
   version: number;
   userRushmoreItemList: UserRushmoreItem[]; //List of items.
 }
