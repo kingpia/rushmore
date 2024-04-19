@@ -1,4 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { CognitoUser } from "amazon-cognito-identity-js"; // Import CognitoUser from the appropriate package
 
 export type AuthStackParamList = {
   AuthHomeScreen: undefined;

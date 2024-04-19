@@ -19,10 +19,7 @@ const AddFriendsScreen = () => {
       try {
         if (searchText.trim() !== "") {
           console.log("searching:" + searchText);
-          const results = await userService.getUsersByNickName(
-            "6662",
-            searchText
-          );
+          const results = await userService.getUsersByNickName(searchText);
           console.log("Results:" + JSON.stringify(results));
           setSearchResults(results);
         } else {

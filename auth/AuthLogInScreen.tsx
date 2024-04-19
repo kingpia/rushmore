@@ -4,6 +4,8 @@ import { SafeAreaView, View } from "react-native";
 import { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { Auth } from "aws-amplify"; // Import Amplify Auth
+import * as SecureStore from "expo-secure-store";
 
 type AppContainerStackScreenProps = NativeStackScreenProps<AppStackParamList>;
 
@@ -16,15 +18,32 @@ export const AuthLogInScreen = ({
 
   const isButtonEnabled = emailOrUsername.length > 0 && password.length >= 8;
 
-  const handleLoginPress = () => {
-    // Perform login logic here
-    console.log("Login pressed");
-    // Reset the navigation stack to start fresh with RushmoreTabContainer
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "RushmoreTabContainer" }],
-    });
+  const handleLoginPress = async () => {
+    try {
+      // Sign in with email/username and password
+      const user = await Auth.signIn(emailOrUsername, password);
+
+      // If signUpResponse contains the tokens and set access token
+      const accessToken = user?.signInUserSession?.accessToken?.jwtToken;
+      const refreshToken = user?.signInUserSession?.refreshToken?.token;
+
+      saveToken("accessToken", accessToken);
+      saveToken("refreshToken", refreshToken);
+      // Reset the navigation stack to start fresh with RushmoreTabContainer
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "RushmoreTabContainer" }],
+      });
+    } catch (error) {
+      console.error("Error signing in:", error);
+      // If login is unsuccessful, display an alert
+    }
   };
+
+  async function saveToken(key: string, value: string) {
+    console.log("Saving Token" + key);
+    await SecureStore.setItemAsync(key, value);
+  }
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);

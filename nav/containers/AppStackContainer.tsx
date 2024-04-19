@@ -16,13 +16,20 @@ import ProfileSettingsScreen from "../../profile/ProfileSettingsScreen";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
-export const AppStackContainer = () => {
+interface AppStackContainerProps {
+  initialScreen: keyof AppStackParamList; // Define initialScreen prop
+}
+
+export const AppStackContainer: React.FC<AppStackContainerProps> = ({
+  initialScreen,
+}) => {
   return (
     <AppStackNavigator.Navigator
       screenOptions={{
         headerShown: false, // Hide the back button label
         headerBackTitleVisible: false, // Hide the title of the last screen next to the back button
       }}
+      initialRouteName={initialScreen}
     >
       <AppStackNavigator.Screen
         name="AuthStackContainer"

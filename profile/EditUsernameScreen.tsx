@@ -1,6 +1,13 @@
-import React, { useState } from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
-import { Text, TextInput, Button, Modal, Portal } from "react-native-paper"; // Import necessary components
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, View, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Text,
+  TextInput,
+  Button,
+  Modal,
+  Portal,
+  HelperText,
+} from "react-native-paper"; // Import necessary components
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
@@ -18,12 +25,69 @@ export const EditUsernameScreen = ({
   const userService = new UserService<SocialUser>();
   const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false); // State to manage error modal visibility
   const [errorMessage, setErrorMessage] = useState<string>(""); // State to store error message
-  const [username, setUsername] = useState<string>(
+  const [username, setUsername] = useState("");
+
+  const usernameCharacterCount = username.length;
+
+  const [searchText, setSearchText] = useState<string>(
     route.params?.userData.userName || ""
   );
+  const [searchResults, setSearchResults] = useState<SocialUser[]>([]); // Assuming the shape of your user data
+  const [loading, setLoading] = useState<boolean>(false); // Track loading state
+  const [errorMsg, setErrorMsg] = useState<String>();
+  const [hasError, setHasError] = useState<boolean>();
 
-  const handleClearName = () => {
+  useEffect(() => {
+    console.log("Use effect Running");
+    console.log("Username:" + route.params?.userData.userName);
+
+    const fetchUsers = async () => {
+      setLoading(true); // Set loading to true when API call begins
+      try {
+        if (searchText.trim() !== "") {
+          console.log("searching:" + searchText);
+          const results: SocialUser[] = await userService.getUsersByUserName(
+            searchText
+          );
+          console.log("Results:" + JSON.stringify(results));
+          console.log("Result size:" + results.length);
+          if (results.length > 0) {
+            setErrorMsg("Username is in use.");
+            setHasError(true);
+          } else {
+            console.log("Username not found, setting error msg to undefined");
+
+            if (!isValidUsername(searchText)) {
+            } else {
+              setErrorMsg(undefined);
+              setHasError(false);
+            }
+          }
+          setSearchResults(results);
+        } else {
+          setSearchResults([]); // Clear search results if search text is empty
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setLoading(false); // Set loading to false when API call finishes
+      }
+    };
+
+    const debounceTimer = setTimeout(fetchUsers, 400);
+
+    return () => {
+      clearTimeout(debounceTimer);
+    };
+  }, [searchText]);
+
+  const isValidUsername = (username: string) => {
+    return /^[a-zA-Z0-9_.]+$/.test(username);
+  };
+
+  const handleClearUserName = () => {
     setUsername("");
+    setSearchText("");
   };
 
   const handleSave = async () => {
@@ -41,7 +105,24 @@ export const EditUsernameScreen = ({
   };
 
   const characterCount = username.length;
-  const isSaveDisabled = characterCount === 0 || characterCount > 30;
+  const isSaveDisabled =
+    characterCount === 0 || characterCount > 30 || hasError;
+
+  const handleSearchChange = (text: string) => {
+    setSearchText(text);
+    setUsername(text);
+    if (text === "") {
+      setErrorMsg(undefined);
+      setHasError(false);
+    } else {
+      // Validate username format
+      const validUsername = isValidUsername(text);
+      if (!validUsername) {
+        setErrorMsg("Invalid Characters"); // Set inUse to true if username is invalid
+      }
+      setHasError(true);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -52,22 +133,29 @@ export const EditUsernameScreen = ({
       <View style={styles.inputContainer}>
         <TextInput
           label="Username"
-          value={username}
-          onChangeText={(text) => setUsername(text)}
+          onChangeText={handleSearchChange}
+          value={searchText}
           style={styles.input}
+          maxLength={20} // Add this line to limit input to 20 characters
           right={
             <TextInput.Icon
               icon="close"
-              onPress={handleClearName}
+              onPress={handleClearUserName}
               color={username ? "black" : "transparent"}
             />
           }
         />
       </View>
-
-      {/* Character Counter */}
-      <View style={styles.counterContainer}>
-        <Text>{`${characterCount}/30`}</Text>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        {!errorMsg ? null : (
+          <HelperText type="error" visible={hasError}>
+            {errorMsg}
+          </HelperText>
+        )}
+        {/* Character Counter */}
+        <View style={styles.counterContainer}>
+          <Text>{`${usernameCharacterCount}/20`}</Text>
+        </View>
       </View>
 
       {/* Information Text */}
@@ -77,9 +165,9 @@ export const EditUsernameScreen = ({
 
       {/* Action Buttons */}
       <View style={styles.buttonContainer}>
-        <Button mode="outlined" onPress={() => navigation.goBack()}>
-          Cancel
-        </Button>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text>Cancel</Text>
+        </TouchableOpacity>
         <Button mode="contained" onPress={handleSave} disabled={isSaveDisabled}>
           Save
         </Button>
@@ -127,7 +215,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     marginTop: 16,
   },
   modalContent: {

@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { List, Divider } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import * as SecureStore from "expo-secure-store";
 
 type ProfileSettingsScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -19,8 +20,17 @@ const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     navigation.push("TermsAndPolicyScreen"); // Navigate to AccountScreen
   };
 
-  const handleLogoutPress = () => {
-    console.log("Logout Pressed. implement Me");
+  const handleLogoutPress = async () => {
+    console.log("Logout Pressed. Implement Me");
+
+    // Delete accessToken and refreshToken from SecureStore
+    await SecureStore.deleteItemAsync("accessToken");
+    await SecureStore.deleteItemAsync("refreshToken");
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "AuthStackContainer" }],
+    });
   };
 
   return (

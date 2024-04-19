@@ -1,8 +1,9 @@
 // UserService.ts
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { UserRushmore } from "../model/UserRushmore";
-import axios, { AxiosResponse } from "axios";
 import FormData from "form-data";
+import api from "./api";
+import { AxiosResponse } from "axios";
 
 interface GraphQLError {
   message: string;
@@ -40,7 +41,7 @@ export class UserService<T> {
   async getUserRushmoreList(uid: string): Promise<UserRushmore[]> {
     console.log("GetUserRushmoreList UID:" + uid);
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           userRushmoresByUid(uid: "${uid}") {
@@ -86,7 +87,7 @@ export class UserService<T> {
 
   async getUserByUserId(uid: string): Promise<SocialUser> {
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           socialUserByUid(uid: "${uid}") {
@@ -144,15 +145,12 @@ export class UserService<T> {
     }
   }
 
-  async getUsersByNickName(
-    uid: string,
-    searchString: string
-  ): Promise<SocialUser[]> {
+  async getUsersByNickName(searchString: string): Promise<SocialUser[]> {
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
-          getUserByNickName(searchString: "${searchString}", uid: "${uid}") {
+          getUserByNickName(searchString: "${searchString}") {
             followersCount
             following
             followingCount
@@ -176,9 +174,29 @@ export class UserService<T> {
     }
   }
 
+  async getUsersByUserName(searchString: string): Promise<SocialUser[]> {
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          getUserByUserName(searchString: "${searchString}") {
+            userName,
+            uid,
+            nickName
+          }
+        }
+        `,
+      });
+      return response.data.data.getUserByUserName;
+    } catch (error) {
+      console.error("Error fetching users by nickname:", error);
+      throw error;
+    }
+  }
+
   async followUser(uid: string, followedUid: string): Promise<User> {
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
           mutation {
             followUser(followedUid: "${followedUid}", uid: "${uid}") {
@@ -198,7 +216,7 @@ export class UserService<T> {
 
   async unfollowUser(uid: string, unfollowedUid: string): Promise<User> {
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
          mutation {
           unFollowUser(uid: "${uid}" unFollowedUid: "${unfollowedUid}") {
@@ -216,7 +234,7 @@ export class UserService<T> {
 
   async getFollowersUserList(uid: string): Promise<SocialUser[]> {
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
          getFollowersUserList(uid: "${uid}") {
@@ -244,7 +262,7 @@ export class UserService<T> {
 
   async getFollowingUserList(uid: string): Promise<SocialUser[]> {
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           getFollowingUserList(uid: "${uid}") {
@@ -274,7 +292,7 @@ export class UserService<T> {
 
   async getSocialUserByUid(uid: string): Promise<SocialUser> {
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           socialUserByUid(uid: "${uid}") {
@@ -301,7 +319,7 @@ export class UserService<T> {
       const response: AxiosResponse<{
         data: { updateUserName: SocialUser };
         errors?: GraphQLError[];
-      }> = await axios.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${this.baseURL}/graphql`, {
         query: `
             mutation {
               updateUserName(userName: "${userName}") {
@@ -344,7 +362,7 @@ export class UserService<T> {
       const response: AxiosResponse<{
         data: { updateUserNickName: SocialUser };
         errors?: GraphQLError[];
-      }> = await axios.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${this.baseURL}/graphql`, {
         query: `
             mutation {
               updateUserNickName(nickName: "${nickName}") {
@@ -375,6 +393,49 @@ export class UserService<T> {
 
       // No errors, return the user data
       return response.data.data.updateUserNickName;
+    } catch (error) {
+      // Handle network errors or unexpected errors
+      console.error("Error updating user name:", error);
+      throw error;
+    }
+  }
+
+  async createUser(): Promise<SocialUser> {
+    try {
+      const response: AxiosResponse<{
+        data: { createUser: SocialUser };
+        errors?: GraphQLError[];
+      }> = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+            mutation {
+              createUser {
+                uid
+                userName
+                nickName
+              }
+            }
+          `,
+      });
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        var errorMessage = "";
+
+        //Problem here, which error do we display, we are assuming only 1
+        response.data.errors.forEach((error: GraphQLError) => {
+          console.error("GraphQL error:", error.message);
+          // You can also log additional information such as error locations and path if needed
+          console.error("Error locations:", error.locations);
+          console.error("Error path:", error.path);
+          errorMessage = error.message;
+        });
+
+        // Throw an error or handle the errors as needed
+        throw new Error(errorMessage);
+      }
+
+      // No errors, return the user data
+      return response.data.data.createUser;
     } catch (error) {
       // Handle network errors or unexpected errors
       console.error("Error updating user name:", error);

@@ -48,6 +48,8 @@ export const AuthStackContainer = () => {
         component={AuthCreateUsernameScreen}
         options={{
           title: "Title: Auth Create Username Screen",
+          headerShown: false,
+          gestureEnabled: false,
         }}
       />
     </AuthStackNavigator.Navigator>

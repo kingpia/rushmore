@@ -14,10 +14,19 @@ import { useState, useEffect } from "react";
 import { TextInput } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { Auth } from "aws-amplify";
+import { CognitoUser } from "amazon-cognito-identity-js"; // Import CognitoUser from the appropriate package
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AuthStackParamList } from "../nav/params/AuthStackParamList";
+import { Hub } from "aws-amplify";
+import * as SecureStore from "expo-secure-store";
 
-export const AuthEmailSignUpScreen = () => {
-  //TODO: On the of all the fields, you need to enable or disable "send code" or "next"
+type AuthEmailSignUpScreenProps = {
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
+};
 
+export const AuthEmailSignUpScreen = ({
+  navigation,
+}: AuthEmailSignUpScreenProps) => {
   //Form
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [emailText, setEmailText] = useState("");
@@ -55,6 +64,9 @@ export const AuthEmailSignUpScreen = () => {
 
   // New state for phone number
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState<string>(); //the returned user from signup
+
+  const [isFormDisabled, setIsFormDisabled] = useState(false);
 
   // Toggle function for the "Sign up with phone" button
   const togglePhoneSignup = () => {
@@ -70,15 +82,22 @@ export const AuthEmailSignUpScreen = () => {
   const handleSendCodeClick = () => {
     // Start the countdown if not already active
     if (!countdownActive) {
-      setCountdown(45);
+      setCountdown(180);
       setCountdownActive(true);
 
       // Logic to send code can be added here if needed
+      //Call handleSendCodeHere
+      console.log("Email:" + emailText);
+      console.log("Password:" + passwordText);
+      console.log("DOB:" + dateOfBirth);
+      handleSendCode(emailText, passwordText);
     }
   };
 
   // Effect to manage countdown
   useEffect(() => {
+    listenToAutoSignInEvent();
+
     let countdownInterval: string | number | NodeJS.Timeout | undefined;
 
     if (countdownActive && countdown > 0) {
@@ -177,27 +196,116 @@ export const AuthEmailSignUpScreen = () => {
   };
 
   // Function to handle sending verification code
-  const handleSendCode = async (
-    email: string,
-    password: string,
-    dob: string
-  ) => {
+  const handleSendCode = async (email: string, password: string) => {
     try {
-      await Auth.signUp({
+      const signUpResponse = await Auth.signUp({
         username: email,
         password: password,
         attributes: {
           email: email,
-          birthdate: dob,
+        },
+        autoSignIn: {
+          // optional - enables auto sign in after user is confirmed
+          enabled: true,
         },
       });
-      console.log("Verification code sent successfully");
+
+      // console.log(signUpResponse);
+
+      setEmail(email);
+      console.log("Cognito Sign Up Response:" + JSON.stringify(signUpResponse));
+
       // Handle success (e.g., show confirmation message to the user)
-    } catch (error) {
-      console.error("Error sending verification code:", error);
-      // Handle error (e.g., display error message to the user)
+    } catch (error: any) {
+      if (error.code === "UsernameExistsException") {
+        resendConfirmationCode(email);
+        //Fetch the user from AUTH since it already exists.
+      } else {
+        console.error("Error sending verification code:", error);
+        setCodeError(error instanceof Error ? error.message : String(error));
+        // Handle other errors
+      }
     }
   };
+
+  // Function to resend confirmation code
+  const resendConfirmationCode = async (email: string) => {
+    console.log("resending confiirmation email:" + email);
+    try {
+      const data: CognitoUser = await Auth.resendSignUp(email);
+      console.log("RsendConfirmationCode:" + JSON.stringify(data));
+
+      console.log("RE-confirmation code resent successfully setting the user");
+      setEmail(email);
+      // Handle success (e.g., show confirmation message to the user)
+    } catch (error) {
+      console.error("Error resending confirmation code:", error);
+      setCodeError(error instanceof Error ? error.message : String(error));
+    }
+  };
+
+  const handleNextButtonClick = async () => {
+    console.log("Next button email click:" + email);
+
+    try {
+      if (!email) {
+        throw new Error("Email is required."); // Throw an error if email is undefined
+      }
+
+      //DISABLE all the inputs and buttons. DateTimePicker, email, code, send code and next button.
+      // Disable the form to prevent further user input
+      setIsFormDisabled(true);
+      //Call the confirm, which will eventually return an event that we are listening to with Hub.listen
+      await Auth.confirmSignUp(
+        email, // Use email directly
+        codeText
+      );
+    } catch (error) {
+      setIsFormDisabled(false);
+      console.log("error confirming sign up", error);
+      setCodeError(error instanceof Error ? error.message : String(error));
+      //TODO Show Helper error here
+    }
+  };
+
+  async function listenToAutoSignInEvent() {
+    //TODO figure out a way to unsubscribe after getting the auth event
+    const unsubscribe = Hub.listen("auth", async ({ payload }) => {
+      const { event } = payload;
+      if (event === "autoSignIn") {
+        console.log("AutoSignInEvent received");
+        const user = payload.data;
+        //console.log("userPayload:" + JSON.stringify(user));
+
+        // If signUpResponse contains the tokens and set access token
+        const accessToken = user?.signInUserSession?.accessToken?.jwtToken;
+        const refreshToken = user?.signInUserSession?.refreshToken?.token;
+
+        console.log("The refres token is :" + refreshToken);
+
+        if (accessToken) {
+          // Store the access token securely
+          saveToken("accessToken", accessToken);
+          saveToken("refreshToken", refreshToken);
+
+          console.log("calling unsubscribe");
+
+          navigation.navigate("AuthCreateUsernameScreen"); // Change 'user' to 'cognitoUser'
+        }
+
+        // assign user
+      } else if (event === "autoSignIn_failure") {
+        console.log("Auto sign in failed:");
+        console.log("autosignin failed:" + JSON.stringify(event));
+        // redirect to sign in page
+      }
+    });
+  }
+
+  async function saveToken(key: string, value: string) {
+    console.log("Saving Token" + key);
+    await SecureStore.setItemAsync(key, value);
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -213,6 +321,7 @@ export const AuthEmailSignUpScreen = () => {
             value={date}
             onChange={onDatePickerChange}
             style={styles.datePicker}
+            disabled={isFormDisabled} // Disable the input if the form is disabled
           />
         )}
         {showDatePicker && Platform.OS === "ios" && (
@@ -258,6 +367,7 @@ export const AuthEmailSignUpScreen = () => {
           value={emailText}
           right={<TextInput.Icon icon="email" />}
           onChangeText={handleEmailChange}
+          disabled={isFormDisabled} // Disable the input if the form is disabled
         />
 
         <HelperText type="error" visible={!!emailError}>
@@ -280,6 +390,7 @@ export const AuthEmailSignUpScreen = () => {
             onChangeText={handlePasswordChange}
             onFocus={handlePasswordFocus}
             onBlur={handlePasswordBlur}
+            disabled={isFormDisabled} // Disable the input if the form is disabled
           />
 
           {(isPasswordFocused || !isLengthValid || !isComplexityValid) &&
@@ -331,7 +442,9 @@ export const AuthEmailSignUpScreen = () => {
             value={codeText}
             onChangeText={handleCodeChange}
             style={{ flex: 7 }}
+            disabled={isFormDisabled} // Disable the input if the form is disabled
           />
+
           <Button
             mode="text"
             disabled={
@@ -340,7 +453,8 @@ export const AuthEmailSignUpScreen = () => {
               !isComplexityValid ||
               !validatePassword(passwordText) ||
               !validateEmail(emailText) ||
-              countdown > 0
+              countdown > 0 ||
+              isFormDisabled
             }
             onPress={handleSendCodeClick}
             style={{ flex: 3, alignSelf: "center" }}
@@ -357,19 +471,21 @@ export const AuthEmailSignUpScreen = () => {
           mode="contained"
           disabled={
             !(
-              validateEmail(emailText) &&
-              isLengthValid &&
-              isComplexityValid &&
-              validatePassword(passwordText) &&
-              (isAgeValid || false) &&
-              dateOfBirth !== null &&
-              dateOfBirth !== "" &&
-              codeText !== "" &&
-              !codeError &&
-              countdown > 0
+              (validateEmail(emailText) &&
+                isLengthValid &&
+                isComplexityValid &&
+                validatePassword(passwordText) &&
+                (isAgeValid || false) &&
+                dateOfBirth !== null &&
+                dateOfBirth !== "" &&
+                codeText !== "" &&
+                !codeError &&
+                countdown > 0) ||
+              isFormDisabled
             )
           }
           style={styles.button}
+          onPress={handleNextButtonClick} // Add onPress event handler
         >
           Next
         </Button>

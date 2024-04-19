@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { SafeAreaView, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, TextInput, Button, Portal, Modal } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
@@ -38,7 +38,7 @@ export const EditNameScreen = ({ route, navigation }: EditNameScreenProps) => {
   };
 
   const characterCount = name.length;
-  const isSaveDisabled = characterCount === 0 || characterCount > 30;
+  const isSaveDisabled = characterCount === 0 || characterCount > 20;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -63,7 +63,7 @@ export const EditNameScreen = ({ route, navigation }: EditNameScreenProps) => {
 
       {/* Character Counter */}
       <View style={styles.counterContainer}>
-        <Text>{`${characterCount}/30`}</Text>
+        <Text>{`${characterCount}/20`}</Text>
       </View>
 
       {/* Information Text */}
@@ -71,9 +71,9 @@ export const EditNameScreen = ({ route, navigation }: EditNameScreenProps) => {
 
       {/* Action Buttons */}
       <View style={styles.buttonContainer}>
-        <Button mode="outlined" onPress={() => navigation.goBack()}>
-          Cancel
-        </Button>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text>Cancel</Text>
+        </TouchableOpacity>
         <Button mode="contained" onPress={handleSave} disabled={isSaveDisabled}>
           Save
         </Button>
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     marginTop: 16,
   },
   modalContent: {

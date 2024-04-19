@@ -10,7 +10,7 @@ import {
   rushmoreListURL,
   yourCompletedRushmoreListURL,
 } from "../sampleDataConfig";
-import axios from "axios";
+import api from "./api";
 
 export class RushmoreService<T> {
   private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
@@ -22,12 +22,12 @@ export class RushmoreService<T> {
 
       if (toFetch === ApiFetchEnums.YOUR_IN_PROGRESS_RUSHMORE_LIST) {
         endpoint = `/inProgressUserRushmores/${uid}`;
-        const response = await axios.get<T[]>(`${this.baseURL}${endpoint}`);
+        const response = await api.get<T[]>(`${this.baseURL}${endpoint}`);
         return response.data;
         //data = require("../sampleApiData/yourInProgressRushmoreList.json");
       } else if (toFetch === ApiFetchEnums.YOUR_COMPLETED_RUSHMORE_LIST) {
         endpoint = `/completedUserRushmores/${uid}`;
-        const response = await axios.get<T[]>(`${this.baseURL}${endpoint}`);
+        const response = await api.get<T[]>(`${this.baseURL}${endpoint}`);
         return response.data;
 
         //data = require("../sampleApiData/yourCompletedRushmoreList.json");
@@ -233,7 +233,7 @@ export class RushmoreService<T> {
     UserRushmoreGameSession[]
   > {
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           myInProgressUserRushmoreGameSessions {
@@ -286,7 +286,7 @@ export class RushmoreService<T> {
     UserRushmoreGameSession[]
   > {
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           mySolvedUserRushmoreGameSessions {
@@ -338,7 +338,7 @@ export class RushmoreService<T> {
   async getMyBookmarkedUserRushmores(): Promise<UserRushmoreDTO[]> {
     console.log("getMyBookmarkedUserRushmores");
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           myBookmarkedUserRushmores {
@@ -394,7 +394,7 @@ export class RushmoreService<T> {
 
   async getMyLikedUserRushmores(): Promise<UserRushmoreDTO[]> {
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           myLikedUserRushmores {
@@ -451,7 +451,7 @@ export class RushmoreService<T> {
   async getMyInProgressRushmoreList(): Promise<UserRushmoreDTO[]> {
     console.log("getMyInprogressRushmores");
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
             myInProgressUserRushmores {
@@ -516,7 +516,7 @@ export class RushmoreService<T> {
     console.log("getMyCompletedRushmoreList");
 
     try {
-      const response = await axios.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           myCompletedUserRushmores {

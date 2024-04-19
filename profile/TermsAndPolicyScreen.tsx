@@ -5,9 +5,6 @@ import { Appbar, Paragraph } from "react-native-paper";
 const TermsAndPolicyScreen: React.FC = () => {
   return (
     <View style={styles.container}>
-      <Appbar.Header>
-        <Appbar.Content title="Terms and Policy" />
-      </Appbar.Header>
       <ScrollView style={styles.content}>
         <Paragraph>
           By using this application, you agree to the following terms and

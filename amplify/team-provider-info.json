@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-rushmore-dev-d65f3-authRole",
+      "UnauthRoleArn": "arn:aws:iam::992382505532:role/amplify-rushmore-dev-d65f3-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::992382505532:role/amplify-rushmore-dev-d65f3-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-rushmore-dev-d65f3-deployment",
+      "UnauthRoleName": "amplify-rushmore-dev-d65f3-unauthRole",
+      "StackName": "amplify-rushmore-dev-d65f3",
+      "StackId": "arn:aws:cloudformation:us-east-1:992382505532:stack/amplify-rushmore-dev-d65f3/70a13af0-f82f-11ee-adb6-0eaf90b6d009",
+      "AmplifyAppId": "d26ayf0ldzyqza"
+    },
+    "categories": {
+      "auth": {
+        "rushmoref49671ee": {}
+      }
+    }
+  }
+}
