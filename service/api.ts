@@ -23,31 +23,17 @@ api.interceptors.request.use(
     console.log("in API Interceptor.");
 
     // Check if access token is expired or not present
-    const accessToken = await SecureStore.getItemAsync("accessToken");
+    let accessToken = await SecureStore.getItemAsync("accessToken");
     //console.log("Access token:" + accessToken);
     if (!accessToken) {
       throw new Error("Access token not found.");
     }
 
-    // Check if access token is expired
-    console.log(
-      "gettingAccssTokenExpiration. Why can't we get this from acess token?"
-    );
-
-    console.log("AccessToken:" + accessToken);
     // Decode the token to extract the payload
     //let decoded = jwt_decode(accessToken);
     const decoded = jwtDecode(accessToken);
 
-    console.log("Decoded EXP:" + decoded.exp);
-
     const accessTokenExpiration: number = decoded.exp || 0;
-
-    if (!accessToken) {
-      console.log("no access token found");
-    }
-    let accessTokenExpirationDt = new Date(accessTokenExpiration);
-    console.log("AccessTokenExpiration:" + accessTokenExpirationDt);
 
     if (accessTokenExpiration * 1000 < new Date().getTime()) {
       console.log(
@@ -56,7 +42,8 @@ api.interceptors.request.use(
           " is less than new Date " +
           new Date().getTime()
       );
-      await refreshAccessToken();
+      accessToken = await refreshAccessToken();
+      saveToken("accessToken", accessToken);
     }
 
     // Add access token to request headers
@@ -69,24 +56,20 @@ api.interceptors.request.use(
 );
 
 // Function to refresh access token
-async function refreshAccessToken() {
-  console.log("resfresh access token, because original token was expired");
-
-  console.log("refreshAccessToken");
+async function refreshAccessToken(): Promise<string> {
+  console.log(
+    "Refreshing access token, because the original token was expired"
+  );
   try {
     // Retrieve refresh token from SecureStore
     const refreshToken = await SecureStore.getItemAsync("refreshToken");
     if (!refreshToken) {
-      console.log("refreshToken is empty");
+      console.log("Refresh token is empty");
       // TODO Redirect to the LOGIN screen
       throw new Error("Refresh token not found.");
     }
 
-    console.log(
-      "Making call to cognito to refresh acess token: :I DONT THIS THIS WORKS. HERE IS THE REFRESH TOKEN" +
-        refreshToken +
-        "========="
-    );
+    console.log("Making call to Cognito to refresh access token...");
 
     // Make a request to Cognito to refresh access token
     const requestData = {
@@ -104,18 +87,23 @@ async function refreshAccessToken() {
         headers,
       }
     );
-    console.log("New Access Token Response:", response.data);
 
-    saveToken("accessToken", response.data);
-    console.log("After Gettign Token Back");
+    console.log(
+      "New Access Token:",
+      response.data.AuthenticationResult.AccessToken
+    );
+
+    // Return the newly refreshed access token
+    return response.data.AuthenticationResult.AccessToken;
   } catch (error) {
     // Handle token refresh failure
     console.error("Error refreshing access token:", error);
     throw error;
   }
 }
+
 async function saveToken(key: string, value: string) {
-  console.log("Saving Token" + key);
+  console.log("Saving Token key:" + key + ", token" + value);
   await SecureStore.setItemAsync(key, value);
 }
 

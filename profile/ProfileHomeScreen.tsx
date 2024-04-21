@@ -112,12 +112,11 @@ export const ProfileHomeScreen = ({
   // Inside ProfileHomeScreen component
   useFocusEffect(
     React.useCallback(() => {
-      console.log("Use Effect Running");
+      console.log("ProfileHome Use Effect Running...");
       const fetchData = async () => {
         console.log("Fetching user Data:");
         try {
-          const uid = "6662";
-          const data = await userService.getUserByUserId(uid);
+          const data = await userService.getMyUserProfile();
           console.log("UserData" + JSON.stringify(data));
           setUserData(data);
           setIsLoading(false);
@@ -135,28 +134,53 @@ export const ProfileHomeScreen = ({
     }, [])
   );
 
-  const navigateToEditProfileScreen = (userData: SocialUser) => {
+  const navigateToEditProfileScreen = (user: SocialUser) => {
     navigation.push("EditProfileScreen", {
-      user: userData,
+      user: user,
     });
   };
 
-  const navigateToFollowingScreen = (userData: SocialUser) => {
+  const navigateToFollowingScreen = (user: SocialUser) => {
+    console.log("UserData Before Navigate:" + JSON.stringify(user));
     navigation.push("UserNetworkTopTabContainer", {
-      screen: "FollowingScreen",
-      user: userData,
+      screen: "FollowingScreen", // Navigate to the tab navigator
+      user: user,
+      params: {
+        // Pass parameters to the tab navigator
+        screen: "FollowingScreen", // Navigate to the FollowingScreen within the tab
+        params: {
+          // Pass parameters to the FollowingScreen
+          user: user,
+        },
+      },
     });
   };
-  const navigateToFollowersScreen = (userData: SocialUser) => {
+  const navigateToFollowersScreen = (user: SocialUser) => {
     navigation.push("UserNetworkTopTabContainer", {
       screen: "FollowersScreen",
-      user: userData,
+      user: user,
+      params: {
+        // Pass parameters to the tab navigator
+        screen: "FollowingScreen", // Navigate to the FollowingScreen within the tab
+        params: {
+          // Pass parameters to the FollowingScreen
+          user: user,
+        },
+      },
     });
   };
-  const navigateToFriendsScreen = (userData: SocialUser) => {
+  const navigateToFriendsScreen = (user: SocialUser) => {
     navigation.push("UserNetworkTopTabContainer", {
       screen: "FriendsScreen",
-      user: userData,
+      user: user,
+      params: {
+        // Pass parameters to the tab navigator
+        screen: "FollowingScreen", // Navigate to the FollowingScreen within the tab
+        params: {
+          // Pass parameters to the FollowingScreen
+          user: user,
+        },
+      },
     });
   };
 

@@ -13,14 +13,16 @@ type EditNameScreenProps = {
 
 export const EditNameScreen = ({ route, navigation }: EditNameScreenProps) => {
   const userService = new UserService<SocialUser>();
-  const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false); // State to manage error modal visibility
-  const [errorMessage, setErrorMessage] = useState<string>(""); // State to store error message
+  const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [name, setName] = useState<string>(
     route.params?.userData.nickName || ""
   );
+  const [isModified, setIsModified] = useState<boolean>(false); // New state to track if the input is modified
 
   const handleClearName = () => {
     setName("");
+    setIsModified(false); // Clearing input also means it's not modified
   };
 
   const handleSave = async () => {
@@ -32,8 +34,8 @@ export const EditNameScreen = ({ route, navigation }: EditNameScreenProps) => {
       });
     } catch (error: any) {
       console.error("Error updating nickname:", error);
-      setErrorMessage(error.message); // Set error message
-      setErrorModalVisible(true); // Show error modal
+      setErrorMessage(error.message);
+      setErrorModalVisible(true);
     }
   };
 
@@ -42,34 +44,34 @@ export const EditNameScreen = ({ route, navigation }: EditNameScreenProps) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Title */}
       <Text style={styles.title}>Edit Name</Text>
-      {/* Text Input */}
       <View style={styles.inputContainer}>
         <TextInput
           label="Your Nickname"
           value={name}
-          onChangeText={(text) => setName(text)}
+          onChangeText={(text) => {
+            setName(text);
+            setIsModified(true); // Set isModified to true when the input changes
+          }}
           style={styles.input}
           right={
-            <TextInput.Icon
-              icon="close"
-              onPress={handleClearName}
-              color={name ? "black" : "transparent"}
-            />
+            isModified && ( // Only display the clear icon if the input is modified
+              <TextInput.Icon
+                icon="close"
+                onPress={handleClearName}
+                color={name ? "black" : "transparent"}
+              />
+            )
           }
         />
       </View>
 
-      {/* Character Counter */}
       <View style={styles.counterContainer}>
         <Text>{`${characterCount}/20`}</Text>
       </View>
 
-      {/* Information Text */}
       <Text>Your nickname can only be changed once every 10 days.</Text>
 
-      {/* Action Buttons */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text>Cancel</Text>
@@ -79,7 +81,6 @@ export const EditNameScreen = ({ route, navigation }: EditNameScreenProps) => {
         </Button>
       </View>
 
-      {/* Error Modal */}
       <Portal>
         <Modal
           visible={errorModalVisible}
@@ -111,9 +112,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-  },
-  clearButton: {
-    marginLeft: 8,
   },
   counterContainer: {
     alignItems: "flex-end",

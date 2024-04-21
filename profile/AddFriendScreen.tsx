@@ -50,7 +50,8 @@ const AddFriendsScreen = () => {
 
   const followUser = async (followedUid: string) => {
     try {
-      const updatedUser = await userService.followUser("6662", followedUid);
+      console.log("FollowUser - followedUid:" + followedUid);
+      const updatedUser = await userService.followUser(followedUid);
       // Update the user's following status in searchResults
       setSearchResults((prevResults) =>
         prevResults.map((user) =>
@@ -63,8 +64,10 @@ const AddFriendsScreen = () => {
   };
 
   const unfollowUser = async (followedUid: string) => {
+    console.log("unFollowerUser - followedUid:" + followedUid);
+
     try {
-      const updatedUser = await userService.unfollowUser("6662", followedUid);
+      const updatedUser = await userService.unfollowUser(followedUid);
       // Update the user's following status in searchResults
       setSearchResults((prevResults) =>
         prevResults.map((user) =>

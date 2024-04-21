@@ -14,11 +14,15 @@ import { AppStackParamList } from "../nav/params/AppStackParamList";
 
 type FollowersScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
+  route: any;
 };
 
 const userService = new UserService(); // Instantiate UserService
 
-export const FollowersScreen = ({ navigation }: FollowersScreenProps) => {
+export const FollowersScreen = ({
+  navigation,
+  route,
+}: FollowersScreenProps) => {
   const [followersList, setFollowersList] = useState<SocialUser[]>([]);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -28,7 +32,13 @@ export const FollowersScreen = ({ navigation }: FollowersScreenProps) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const followersList = await userService.getFollowersUserList("6662");
+      console.log("THE UID is :" + route.params?.user?.uid);
+      const userData: SocialUser | undefined = route.params?.params?.user; // Access userData from route params
+
+      const followersList = await userService.getFollowersUserList(
+        userData?.uid ?? ""
+      );
+
       setFollowersList(followersList);
     } catch (error) {
       console.error("Error fetching following users:", error);
@@ -62,7 +72,7 @@ export const FollowersScreen = ({ navigation }: FollowersScreenProps) => {
 
   const followUser = async (followedUid: string) => {
     try {
-      const updatedUser = await userService.followUser("6662", followedUid);
+      const updatedUser = await userService.followUser(followedUid);
       // Update the user's following status in searchResults
     } catch (error) {
       console.error("Error following user:", error);
@@ -71,7 +81,7 @@ export const FollowersScreen = ({ navigation }: FollowersScreenProps) => {
 
   const unfollowUser = async (followedUid: string) => {
     try {
-      const updatedUser = await userService.unfollowUser("6662", followedUid);
+      const updatedUser = await userService.unfollowUser(followedUid);
       // Update the user's following status in searchResults
     } catch (error) {
       console.error("Error unfollowing user:", error);

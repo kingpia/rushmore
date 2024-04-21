@@ -114,6 +114,35 @@ export class UserService<T> {
     }
   }
 
+  async getMyUserProfile(): Promise<SocialUser> {
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          getMyUserProfile {
+            followersCount
+            followingCount
+            nickName
+            profileImagePath
+            uid
+            userName
+            socialRelationship {
+              isFollowed
+              isFollowing
+            }
+          }
+        }
+        `,
+      });
+
+      //console.log("OUTPUT:" + JSON.stringify(response.data));
+      return response.data.data.getMyUserProfile;
+    } catch (error) {
+      console.error("Error fetching user by user ID:", error);
+      throw error;
+    }
+  }
+
   async userProfileImageUpdate(imageUri: string): Promise<void> {
     try {
       const formData = new FormData();
@@ -194,12 +223,12 @@ export class UserService<T> {
     }
   }
 
-  async followUser(uid: string, followedUid: string): Promise<User> {
+  async followUser(followedUid: string): Promise<User> {
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
           mutation {
-            followUser(followedUid: "${followedUid}", uid: "${uid}") {
+            followUser(followedUid: "${followedUid}") {
               userName
               nickName
               profileImagePath
@@ -214,12 +243,12 @@ export class UserService<T> {
     }
   }
 
-  async unfollowUser(uid: string, unfollowedUid: string): Promise<User> {
+  async unfollowUser(unfollowedUid: string): Promise<User> {
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
          mutation {
-          unFollowUser(uid: "${uid}" unFollowedUid: "${unfollowedUid}") {
+          unFollowUser(unFollowedUid: "${unfollowedUid}") {
             uid
           }
         }
@@ -261,6 +290,7 @@ export class UserService<T> {
   }
 
   async getFollowingUserList(uid: string): Promise<SocialUser[]> {
+    console.log("getFollowinguserList:" + uid);
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
         query: `

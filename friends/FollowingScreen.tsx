@@ -11,14 +11,21 @@ import { UserService } from "../service/UserService";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import SocialUserCard from "../components/SocialUserCard";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { RouteProp } from "@react-navigation/native";
+import { RushmoreTabContainerParamList } from "../nav/params/RushmoreTabContainerParamList";
+import { UserNetworkTopTabContainerParamList } from "../nav/params/UserNetworkTopTabContainerParamList";
 
 type FollowingScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
+  route: any;
 };
 
 const userService = new UserService(); // Instantiate UserService
 
-export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
+export const FollowingScreen = ({
+  navigation,
+  route,
+}: FollowingScreenProps) => {
   const [followingList, setFollowingList] = useState<SocialUser[]>([]);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -27,9 +34,21 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
   const onChangeSearch = (query: string) => setSearchQuery(query);
 
   const fetchData = async () => {
+    console.log(
+      "In the folllowing Screen Fetching Data. I need the route stuff:" +
+        JSON.stringify(route.params.params.user.uid)
+    );
+
+    console.log("THE UID is :" + route.params?.user?.uid);
+
     setLoading(true);
     try {
-      const followingUsers = await userService.getFollowingUserList("6662");
+      console.log("THE UID is :" + route.params?.user?.uid);
+      const userData: SocialUser | undefined = route.params?.params?.user; // Access userData from route params
+
+      const followingUsers = await userService.getFollowingUserList(
+        userData?.uid ?? ""
+      );
       setFollowingList(followingUsers);
     } catch (error) {
       console.error("Error fetching following users:", error);
@@ -69,7 +88,7 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
 
   const followUser = async (followedUid: string) => {
     try {
-      const updatedUser = await userService.followUser("6662", followedUid);
+      const updatedUser = await userService.followUser(followedUid);
     } catch (error) {
       console.error("Error following user:", error);
     }
@@ -77,7 +96,7 @@ export const FollowingScreen = ({ navigation }: FollowingScreenProps) => {
 
   const unfollowUser = async (followedUid: string) => {
     try {
-      const updatedUser = await userService.unfollowUser("6662", followedUid);
+      const updatedUser = await userService.unfollowUser(followedUid);
     } catch (error) {
       console.error("Error unfollowing user:", error);
     }

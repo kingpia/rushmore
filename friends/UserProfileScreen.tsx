@@ -90,7 +90,7 @@ export const UserProfileScreen = ({
 
   const followUser = async (followedUid: string) => {
     try {
-      const updatedUser = await userService.followUser("6662", followedUid);
+      const updatedUser = await userService.followUser(followedUid);
     } catch (error) {
       console.error("Error following user:", error);
     }
@@ -98,7 +98,7 @@ export const UserProfileScreen = ({
 
   const unfollowUser = async (followedUid: string) => {
     try {
-      const updatedUser = await userService.unfollowUser("6662", followedUid);
+      const updatedUser = await userService.unfollowUser(followedUid);
     } catch (error) {
       console.error("Error unfollowing user:", error);
     }
