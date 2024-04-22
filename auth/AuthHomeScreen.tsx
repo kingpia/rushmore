@@ -49,12 +49,13 @@ export const AuthHomeScreen = ({ navigation }: HomeScreenProps) => {
           </View>
 
           <Button
+            icon="email"
             mode="contained"
             onPress={() => {
               navigation.push("AuthEmailSignUpScreen");
             }}
           >
-            Continue with Email or Phone
+            Continue with Email
           </Button>
         </View>
         {/* Already have an account? */}
@@ -72,9 +73,7 @@ export const AuthHomeScreen = ({ navigation }: HomeScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
+    margin: 10,
   },
   content: {
     width: "100%",
@@ -94,6 +93,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 16,
+    marginTop: 10,
   },
 });

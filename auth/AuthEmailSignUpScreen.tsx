@@ -310,7 +310,6 @@ export const AuthEmailSignUpScreen = ({
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text>Rushmore</Text>
         <Text>Date of Birth</Text>
 
         {showDatePicker && (
@@ -383,7 +382,7 @@ export const AuthEmailSignUpScreen = ({
             secureTextEntry={!isPasswordVisible}
             right={
               <TextInput.Icon
-                icon={isPasswordVisible ? "eye-off" : "eye"}
+                icon={isPasswordVisible ? "eye" : "eye-off"}
                 onPress={togglePasswordVisibility}
               />
             }
@@ -404,7 +403,12 @@ export const AuthEmailSignUpScreen = ({
                     size={15}
                     color={isLengthValid ? "green" : "red"}
                   />
-                  <Text style={{ color: isLengthValid ? "green" : "red" }}>
+                  <Text
+                    style={{
+                      color: isLengthValid ? "green" : "red",
+                      marginBottom: 5,
+                    }}
+                  >
                     {" "}
                     8-20 characters
                   </Text>
@@ -442,6 +446,7 @@ export const AuthEmailSignUpScreen = ({
             value={codeText}
             onChangeText={handleCodeChange}
             style={{ flex: 7 }}
+            keyboardType="numeric" // Set the keyboardType prop to 'numeric'
             disabled={isFormDisabled} // Disable the input if the form is disabled
           />
 

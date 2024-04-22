@@ -5,6 +5,7 @@ import { AuthResetPasswordEmailScreen } from "../../auth/AuthResetPasswordEmailS
 import { AuthCreateUsernameScreen } from "../../auth/AuthCreateUsernameScreen";
 import { AuthLogInScreen } from "../../auth/AuthLogInScreen";
 import { AuthStackParamList } from "../params/AuthStackParamList";
+import { AuthResetPasswordCodeScreen } from "../../auth/AuthResetPassswordCodeScreen";
 
 const AuthStackNavigator = createNativeStackNavigator<AuthStackParamList>();
 
@@ -33,14 +34,21 @@ export const AuthStackContainer = () => {
         name="AuthLogInScreen"
         component={AuthLogInScreen}
         options={{
-          headerTitle: "", // Empty string to hide the title
+          headerTitle: "Sign In", // Empty string to hide the title
         }}
       />
       <AuthStackNavigator.Screen
         name="AuthResetPasswordEmailScreen"
         component={AuthResetPasswordEmailScreen}
         options={{
-          title: "Title: Auth Reset Password Email Screen",
+          title: "Forgot Password",
+        }}
+      />
+      <AuthStackNavigator.Screen
+        name="AuthResetPasswordCodeScreen"
+        component={AuthResetPasswordCodeScreen}
+        options={{
+          title: "Forgot Password",
         }}
       />
       <AuthStackNavigator.Screen

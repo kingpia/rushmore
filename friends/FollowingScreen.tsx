@@ -34,13 +34,6 @@ export const FollowingScreen = ({
   const onChangeSearch = (query: string) => setSearchQuery(query);
 
   const fetchData = async () => {
-    console.log(
-      "In the folllowing Screen Fetching Data. I need the route stuff:" +
-        JSON.stringify(route.params.params.user.uid)
-    );
-
-    console.log("THE UID is :" + route.params?.user?.uid);
-
     setLoading(true);
     try {
       console.log("THE UID is :" + route.params?.user?.uid);

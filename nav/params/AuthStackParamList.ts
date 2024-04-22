@@ -7,6 +7,9 @@ export type AuthStackParamList = {
   AuthCreateUsernameScreen: undefined;
   AuthResetPasswordEmailScreen: undefined;
   AuthLogInScreen: undefined;
+  AuthResetPasswordCodeScreen: {
+    email: string;
+  };
 };
 
 export type StackContainerScreenProps<S extends keyof AuthStackParamList> =

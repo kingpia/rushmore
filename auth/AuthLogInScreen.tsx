@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Button, TextInput } from "react-native-paper";
-import { SafeAreaView, View } from "react-native";
+import { Button, HelperText, TextInput, Text } from "react-native-paper";
+import { SafeAreaView, View, StyleSheet } from "react-native";
 import { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
@@ -15,6 +15,7 @@ export const AuthLogInScreen = ({
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   const isButtonEnabled = emailOrUsername.length > 0 && password.length >= 8;
 
@@ -36,6 +37,8 @@ export const AuthLogInScreen = ({
       });
     } catch (error) {
       console.error("Error signing in:", error);
+      setLoginError("Invalid login credentials");
+      //TODO:
       // If login is unsuccessful, display an alert
     }
   };
@@ -50,7 +53,7 @@ export const AuthLogInScreen = ({
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <View>
         <TextInput
           label="Email or Username"
@@ -66,37 +69,48 @@ export const AuthLogInScreen = ({
           secureTextEntry={!isPasswordVisible}
           right={
             <TextInput.Icon
-              icon={isPasswordVisible ? "eye-off" : "eye"}
+              icon={isPasswordVisible ? "eye" : "eye-off"}
               onPress={togglePasswordVisibility}
             />
           }
           onChangeText={(text) => setPassword(text)}
           style={{ margin: 10 }}
         />
+
+        <HelperText type="error" visible={!!loginError}>
+          {loginError}
+        </HelperText>
+
         <Button
           mode="text"
           onPress={() => {
-            // Navigate to the forgot password
-            console.log("Navigate to Forgot Password Screen");
             navigation.navigate("AuthStackContainer", {
               screen: "AuthResetPasswordEmailScreen",
             });
           }}
         >
-          Forgot Password
-        </Button>
-
-        <Button
-          mode="contained"
-          onPress={handleLoginPress}
-          disabled={!isButtonEnabled}
-          style={{ margin: 10 }}
-        >
-          Log in
+          Forgot your password?
         </Button>
       </View>
 
-      <View>
+      <Button
+        mode="contained"
+        onPress={handleLoginPress}
+        disabled={!isButtonEnabled}
+        style={{ marginTop: 30 }}
+      >
+        Log in
+      </Button>
+
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 20,
+        }}
+      >
+        <Text>Don't have an account?</Text>
         <Button
           mode="text"
           onPress={() => {
@@ -111,3 +125,10 @@ export const AuthLogInScreen = ({
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 10,
+  },
+});
