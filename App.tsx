@@ -24,8 +24,8 @@ export default function App() {
       try {
         // Pre-load fonts, make any API calls you need to do here
         console.log("Doing some work in prepare method");
-        //deleteItemFromSecureStore("accessToken"); // Delete item with key 'accessToken'
-        //deleteItemFromSecureStore("refreshToken"); // Delete item with key 'accessToken'
+        deleteItemFromSecureStore("accessToken"); // Delete item with key 'accessToken'
+        deleteItemFromSecureStore("refreshToken"); // Delete item with key 'accessToken'
 
         const accessToken = await SecureStore.getItemAsync("accessToken");
         if (!accessToken) {

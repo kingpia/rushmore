@@ -6,6 +6,7 @@ import { UserRushmoreItem } from "./UserRushmoreItem";
 
 export interface UserRushmore {
   urId: number; //user rushmore id
+  uid: string;
   rushmore: Rushmore;
   ownerUser: SocialUser;
   visibility: RushmoreVisibilityEnums;

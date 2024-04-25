@@ -24,6 +24,7 @@ api.interceptors.request.use(
 
     // Check if access token is expired or not present
     let accessToken = await SecureStore.getItemAsync("accessToken");
+    console.log("Access Token:" + accessToken);
     //console.log("Access token:" + accessToken);
     if (!accessToken) {
       throw new Error("Access token not found.");

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button, HelperText, TextInput, Text } from "react-native-paper";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { SafeAreaView, View, StyleSheet, Animated } from "react-native";
 import { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
@@ -16,10 +16,30 @@ export const AuthLogInScreen = ({
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [fadeInValue] = useState(new Animated.Value(0)); // Animated value for fading animation
 
   const isButtonEnabled = emailOrUsername.length > 0 && password.length >= 8;
 
+  // Fade animation function
+  const fadeIn = () => {
+    Animated.timing(fadeInValue, {
+      toValue: 1,
+      duration: 1000, // Adjust the duration as needed
+      useNativeDriver: true,
+    }).start();
+  };
+
+  // Reset fade animation
+  const resetFade = () => {
+    Animated.timing(fadeInValue, {
+      toValue: 0,
+      duration: 0, // Reset instantly
+      useNativeDriver: true,
+    }).start();
+  };
+
   const handleLoginPress = async () => {
+    resetFade();
     try {
       // Sign in with email/username and password
       const user = await Auth.signIn(emailOrUsername, password);
@@ -36,6 +56,7 @@ export const AuthLogInScreen = ({
         routes: [{ name: "RushmoreTabContainer" }],
       });
     } catch (error) {
+      fadeIn();
       console.error("Error signing in:", error);
       setLoginError("Invalid login credentials");
       //TODO:
@@ -77,9 +98,15 @@ export const AuthLogInScreen = ({
           style={{ margin: 10 }}
         />
 
-        <HelperText type="error" visible={!!loginError}>
-          {loginError}
-        </HelperText>
+        <Animated.View
+          style={{
+            opacity: fadeInValue,
+          }}
+        >
+          <HelperText type="error" visible={!!loginError}>
+            {loginError}
+          </HelperText>
+        </Animated.View>
 
         <Button
           mode="text"
