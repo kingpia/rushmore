@@ -11,6 +11,7 @@ import * as SecureStore from "expo-secure-store";
 import { Amplify, Auth } from "aws-amplify";
 import amplifyconfig from "./src/amplifyconfiguration.json";
 import { AppStackParamList } from "./nav/params/AppStackParamList";
+import { UserFocusProvider } from "./service/UserFocusContext";
 Amplify.configure(amplifyconfig);
 
 export default function App() {
@@ -24,8 +25,9 @@ export default function App() {
       try {
         // Pre-load fonts, make any API calls you need to do here
         console.log("Doing some work in prepare method");
-        deleteItemFromSecureStore("accessToken"); // Delete item with key 'accessToken'
-        deleteItemFromSecureStore("refreshToken"); // Delete item with key 'accessToken'
+        //deleteItemFromSecureStore("accessToken"); // Delete item with key 'accessToken'
+        //deleteItemFromSecureStore("refreshToken"); // Delete item with key 'accessToken'
+        //deleteItemFromSecureStore("uid"); // Delete item with key 'accessToken'
 
         const accessToken = await SecureStore.getItemAsync("accessToken");
         if (!accessToken) {
@@ -91,7 +93,9 @@ export default function App() {
     <Providers>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaView style={{ flex: 1 }}>
-          <AppStackContainer initialScreen={initialRoute} />
+          <UserFocusProvider>
+            <AppStackContainer initialScreen={initialRoute} />
+          </UserFocusProvider>
         </SafeAreaView>
       </GestureHandlerRootView>
     </Providers>

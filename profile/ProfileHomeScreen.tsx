@@ -25,6 +25,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import FollowingRushmoreListsComponent from "../components/FollowingRushmoreListsComponent";
 import { MyBookmarkedListsComponent } from "../components/MyBookmarkedListComponent";
 import { MyLikedListsComponent } from "../components/MyLikedListComponent";
+import { useUserFocus } from "../service/UserFocusContext";
 
 type ProfileStackContainerScreenProps = NativeStackScreenProps<
   SettingsStackParamList & AppStackParamList
@@ -108,6 +109,8 @@ export const ProfileHomeScreen = ({
   const [isLoading, setIsLoading] = useState(true);
   const userService = new UserService<SocialUser>();
   const [menuVisible, setMenuVisible] = useState(false);
+  console.log("ProfileHomeScreen");
+  const { userFocus, setUserFocus } = useUserFocus(); // Destructure setUserFocus here
 
   // Inside ProfileHomeScreen component
   useFocusEffect(
@@ -119,6 +122,11 @@ export const ProfileHomeScreen = ({
           const data = await userService.getMyUserProfile();
           console.log("UserData" + JSON.stringify(data));
           setUserData(data);
+          /**
+           * Set the focus so if we navigate to UserNetworkTabs, we have the context of which user we are querying for.
+           */
+          setUserFocus(data.uid);
+
           setIsLoading(false);
         } catch (error) {
           console.error("Error fetching rushmore data:", error);
@@ -155,13 +163,14 @@ export const ProfileHomeScreen = ({
       },
     });
   };
+
   const navigateToFollowersScreen = (user: SocialUser) => {
     navigation.push("UserNetworkTopTabContainer", {
       screen: "FollowersScreen",
       user: user,
       params: {
         // Pass parameters to the tab navigator
-        screen: "FollowingScreen", // Navigate to the FollowingScreen within the tab
+        screen: "FollowersScreen", // Navigate to the FollowingScreen within the tab
         params: {
           // Pass parameters to the FollowingScreen
           user: user,

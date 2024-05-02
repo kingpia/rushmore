@@ -19,7 +19,8 @@ const SocialUserCard: React.FC<SocialUserCardProps> = ({
 
   useEffect(() => {
     // Update button text based on the initial relationship status
-    console.log("should be updating button tnext here:");
+    //console.log("should be updating button tnext here:" + JSON.stringify(user));
+
     setButtonText(getSocialNetworkButtonText(user.socialRelationship));
   }, [user.socialRelationship]);
 
@@ -41,6 +42,9 @@ const SocialUserCard: React.FC<SocialUserCardProps> = ({
       case "Following":
         onUnfollow(user.uid);
         setButtonText("Follow");
+        break;
+      case "Its You":
+        setButtonText("Hi");
         break;
       default:
         break;
@@ -66,17 +70,10 @@ const SocialUserCard: React.FC<SocialUserCardProps> = ({
           onPress={handleSocialAction}
           style={styles.button}
           labelStyle={styles.buttonLabel}
+          disabled={buttonText === "Its you"} // Disable the button when buttonText is "Its you"
         >
           {buttonText}
         </Button>
-
-        <IconButton
-          icon="bell"
-          size={30}
-          onPress={() => {
-            // Handle button press if needed
-          }}
-        />
       </Card.Content>
     </Card>
   );

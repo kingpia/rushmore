@@ -1,12 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, FlatList, Keyboard, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Keyboard,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { Searchbar, Button, ActivityIndicator } from "react-native-paper"; // Import ActivityIndicator from react-native-paper
 import { UserService } from "../service/UserService";
 import SocialUserCard from "../components/SocialUserCard";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
 
 const userService = new UserService(); // Instantiate UserService
 
-const AddFriendsScreen = () => {
+type AddFriendScreenProps = {
+  navigation: NativeStackNavigationProp<AppStackParamList>;
+};
+export const AddFriendsScreen = ({ navigation }: AddFriendScreenProps) => {
   const [searchText, setSearchText] = useState<string>("");
   const [searchResults, setSearchResults] = useState<SocialUser[]>([]); // Assuming the shape of your user data
   const [loading, setLoading] = useState<boolean>(false); // Track loading state
@@ -78,6 +90,14 @@ const AddFriendsScreen = () => {
       console.error("Error unfollowing user:", error);
     }
   };
+  const navigateToUserProfileScreen = (user: SocialUser) => {
+    console.log("navigateToUserProfileScreen");
+    setSearchText("");
+
+    navigation.push("UserProfileScreen", {
+      user,
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -111,11 +131,13 @@ const AddFriendsScreen = () => {
           data={searchResults}
           keyExtractor={(item) => item.uid}
           renderItem={({ item }) => (
-            <SocialUserCard
-              user={item}
-              onPressFollow={followUser}
-              onUnfollow={unfollowUser}
-            />
+            <TouchableOpacity onPress={() => navigateToUserProfileScreen(item)}>
+              <SocialUserCard
+                user={item}
+                onPressFollow={followUser}
+                onUnfollow={unfollowUser}
+              />
+            </TouchableOpacity>
           )}
           keyboardShouldPersistTaps="handled" // Handle taps even when the keyboard is displayed
           style={styles.flatList} // Add any additional styles if needed

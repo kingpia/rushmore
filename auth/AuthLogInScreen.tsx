@@ -1,11 +1,18 @@
 import * as React from "react";
-import { Button, HelperText, TextInput, Text } from "react-native-paper";
+import {
+  Button,
+  HelperText,
+  TextInput,
+  Text,
+  ActivityIndicator,
+} from "react-native-paper";
 import { SafeAreaView, View, StyleSheet, Animated } from "react-native";
 import { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { Auth } from "aws-amplify"; // Import Amplify Auth
 import * as SecureStore from "expo-secure-store";
+import { jwtDecode } from "jwt-decode";
 
 type AppContainerStackScreenProps = NativeStackScreenProps<AppStackParamList>;
 
@@ -17,6 +24,7 @@ export const AuthLogInScreen = ({
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [fadeInValue] = useState(new Animated.Value(0)); // Animated value for fading animation
+  const [isLoading, setIsLoading] = useState(false); // Loading state for login process
 
   const isButtonEnabled = emailOrUsername.length > 0 && password.length >= 8;
 
@@ -39,6 +47,8 @@ export const AuthLogInScreen = ({
   };
 
   const handleLoginPress = async () => {
+    setIsLoading(true); // Set loading state to true while awaiting authentication
+
     resetFade();
     try {
       // Sign in with email/username and password
@@ -50,12 +60,15 @@ export const AuthLogInScreen = ({
 
       saveToken("accessToken", accessToken);
       saveToken("refreshToken", refreshToken);
+      saveToken("uid", jwtDecode(accessToken).sub || "");
       // Reset the navigation stack to start fresh with RushmoreTabContainer
       navigation.reset({
         index: 0,
         routes: [{ name: "RushmoreTabContainer" }],
       });
     } catch (error) {
+      setIsLoading(false); // Reset loading state in case of error
+
       fadeIn();
       console.error("Error signing in:", error);
       setLoginError("Invalid login credentials");
@@ -123,10 +136,19 @@ export const AuthLogInScreen = ({
       <Button
         mode="contained"
         onPress={handleLoginPress}
-        disabled={!isButtonEnabled}
+        disabled={!isButtonEnabled || isLoading}
         style={{ marginTop: 30 }}
+        contentStyle={{ flexDirection: "row-reverse" }}
+        labelStyle={{ marginLeft: 5 }}
       >
-        Log in
+        {isLoading ? (
+          <>
+            <Text>Logging in...</Text>
+            <ActivityIndicator animating={true} color="#ffffff" />
+          </>
+        ) : (
+          "Log in"
+        )}
       </Button>
 
       <View

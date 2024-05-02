@@ -11,9 +11,14 @@ import { UserService } from "../service/UserService";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import SocialUserCard from "../components/SocialUserCard";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import * as SecureStore from "expo-secure-store";
+import { SettingsStackParamList } from "../nav/params/SettingsStackParamList";
+import { useUserFocus } from "../service/UserFocusContext";
 
 type FollowersScreenProps = {
-  navigation: NativeStackNavigationProp<AppStackParamList>;
+  navigation: NativeStackNavigationProp<
+    AppStackParamList & SettingsStackParamList
+  >;
   route: any;
 };
 
@@ -27,17 +32,26 @@ export const FollowersScreen = ({
   const [searchQuery, setSearchQuery] = React.useState("");
   const [loading, setLoading] = useState<boolean>(true);
   const [fadeAnim] = useState(new Animated.Value(0)); // Initial value for opacity: 0
+  const { userFocus } = useUserFocus();
 
   const onChangeSearch = (query: string) => setSearchQuery(query);
   const fetchData = async () => {
     setLoading(true);
     try {
-      console.log("THE UID is :" + route.params?.user?.uid);
       const userData: SocialUser | undefined = route.params?.params?.user; // Access userData from route params
+      console.log("Route:" + JSON.stringify(route));
 
-      const followersList = await userService.getFollowersUserList(
-        userData?.uid ?? ""
-      );
+      let uid: string = "";
+      if (userData?.uid) {
+        console.log("userData UID:" + userData?.uid);
+        uid = userData?.uid;
+      } else {
+        //userFocus should always be set
+        console.log("Using UserFocus:" + userFocus);
+        uid = userFocus || "";
+      }
+
+      const followersList = await userService.getFollowersUserList(uid);
 
       setFollowersList(followersList);
     } catch (error) {
@@ -63,11 +77,23 @@ export const FollowersScreen = ({
     }).start();
   }, [fadeAnim]);
 
-  const navigateToUserProfileScreen = (user: SocialUser) => {
+  const navigateToUserProfileScreen = async (user: SocialUser) => {
     console.log("navigateToUserProfileScreen");
-    navigation.navigate("UserProfileScreen", {
-      user,
-    });
+    let uid = await SecureStore.getItemAsync("uid");
+    console.log("Navigating to UID:" + uid);
+    if (uid === user.uid) {
+      console.log(
+        "You need to navigate to your Profile Home. PUSH IT to stack"
+      );
+
+      navigation.navigate("ProfileHomeScreen");
+    } else {
+      //ARE YOU NAVIGATING TO YOUR PROFILE???
+
+      navigation.navigate("UserProfileScreen", {
+        user,
+      });
+    }
   };
 
   const followUser = async (followedUid: string) => {

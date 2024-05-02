@@ -4,8 +4,12 @@ import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { RushmoreStackParamList } from "./RushmoreStackParamList";
 
 export type UserNetworkTopTabContainerParamList = {
-  FollowingScreen: { user: SocialUser | undefined };
-  FollowersScreen: undefined;
+  FollowingScreen: {
+    user: SocialUser | undefined;
+  };
+  FollowersScreen: {
+    user: SocialUser | undefined;
+  };
   FriendsScreen: undefined;
 };
 

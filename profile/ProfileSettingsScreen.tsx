@@ -26,6 +26,7 @@ const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     // Delete accessToken and refreshToken from SecureStore
     await SecureStore.deleteItemAsync("accessToken");
     await SecureStore.deleteItemAsync("refreshToken");
+    await SecureStore.deleteItemAsync("uid");
 
     navigation.reset({
       index: 0,

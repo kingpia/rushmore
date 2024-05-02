@@ -6,5 +6,7 @@ type SocialUser = {
   followersCount: number;
   followingCount: number;
   userRushmoreCount: number;
+  lastUserNameUpdatedDt: string;
+  lastNickNameUpdatedDt: string;
   socialRelationship: SocialRelationship;
 };

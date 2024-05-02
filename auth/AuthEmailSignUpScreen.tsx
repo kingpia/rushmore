@@ -19,6 +19,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../nav/params/AuthStackParamList";
 import { Hub } from "aws-amplify";
 import * as SecureStore from "expo-secure-store";
+import { jwtDecode } from "jwt-decode";
 
 type AuthEmailSignUpScreenProps = {
   navigation: NativeStackNavigationProp<AuthStackParamList>;
@@ -287,6 +288,7 @@ export const AuthEmailSignUpScreen = ({
           // Store the access token securely
           saveToken("accessToken", accessToken);
           saveToken("refreshToken", refreshToken);
+          saveToken("uid", jwtDecode(accessToken).sub || "");
 
           console.log("calling unsubscribe");
 

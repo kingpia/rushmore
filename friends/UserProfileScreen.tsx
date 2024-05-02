@@ -11,6 +11,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { getSocialNetworkButtonText } from "../utils/SocialUtils";
+import { useUserFocus } from "../service/UserFocusContext";
 
 type UserProfileScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -27,6 +28,9 @@ export const UserProfileScreen = ({
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [socialButtonText, setSocialButtonText] = useState<string>("");
   const userService = new UserService<User>();
+  const { userFocus, setUserFocus } = useUserFocus(); // Destructure setUserFocus here
+
+  console.log("UserProfileScreen");
 
   useFocusEffect(
     React.useCallback(() => {
@@ -43,10 +47,12 @@ export const UserProfileScreen = ({
       try {
         const user = await userService.getUserByUserId(route.params.user.uid);
         setUserData(user);
+        /**
+         * Set the focus so if we navigate to UserNetworkTabs, we have the context of which user we are querying for.
+         */
+        console.log("Setting user focus to :" + user.uid);
+        setUserFocus(user.uid);
 
-        const userRushmoreData = await userService.getUserRushmoreList(
-          route.params.user.uid
-        );
         console.log("User Profile Data:" + JSON.stringify(user));
         setUserRushmoreData(userRushmoreData);
         setSocialButtonText(
@@ -58,7 +64,7 @@ export const UserProfileScreen = ({
     };
 
     fetchData();
-  }, [route.params.user.uid, navigation]);
+  }, [route.params.user.uid]);
 
   const handleCategoryPress = (category: string) => {
     console.log(`Clicked on ${category}`);
@@ -88,44 +94,106 @@ export const UserProfileScreen = ({
     navigation.navigate("RushmoreGameScreen", { urId: userRushmore.urId }); // PassurId
   };
 
-  const followUser = async (followedUid: string) => {
-    try {
-      const updatedUser = await userService.followUser(followedUid);
-    } catch (error) {
-      console.error("Error following user:", error);
-    }
-  };
-
-  const unfollowUser = async (followedUid: string) => {
-    try {
-      const updatedUser = await userService.unfollowUser(followedUid);
-    } catch (error) {
-      console.error("Error unfollowing user:", error);
-    }
-  };
-
   const handleSocialAction = () => {
     console.log("handlesocialAction");
+    if (!userData) return; // Exit early if `userData` is undefined
+
     switch (socialButtonText) {
       case "Follow back":
-        followUser(userData?.uid ?? "");
+        followUser(userData.uid);
         setSocialButtonText("Friends");
         break;
       case "Friends":
-        unfollowUser(userData?.uid ?? "");
+        unfollowUser(userData.uid);
         setSocialButtonText("Follow back");
         break;
       case "Follow":
-        followUser(userData?.uid ?? "");
+        followUser(userData.uid);
         setSocialButtonText("Following");
         break;
       case "Following":
-        unfollowUser(userData?.uid ?? "");
+        unfollowUser(userData.uid);
         setSocialButtonText("Follow");
         break;
       default:
         break;
     }
+  };
+
+  const followUser = async (followedUid: string) => {
+    //TODO  Update the Count on screen
+    try {
+      const updatedUser = await userService.followUser(followedUid);
+
+      // Update the state with followersCount decremented by 1
+      setUserData((prevUserData: SocialUser | undefined) => {
+        if (!prevUserData) {
+          return prevUserData; // Return undefined if prevUserData is undefined
+        }
+
+        // Return the updated state with followersCount decremented by 1
+        return {
+          ...prevUserData,
+          followersCount: prevUserData.followersCount + 1,
+        };
+      });
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+    }
+  };
+
+  const unfollowUser = async (followedUid: string) => {
+    console.log("unFollowerUser - followedUid:" + followedUid);
+    try {
+      // Update the user's following status in searchResults
+      const updatedUser = await userService.unfollowUser(followedUid);
+
+      // Update the state with followersCount decremented by 1
+      setUserData((prevUserData: SocialUser | undefined) => {
+        if (!prevUserData) {
+          return prevUserData; // Return undefined if prevUserData is undefined
+        }
+
+        // Return the updated state with followersCount decremented by 1
+        return {
+          ...prevUserData,
+          followersCount: prevUserData.followersCount - 1,
+        };
+      });
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+    }
+  };
+
+  const navigateToFollowingScreen = (user: SocialUser) => {
+    console.log("UserData Before Navigate:" + JSON.stringify(user));
+    navigation.push("UserNetworkTopTabContainer", {
+      screen: "FollowingScreen", // Navigate to the tab navigator
+      user: user,
+      params: {
+        // Pass parameters to the tab navigator
+        screen: "FollowingScreen", // Navigate to the FollowingScreen within the tab
+        params: {
+          // Pass parameters to the FollowingScreen
+          user: user,
+        },
+      },
+    });
+  };
+
+  const navigateToFollowersScreen = (user: SocialUser) => {
+    navigation.push("UserNetworkTopTabContainer", {
+      screen: "FollowersScreen",
+      user: user,
+      params: {
+        // Pass parameters to the tab navigator
+        screen: "FollowingScreen", // Navigate to the FollowingScreen within the tab
+        params: {
+          // Pass parameters to the FollowingScreen
+          user: user,
+        },
+      },
+    });
   };
 
   return (
@@ -159,12 +227,7 @@ export const UserProfileScreen = ({
           <View style={styles.centeredText}>
             <Button
               mode="text"
-              onPress={() =>
-                navigation.push("UserNetworkTopTabContainer", {
-                  user: userData,
-                  screen: "FollowingScreen", // Specify the screen to navigate to
-                })
-              }
+              onPress={() => userData && navigateToFollowingScreen(userData)}
             >
               Following
             </Button>
@@ -174,12 +237,7 @@ export const UserProfileScreen = ({
           <View style={styles.centeredText}>
             <Button
               mode="text"
-              onPress={() =>
-                navigation.push("UserNetworkTopTabContainer", {
-                  user: userData,
-                  screen: "FollowersScreen", // Specify the screen to navigate to
-                })
-              }
+              onPress={() => userData && navigateToFollowersScreen(userData)}
             >
               Followers
             </Button>

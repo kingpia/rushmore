@@ -4,7 +4,6 @@ import amplifyconfig from "../src/amplifyconfiguration.json";
 const { aws_user_pools_web_client_id } = amplifyconfig;
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob"; // <- polyfill here
-import { Auth } from "aws-amplify";
 
 // Create Axios instance
 const api = axios.create({
@@ -20,8 +19,6 @@ const headers = {
 // Axios request interceptor
 api.interceptors.request.use(
   async (config) => {
-    console.log("in API Interceptor.");
-
     // Check if access token is expired or not present
     let accessToken = await SecureStore.getItemAsync("accessToken");
     console.log("Access Token:" + accessToken);
@@ -45,6 +42,9 @@ api.interceptors.request.use(
       );
       accessToken = await refreshAccessToken();
       saveToken("accessToken", accessToken);
+      const decodedAccessToken = jwtDecode(accessToken);
+      console.log("Saving uid in securestore");
+      saveToken("uid", decodedAccessToken.sub || "");
     }
 
     // Add access token to request headers

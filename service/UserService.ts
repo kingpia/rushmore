@@ -115,6 +115,7 @@ export class UserService<T> {
   }
 
   async getMyUserProfile(): Promise<SocialUser> {
+    console.log("getMyUserProfile");
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
@@ -130,6 +131,8 @@ export class UserService<T> {
               isFollowed
               isFollowing
             }
+          lastUserNameUpdatedDt
+          lastNickNameUpdatedDt
           }
         }
         `,
@@ -216,6 +219,9 @@ export class UserService<T> {
         }
         `,
       });
+      console.log(
+        "resonse from getUsersByusername:" + JSON.stringify(response.data.data)
+      );
       return response.data.data.getUserByUserName;
     } catch (error) {
       console.error("Error fetching users by nickname:", error);
@@ -236,6 +242,24 @@ export class UserService<T> {
           }
         `,
       });
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        var errorMessage = "";
+
+        //Problem here, which error do we display, we are assuming only 1
+        response.data.errors.forEach((error: GraphQLError) => {
+          console.error("GraphQL error:", error.message);
+          // You can also log additional information such as error locations and path if needed
+          console.error("Error locations:", error.locations);
+          console.error("Error path:", error.path);
+          errorMessage = error.message;
+        });
+
+        // Throw an error or handle the errors as needed
+        throw new Error(errorMessage);
+      }
+
       return response.data.data.followUser;
     } catch (error) {
       console.error("Error following user:", error);
@@ -262,6 +286,7 @@ export class UserService<T> {
   }
 
   async getFollowersUserList(uid: string): Promise<SocialUser[]> {
+    console.log("getFollowersUserList:" + uid);
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
         query: `

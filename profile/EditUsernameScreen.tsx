@@ -12,6 +12,7 @@ import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { UserService } from "../service/UserService";
+import { parse } from "date-fns";
 
 type EditUsernameScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -28,58 +29,118 @@ export const EditUsernameScreen = ({
   const [username, setUsername] = useState("");
 
   const usernameCharacterCount = username.length;
-
   const [searchText, setSearchText] = useState<string>(
     route.params?.userData.userName || ""
   );
-  const [searchResults, setSearchResults] = useState<SocialUser[]>([]); // Assuming the shape of your user data
+  const [searchResults, setSearchResults] = useState<SocialUser[]>(); // Assuming the shape of your user data
   const [loading, setLoading] = useState<boolean>(false); // Track loading state
   const [errorMsg, setErrorMsg] = useState<String>();
   const [hasError, setHasError] = useState<boolean>();
+  const [hasRecentUpdateError, setHasRecentUpdateError] = useState<boolean>();
+  const [hasRecentUpdateErrorMsg, setHasRecentUpdateErrorMsg] =
+    useState<string>("");
 
+  const [lastUserNameUpdatedDt, setLastUserNameUpdatedDt] = useState<
+    string | null
+  >(route.params?.userData.lastUserNameUpdatedDt || null);
+
+  console.log("LastUserNameUpdatedDt:" + lastUserNameUpdatedDt);
   useEffect(() => {
     console.log("Use effect Running");
     console.log("Username:" + route.params?.userData.userName);
+    console.log(
+      "Data to edit screen:" + JSON.stringify(route.params?.userData)
+    );
 
     const fetchUsers = async () => {
-      setLoading(true); // Set loading to true when API call begins
-      try {
-        if (searchText.trim() !== "") {
-          console.log("searching:" + searchText);
-          const results: SocialUser[] = await userService.getUsersByUserName(
-            searchText
-          );
-          console.log("Results:" + JSON.stringify(results));
-          console.log("Result size:" + results.length);
-          if (results.length > 0) {
-            setErrorMsg("Username is in use.");
-            setHasError(true);
-          } else {
-            console.log("Username not found, setting error msg to undefined");
+      //TODO we don't want to send shit character requests to the server.
+      if (errorMsg === "Invalid Characters") {
+        console.log("Dont fetch here because of invalid characters");
+      } else {
+        console.log("Inside FetchUsers useEffect");
+        setLoading(true); // Set loading to true when API call begins
+        try {
+          if (
+            searchText.trim() !== "" &&
+            searchText != route.params?.userData.userName
+          ) {
+            console.log("Searching since text is present");
+            console.log("searching:" + searchText);
+            const results: SocialUser[] = await userService.getUsersByUserName(
+              searchText
+            );
+            console.log("Results:" + JSON.stringify(results));
+            //console.log("Result size:" + results.length);
 
-            if (!isValidUsername(searchText)) {
+            //TODO WE ARE HERE, RESULT WILL BE NULL IF NO USERS ARE FOUND
+            //TODO OTHERWISE there will be something in the result.
+            if (results.length > 0) {
+              console.log("result is not null");
+              setErrorMsg("Username is in use.");
+              setHasError(true);
             } else {
-              setErrorMsg(undefined);
-              setHasError(false);
+              console.log(
+                "Result is NULL, Username not found, setting error msg to undefined"
+              );
+
+              if (!isValidUsername(searchText)) {
+              } else {
+                console.log("setting has Error to falkse");
+                setErrorMsg(undefined);
+                setHasError(false);
+              }
             }
+            setSearchResults(results);
+          } else {
+            console.log("Same as before we should remove the in use error");
+            setErrorMsg(undefined);
+            console.log("setting has Error to falkse");
+
+            setHasError(false);
+            setSearchResults([]); // Clear search results if search text is empty
           }
-          setSearchResults(results);
-        } else {
-          setSearchResults([]); // Clear search results if search text is empty
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        } finally {
+          setLoading(false); // Set loading to false when API call finishes
         }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setLoading(false); // Set loading to false when API call finishes
       }
     };
-
+    console.log("before debounceTimer");
     const debounceTimer = setTimeout(fetchUsers, 400);
 
     return () => {
       clearTimeout(debounceTimer);
     };
   }, [searchText]);
+
+  useEffect(() => {
+    console.log("lastUpdatedDt useEffect");
+    if (lastUserNameUpdatedDt) {
+      console.log("lastUsernameUpdatedDt" + lastUserNameUpdatedDt);
+
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const lastUpdateDate = parseDate(lastUserNameUpdatedDt);
+      console.log(lastUpdateDate);
+      if (lastUpdateDate.getTime() > thirtyDaysAgo.getTime()) {
+        console.log("updatedDt is very recent: " + lastUpdateDate);
+        setHasRecentUpdateError(true);
+        setHasRecentUpdateErrorMsg(`Last updated ${lastUserNameUpdatedDt}`);
+        console.log("Setting error because of recent update:");
+      }
+    }
+  }, [lastUserNameUpdatedDt]);
+
+  // Function to parse date string into a Date object using date-fns
+  const parseDate = (dateString: string) => {
+    const parsedDate = parse(
+      dateString,
+      "EEE MMM dd HH:mm:ss 'GMT' yyyy",
+      new Date()
+    );
+    return parsedDate;
+  };
 
   const isValidUsername = (username: string) => {
     return /^[a-zA-Z0-9_.]+$/.test(username);
@@ -106,12 +167,17 @@ export const EditUsernameScreen = ({
 
   const characterCount = username.length;
   const isSaveDisabled =
-    characterCount === 0 || characterCount > 30 || hasError;
+    characterCount === 0 ||
+    characterCount > 30 ||
+    hasError ||
+    hasRecentUpdateError;
 
   const handleSearchChange = (text: string) => {
     setSearchText(text);
     setUsername(text);
     if (text === "") {
+      console.log("setting has Error to falkse");
+
       setErrorMsg(undefined);
       setHasError(false);
     } else {
@@ -119,6 +185,11 @@ export const EditUsernameScreen = ({
       const validUsername = isValidUsername(text);
       if (!validUsername) {
         setErrorMsg("Invalid Characters"); // Set inUse to true if username is invalid
+      } else {
+        console.log("setting has Error to falkse");
+
+        setHasError(false);
+        setErrorMsg(""); // Set inUse to true if username is invalid
       }
       setHasError(true);
     }
@@ -136,6 +207,7 @@ export const EditUsernameScreen = ({
           onChangeText={handleSearchChange}
           value={searchText}
           style={styles.input}
+          disabled={hasRecentUpdateError} // Set editable based on hasRecentUpdateError state
           maxLength={20} // Add this line to limit input to 20 characters
           right={
             <TextInput.Icon
@@ -150,6 +222,12 @@ export const EditUsernameScreen = ({
         {!errorMsg ? null : (
           <HelperText type="error" visible={hasError}>
             {errorMsg}
+          </HelperText>
+        )}
+
+        {!hasRecentUpdateError ? null : (
+          <HelperText type="error" visible={hasRecentUpdateError}>
+            {hasRecentUpdateErrorMsg}
           </HelperText>
         )}
         {/* Character Counter */}
