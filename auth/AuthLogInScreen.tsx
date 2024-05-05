@@ -13,8 +13,12 @@ import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { Auth } from "aws-amplify"; // Import Amplify Auth
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
+import { UserService } from "../service/UserService";
+import { AuthStackParamList } from "../nav/params/AuthStackParamList";
 
-type AppContainerStackScreenProps = NativeStackScreenProps<AppStackParamList>;
+type AppContainerStackScreenProps = NativeStackScreenProps<
+  AppStackParamList & AuthStackParamList
+>;
 
 export const AuthLogInScreen = ({
   navigation,
@@ -25,6 +29,7 @@ export const AuthLogInScreen = ({
   const [loginError, setLoginError] = useState("");
   const [fadeInValue] = useState(new Animated.Value(0)); // Animated value for fading animation
   const [isLoading, setIsLoading] = useState(false); // Loading state for login process
+  const userService = new UserService<SocialUser>();
 
   const isButtonEnabled = emailOrUsername.length > 0 && password.length >= 8;
 
@@ -61,6 +66,17 @@ export const AuthLogInScreen = ({
       saveToken("accessToken", accessToken);
       saveToken("refreshToken", refreshToken);
       saveToken("uid", jwtDecode(accessToken).sub || "");
+
+      //NOTE: fetch the user, if they don't have a username, direct them to the AuthCreateUsernameSCreen so they can get created
+      const data: SocialUser = await userService.getMyUserProfile();
+
+      if (null === data) {
+        console.log(
+          "This user needs created w/ a username, direct them to the username create screen. We have them in cognito, but not in rushmore app"
+        );
+        navigation.navigate("AuthCreateUsernameScreen"); // Change 'user' to 'cognitoUser'
+      }
+
       // Reset the navigation stack to start fresh with RushmoreTabContainer
       navigation.reset({
         index: 0,
@@ -143,7 +159,7 @@ export const AuthLogInScreen = ({
       >
         {isLoading ? (
           <>
-            <Text>Logging in...</Text>
+            <Text>Logging in... </Text>
             <ActivityIndicator animating={true} color="#ffffff" />
           </>
         ) : (

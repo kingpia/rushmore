@@ -6,13 +6,9 @@ import {
   HelperText,
   ActivityIndicator,
 } from "react-native-paper";
-import * as SecureStore from "expo-secure-store";
 
 import { SafeAreaView, TouchableOpacity, StyleSheet, View } from "react-native";
-import {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from "@react-navigation/native-stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { UserService } from "../service/UserService";
 

@@ -6,7 +6,6 @@ import { SegmentedButtons } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { MyInProgressRushmoreCard } from "../components/MyInProgressRushmoreCard";
-import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { RushmoreService } from "../service/RushmoreService";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
@@ -28,7 +27,9 @@ export const MyRushmoreListsComponent: React.FC<
   const [myCompletedRushmoreList, setMyCompletedRushmoreList] = useState<
     UserRushmoreDTO[]
   >([]);
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [categories, setCategories] = useState<string[]>(["All"]); // Initialize with "All"
+
   const [isLoading, setLoading] = useState(true);
 
   const fetchData = async (selectedValue: string) => {
@@ -40,6 +41,22 @@ export const MyRushmoreListsComponent: React.FC<
         const myInProgressRushmoreData =
           await rushmoreService.getMyInProgressRushmoreList();
         setMyInProgressRushmoreList(myInProgressRushmoreData);
+
+        const categoriesSet = new Set<string>();
+
+        // Loop through UserRushmoreDTO and extract categories
+        myInProgressRushmoreData.forEach((userRushmoreDTO) => {
+          categoriesSet.add(userRushmoreDTO.userRushmore.rushmore.category);
+        });
+
+        const categoriesArray = Array.from(categoriesSet);
+        categoriesArray.unshift("All");
+
+        console.log("Categories Array:" + JSON.stringify(categoriesArray));
+
+        setCategories(categoriesArray);
+
+        console.log("CategoriesL" + JSON.stringify(categories));
         console.log(
           "MyInProgressRushmoreData:" + JSON.stringify(myInProgressRushmoreData)
         );
@@ -47,6 +64,24 @@ export const MyRushmoreListsComponent: React.FC<
         const myCompletedRushmoreData =
           await rushmoreService.getMyCompletedRushmoreList();
         setMyCompletedRushmoreList(myCompletedRushmoreData);
+        console.log("Completed rushmore response:" + myCompletedRushmoreData);
+
+        const categoriesSet = new Set<string>();
+
+        // Loop through UserRushmoreDTO and extract categories
+        myCompletedRushmoreData.forEach((userRushmoreDTO) => {
+          categoriesSet.add(userRushmoreDTO.userRushmore.rushmore.category);
+        });
+
+        const categoriesArray = Array.from(categoriesSet);
+        categoriesArray.unshift("All");
+
+        console.log("Categories Array:" + JSON.stringify(categoriesArray));
+
+        setCategories(categoriesArray);
+
+        console.log("CategoriesL" + JSON.stringify(categories));
+
         console.log(
           "setMyCompletedRushmoreList:" +
             JSON.stringify(myCompletedRushmoreData)
@@ -150,6 +185,7 @@ export const MyRushmoreListsComponent: React.FC<
         selectedCategory={selectedCategory}
         onPressCategory={handleCategoryPress}
         countByCategory={countByCategory}
+        categories={categories}
       />
       <SegmentedButtons
         style={{ margin: 10 }}

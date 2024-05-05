@@ -1,18 +1,19 @@
 import React from "react";
 import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
-import { categories } from "../model/Categories";
 
 interface RushmoreHorizontalViewProps {
   selectedCategory: string;
   onPressCategory: (category: string) => void;
   countByCategory: (category: string) => number;
+  categories: string[];
 }
 
 export const RushmoreHorizontalView: React.FC<RushmoreHorizontalViewProps> = ({
   selectedCategory,
   onPressCategory,
   countByCategory,
+  categories,
 }) => {
   const getCategoryWithCount = (category: string): string => {
     const count = countByCategory(category);

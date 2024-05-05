@@ -1,5 +1,10 @@
 import * as React from "react";
-import { Button, HelperText, Text } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  HelperText,
+  Text,
+} from "react-native-paper";
 import {
   Platform,
   Pressable,
@@ -44,30 +49,24 @@ export const AuthEmailSignUpScreen = ({
   //Error Notices
   const [emailError, setEmailError] = useState<string | null>(null);
   const [codeError, setCodeError] = React.useState<string | null>(null);
-
   // PasswordValidation field - Need Separate to handle both errors independently
   const [isLengthValid, setIsLengthValid] = useState(false);
   const [isComplexityValid, setIsComplexityValid] = useState(false);
-
   //Toggles the visibility of the password
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   //Handles focus in order to show/don't show hints.
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-
   //Age Verification
   const [isAgeValid, setIsAgeValid] = useState<boolean | undefined>(true); // Add new state for age validation
-
   //codeText
   const [codeText, setCodeText] = React.useState("");
-
   // New state to handle the phone signup toggle
   const [isPhoneSignup, setIsPhoneSignup] = useState(false);
-
   // New state for phone number
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState<string>(); //the returned user from signup
-
   const [isFormDisabled, setIsFormDisabled] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false); // New state for signing in indicator
 
   // Toggle function for the "Sign up with phone" button
   const togglePhoneSignup = () => {
@@ -257,11 +256,14 @@ export const AuthEmailSignUpScreen = ({
       // Disable the form to prevent further user input
       setIsFormDisabled(true);
       //Call the confirm, which will eventually return an event that we are listening to with Hub.listen
+      setIsSigningIn(true); // Set signing in state to true
+
       await Auth.confirmSignUp(
         email, // Use email directly
         codeText
       );
     } catch (error) {
+      setIsSigningIn(false); // Set signing in state to false on error
       setIsFormDisabled(false);
       console.log("error confirming sign up", error);
       setCodeError(error instanceof Error ? error.message : String(error));
@@ -474,6 +476,7 @@ export const AuthEmailSignUpScreen = ({
             {codeError}
           </HelperText>
         )}
+
         <Button
           mode="contained"
           disabled={
@@ -492,9 +495,16 @@ export const AuthEmailSignUpScreen = ({
             )
           }
           style={styles.button}
-          onPress={handleNextButtonClick} // Add onPress event handler
+          onPress={handleNextButtonClick}
         >
-          Next
+          {isSigningIn ? ( // Display "Signing in..." when signing in
+            <>
+              <Text>Signing in... </Text>
+              <ActivityIndicator animating={true} color="#ffffff" />
+            </>
+          ) : (
+            "Next"
+          )}
         </Button>
       </View>
     </SafeAreaView>

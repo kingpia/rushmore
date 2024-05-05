@@ -5,7 +5,6 @@ import { RushmoreService } from "../service/RushmoreService";
 import { useFocusEffect } from "@react-navigation/native";
 import { FollowingSolvedRushmoreCard } from "../components/FollowingSolvedRushmoreCard";
 import { FollowingInProgressRushmoreCard } from "../components/FollowingInProgressRushmoreCard";
-import { categories } from "../model/Categories";
 import { UserRushmoreGameSession } from "../model/UserRushmoreGameSession";
 
 type FollowingRushmoreListsComponentProps = {
@@ -25,7 +24,9 @@ const FollowingRushmoreListsComponent = ({
     setFollowingSolvedUserRushmoreGameList,
   ] = useState<UserRushmoreGameSession[]>([]);
 
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [categories, setCategories] = useState<string[]>(["All"]); // Initialize with "All"
+
   const [isLoading, setLoading] = useState(true);
 
   const fetchData = async (selectedValue: string) => {

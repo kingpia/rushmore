@@ -4,7 +4,6 @@ import { FlatList, View, StyleSheet } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { UserRushmore } from "../model/UserRushmore";
-import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "./RushmoreHorizontalView";
 import { RushmoreService } from "../service/RushmoreService";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
@@ -19,7 +18,9 @@ type MyLikedListsComponentProps = {
 export const MyLikedListsComponent: React.FC<MyLikedListsComponentProps> = ({
   navigation,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [categories, setCategories] = useState<string[]>(["All"]); // Initialize with "All"
+
   const [isLoading, setLoading] = useState(true);
 
   const [myLikedRushmoreList, setMyLikedRushmoreList] = useState<
@@ -34,6 +35,16 @@ export const MyLikedListsComponent: React.FC<MyLikedListsComponentProps> = ({
     try {
       const likeRushmoreList = await rushmoreService.getMyLikedUserRushmores();
       setMyLikedRushmoreList(likeRushmoreList);
+
+      // Extract unique categories from rushmoreList
+      const categoriesSet = new Set<string>();
+      likeRushmoreList.forEach((rushmore) => {
+        categoriesSet.add(rushmore.userRushmore.rushmore.category);
+      });
+
+      // Add "All" category at the beginning
+      const categoriesArray = Array.from(categoriesSet);
+      categoriesArray.unshift("All");
 
       setLoading(false); // Set loading to false after fetching data
       // Calculate category counts after setting the state
@@ -93,6 +104,7 @@ export const MyLikedListsComponent: React.FC<MyLikedListsComponentProps> = ({
         selectedCategory={selectedCategory}
         onPressCategory={handleCategoryPress}
         countByCategory={countByCategory}
+        categories={categories}
       />
       <FlatList
         data={filteredMyLikedRushmoreList}

@@ -1,4 +1,5 @@
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
+import { CreateUserRushmoreDetailResponseDTO } from "../model/CreateUserRushmoreDetailResponseDTO";
 import { LetterSelectionResponse } from "../model/LetterSelectionResponse";
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
 import { RushmoreType } from "../model/RushmoreTypeEnums";
@@ -569,6 +570,43 @@ export class RushmoreService<T> {
       console.log("OUTPUT:" + response.data);
 
       return response.data.data.myCompletedUserRushmores;
+    } catch (error) {
+      console.error("Error fetching completed Rushmore list:", error);
+      throw error;
+    }
+  }
+
+  async getRushmores(): Promise<CreateUserRushmoreDetailResponseDTO> {
+    console.log("getRushmores");
+
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          getRushmores {
+            rushmoreCategoryList {
+              category
+              count
+            }
+            rushmoreList {
+              rid
+              title
+              category
+              icon
+              completedCount
+              price
+            }
+            userRushmoreList {
+              urId
+              completedDt
+            }
+          }
+        }
+      `,
+      });
+      console.log("OUTPUT:" + response.data);
+
+      return response.data.data.getRushmores;
     } catch (error) {
       console.error("Error fetching completed Rushmore list:", error);
       throw error;

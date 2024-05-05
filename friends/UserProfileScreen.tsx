@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Avatar, Button, Text } from "react-native-paper";
 import { UserService } from "../service/UserService";
-import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { UserRushmore } from "../model/UserRushmore";
 import { UserRushmoreCard } from "../components/UserRushmoreCard";
-import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
@@ -25,7 +23,9 @@ export const UserProfileScreen = ({
   const [userData, setUserData] = useState<SocialUser>();
   const [userRushmoreData, setUserRushmoreData] = useState<UserRushmore[]>();
   const defaultImage = require("../assets/shylo.png");
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [categories, setCategories] = useState<string[]>(["All"]); // Initialize with "All"
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
   const [socialButtonText, setSocialButtonText] = useState<string>("");
   const userService = new UserService<User>();
   const { userFocus, setUserFocus } = useUserFocus(); // Destructure setUserFocus here
@@ -249,6 +249,7 @@ export const UserProfileScreen = ({
           selectedCategory={selectedCategory}
           onPressCategory={handleCategoryPress}
           countByCategory={countByCategory}
+          categories={categories}
         />
       </View>
 

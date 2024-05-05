@@ -3,15 +3,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import { FlatList, View, StyleSheet } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { UserRushmore } from "../model/UserRushmore";
-import { categories } from "../model/Categories";
 import { RushmoreHorizontalView } from "./RushmoreHorizontalView";
 import { RushmoreService } from "../service/RushmoreService";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import UserRushmoreListComponent from "./UserRushmoreListComponent";
-import { formatDateToString } from "../utils/DateUtils";
 
 type MyBookmarkedListsComponentProps = {
   navigation: NativeStackNavigationProp<HomeStackParamList & AppStackParamList>;
@@ -20,8 +17,9 @@ type MyBookmarkedListsComponentProps = {
 export const MyBookmarkedListsComponent: React.FC<
   MyBookmarkedListsComponentProps
 > = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [categories, setCategories] = useState<string[]>(["All"]); // Initialize with "All"
   const [isLoading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const [bookmarkedRushmoreList, setMyBookmarkedRushmoreList] = useState<
     UserRushmoreDTO[]
@@ -36,6 +34,16 @@ export const MyBookmarkedListsComponent: React.FC<
       const bookmarkedRushmoreList =
         await rushmoreService.getMyBookmarkedUserRushmores();
       setMyBookmarkedRushmoreList(bookmarkedRushmoreList);
+
+      // Extract unique categories from rushmoreList
+      const categoriesSet = new Set<string>();
+      bookmarkedRushmoreList.forEach((rushmore) => {
+        categoriesSet.add(rushmore.userRushmore.rushmore.category);
+      });
+
+      // Add "All" category at the beginning
+      const categoriesArray = Array.from(categoriesSet);
+      categoriesArray.unshift("All");
 
       setLoading(false); // Set loading to false after fetching data
       // Calculate category counts after setting the state
@@ -95,6 +103,7 @@ export const MyBookmarkedListsComponent: React.FC<
         selectedCategory={selectedCategory}
         onPressCategory={handleCategoryPress}
         countByCategory={countByCategory}
+        categories={categories}
       />
       <FlatList
         data={filteredMyBookmarkedRushmoreList}

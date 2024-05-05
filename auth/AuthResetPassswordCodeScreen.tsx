@@ -1,21 +1,30 @@
 import * as React from "react";
 import { SafeAreaView, View, StyleSheet, Animated } from "react-native";
-import { Text, TextInput, Button, HelperText } from "react-native-paper";
+import {
+  Text,
+  TextInput,
+  Button,
+  HelperText,
+  ActivityIndicator,
+} from "react-native-paper";
 import { useState } from "react";
 import { Auth } from "aws-amplify";
 import { AuthStackParamList } from "../nav/params/AuthStackParamList";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
 type AuthResetPasswordCodeScreenProps = {
-  navigation: NativeStackScreenProps<AuthStackParamList>;
   route: RouteProp<AuthStackParamList, "AuthResetPasswordCodeScreen">;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 };
 
 export const AuthResetPasswordCodeScreen = ({
-  navigation,
   route,
+  navigation,
 }: AuthResetPasswordCodeScreenProps) => {
   const [email, setEmail] = useState<string>(route.params?.email || "");
   const [passwordText, setPasswordText] = useState("");
@@ -27,6 +36,7 @@ export const AuthResetPasswordCodeScreen = ({
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [fadeInValue] = useState(new Animated.Value(0)); // Animated value for fading animation
+  const [isLoading, setIsLoading] = useState(false);
 
   const isFormValid = () => {
     return (
@@ -91,8 +101,9 @@ export const AuthResetPasswordCodeScreen = ({
 
   async function forgotPasswordSubmit() {
     resetFade();
+    setIsLoading(true);
 
-    console.log("forgotPassworldSubmit:");
+    console.log("forgotPasswordSubmit:");
     try {
       console.log("calling forgot passwordSubmit:");
       const data = await Auth.forgotPasswordSubmit(
@@ -100,8 +111,12 @@ export const AuthResetPasswordCodeScreen = ({
         codeText,
         passwordText
       );
+
+      navigation.navigate("AuthLogInScreen");
+
       console.log(JSON.stringify(data));
     } catch (err: any) {
+      setIsLoading(false);
       if (err.code === "CodeMismatchException") {
         console.log("error for Code Mismatch Exception");
 
@@ -202,8 +217,17 @@ export const AuthResetPasswordCodeScreen = ({
         onPress={forgotPasswordSubmit}
         disabled={!isFormValid()}
         style={{ marginVertical: 25 }}
+        contentStyle={{ flexDirection: "row-reverse" }}
+        labelStyle={{ marginLeft: 5 }}
       >
-        Reset
+        {isLoading ? (
+          <>
+            <Text>Resetting... </Text>
+            <ActivityIndicator animating={true} color="#ffffff" />
+          </>
+        ) : (
+          "Reset"
+        )}
       </Button>
     </SafeAreaView>
   );

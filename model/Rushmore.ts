@@ -7,4 +7,5 @@ export interface Rushmore {
   category: string;
   timesCompleted: number;
   icon: string;
+  price: number;
 }
