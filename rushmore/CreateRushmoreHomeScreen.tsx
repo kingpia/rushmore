@@ -39,7 +39,7 @@ export const CreateRushmoreHomeScreen = ({
           const response = await rushmoreService.getRushmores();
           console.log("Response:" + JSON.stringify(rushmoreList));
           setRushmoreList(response.rushmoreList);
-          //Fuck screwing with categories from the server, formulate it yourself by looping through the rushmoreList then setCategories
+
           // Extract unique categories from rushmoreList
           const categoriesSet = new Set<string>();
           response.rushmoreList.forEach((rushmore) => {

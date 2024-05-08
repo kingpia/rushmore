@@ -1,5 +1,7 @@
+import { AxiosResponse } from "axios";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { CreateUserRushmoreDetailResponseDTO } from "../model/CreateUserRushmoreDetailResponseDTO";
+import { CreateUserRushmoreRequestDTO } from "../model/CreateuserRushmoreRequestDTO";
 import { LetterSelectionResponse } from "../model/LetterSelectionResponse";
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
 import { RushmoreType } from "../model/RushmoreTypeEnums";
@@ -12,6 +14,13 @@ import {
   yourCompletedRushmoreListURL,
 } from "../sampleDataConfig";
 import api from "./api";
+
+interface GraphQLError {
+  message: string;
+  locations: { line: number; column: number }[];
+  path: string[];
+  extensions: { classification: string };
+}
 
 export class RushmoreService<T> {
   private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
@@ -584,10 +593,6 @@ export class RushmoreService<T> {
         query: `
         query {
           getRushmores {
-            rushmoreCategoryList {
-              category
-              count
-            }
             rushmoreList {
               rid
               title
@@ -609,6 +614,55 @@ export class RushmoreService<T> {
       return response.data.data.getRushmores;
     } catch (error) {
       console.error("Error fetching completed Rushmore list:", error);
+      throw error;
+    }
+  }
+
+  async createUserRushmore(
+    createUserRushmoreRequest: CreateUserRushmoreRequestDTO
+  ): Promise<any> {
+    try {
+      const response: AxiosResponse<{
+        data: { createUserRushmoreRequest: CreateUserRushmoreRequestDTO };
+        errors?: GraphQLError[];
+      }> = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+            mutation {
+              createUserRushmore(
+                request: {rid: "${createUserRushmoreRequest.rid}", visibility: "${createUserRushmoreRequest.visibility}", gameType: "${createUserRushmoreRequest.gameType}", rushmoreType: "${createUserRushmoreRequest.rushmoreType}"}
+              ) {
+                urId
+                visibility
+                version
+                rushmoreType
+                gameType
+              }
+            }
+          `,
+      });
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        var errorMessage = "";
+
+        //Problem here, which error do we display, we are assuming only 1
+        response.data.errors.forEach((error: GraphQLError) => {
+          console.error("GraphQL error:", error.message);
+          // You can also log additional information such as error locations and path if needed
+          console.error("Error locations:", error.locations);
+          console.error("Error path:", error.path);
+          errorMessage = error.message;
+        });
+
+        // Throw an error or handle the errors as needed
+        throw new Error(errorMessage);
+      }
+      console.log("CreateRushmoreResponse:" + JSON.stringify(response.data));
+      // No errors, return the user data
+      return response.data.data;
+    } catch (error) {
+      // Handle network errors or unexpected errors
+      console.error("Error updating user name:", error);
       throw error;
     }
   }

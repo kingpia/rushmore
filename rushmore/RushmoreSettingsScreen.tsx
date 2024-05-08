@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import { Text, SegmentedButtons, Button } from "react-native-paper";
+import { CreateRushmoreStackParamList } from "../nav/params/CreateRushmoreStackParamList";
 import {
-  CreateRushmoreStackParamList,
-  StackContainerScreenProps,
-} from "../nav/params/CreateRushmoreStackParamList";
-import { UserRushmore } from "../model/UserRushmore";
+  RushmoreGameTypeEnums,
+  RushmoreType,
+  RushmoreVisibilityEnums,
+  UserRushmore,
+} from "../model/UserRushmore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { CreateUserRushmoreRequestDTO } from "../model/CreateuserRushmoreRequestDTO";
+import { RushmoreService } from "../service/RushmoreService";
 
 type RushmoreSettingsScreenProps = {
   navigation: NativeStackNavigationProp<
@@ -25,9 +29,29 @@ export const RushmoreSettingsScreen = ({
   const [rushmoreType, setRushmoreType] = useState("favorite");
   const [gameType, setGameType] = useState("game");
 
+  console.log("The rushmore you are creating is :" + JSON.stringify(rushmore));
   const handleCreatePress = () => {
-    let userRushmore: UserRushmore = require("../sampleApiData/inProgressUserRushmore.json");
+    const rushmoreService = new RushmoreService<UserRushmore>();
 
+    const createUserRushmoreRequest: CreateUserRushmoreRequestDTO = {
+      rid: rushmore.rid,
+      visibility:
+        isPrivate === "yes"
+          ? RushmoreVisibilityEnums.PRIVATE
+          : RushmoreVisibilityEnums.PUBLIC,
+      gameType:
+        gameType === "game"
+          ? RushmoreGameTypeEnums.GAME
+          : RushmoreGameTypeEnums.OPEN,
+      rushmoreType:
+        rushmoreType === "favorite" ? RushmoreType.Best : RushmoreType.Best,
+    };
+
+    rushmoreService.createUserRushmore(createUserRushmoreRequest);
+
+    //TODO Create a userRushmore object using the fields the user set, along with
+
+    //TODO call userRushmoreService.createUserRushmore(
     console.log("Create Rushmore");
     navigation.navigate("EditUserRushmoreScreen", {
       userRushmore,

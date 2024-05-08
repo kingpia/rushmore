@@ -23,5 +23,6 @@ export interface UserRushmore {
   firstCompletedDt: string;
   version: number;
   userRushmoreItemList: UserRushmoreItem[]; //List of items.
+  itemCount: number;
 }
 export { RushmoreVisibilityEnums, RushmoreGameTypeEnums, RushmoreType };
