@@ -1,57 +1,47 @@
-import { FlatList, SafeAreaView } from "react-native";
-import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import React, { useState } from "react";
-import { Rushmore } from "../model/Rushmore";
-import { RushmoreService } from "../service/RushmoreService";
-import { ApiFetchEnums } from "../model/ApiFetchEnums";
+import { Animated, SafeAreaView } from "react-native";
+import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { RushmoreCard } from "../components/RushmoreCard";
+import { RushmoreService } from "../service/RushmoreService";
 import { CreateRushmoreStackParamList } from "../nav/params/CreateRushmoreStackParamList";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
+import { useFocusEffect } from "@react-navigation/native";
 import { CreateUserRushmoreDetailResponseDTO } from "../model/CreateUserRushmoreDetailResponseDTO";
-import { RushmoreCategory } from "../model/RushmoreCategory";
+import { Rushmore } from "../model/Rushmore";
+import { Divider } from "react-native-paper";
 
 type CreateRushmoreHomeScreenProps = {
   navigation: NativeStackNavigationProp<CreateRushmoreStackParamList>;
 };
 
-export const CreateRushmoreHomeScreen = ({
-  navigation,
-}: CreateRushmoreHomeScreenProps) => {
+export const CreateRushmoreHomeScreen: React.FC<
+  CreateRushmoreHomeScreenProps
+> = ({ navigation }: CreateRushmoreHomeScreenProps) => {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [rushmoreList, setRushmoreList] = useState<Rushmore[]>();
+  const [rushmoreList, setRushmoreList] = useState<Rushmore[]>([]);
+  const [fadeAnim] = useState(new Animated.Value(0));
+
   const handleCategoryPress = (category: string) => {
-    console.log(`Clicked on ${category}`);
     setSelectedCategory(category);
   };
 
-  console.log("Create Rushmore Home SCreen");
-
   useFocusEffect(
     React.useCallback(() => {
-      console.log("Create Rushmore Home SCreen USE");
-
       const fetchData = async () => {
         const rushmoreService =
           new RushmoreService<CreateUserRushmoreDetailResponseDTO>();
         try {
           const response = await rushmoreService.getRushmores();
-          console.log("Response:" + JSON.stringify(rushmoreList));
           setRushmoreList(response.rushmoreList);
 
-          // Extract unique categories from rushmoreList
           const categoriesSet = new Set<string>();
           response.rushmoreList.forEach((rushmore) => {
             categoriesSet.add(rushmore.category);
           });
 
-          // Add "All" category at the beginning
           const categoriesArray = Array.from(categoriesSet);
           categoriesArray.unshift("All");
-
-          console.log("Categories Array:" + JSON.stringify(categoriesArray));
-
           setCategories(categoriesArray);
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -66,22 +56,30 @@ export const CreateRushmoreHomeScreen = ({
     }, [])
   );
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fadeAnim.setValue(0); // Reset opacity to 0 when screen is focused
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000, // Adjust the duration as needed
+        useNativeDriver: true,
+      }).start();
+    }, [])
+  );
+
   const countByCategory = (category: string): number => {
-    return (
-      rushmoreList?.filter((item) =>
-        category === "All" ? true : item.category === category
-      ).length || 0
-    );
+    return rushmoreList.filter((item) =>
+      category === "All" ? true : item.category === category
+    ).length;
   };
 
-  const filteredRushmoreData = rushmoreList?.filter(
+  const filteredRushmoreData = rushmoreList.filter(
     (item) => selectedCategory === "All" || item.category === selectedCategory
   );
 
   const navigateToRushmoreSettingsScreen = (rushmore: Rushmore) => {
     navigation.navigate("RushmoreSettingsScreen", {
       rushmore,
-      // Add other properties as needed
     });
   };
 
@@ -93,14 +91,20 @@ export const CreateRushmoreHomeScreen = ({
         countByCategory={countByCategory}
         categories={categories}
       />
-      <FlatList
+      <Animated.FlatList
         data={filteredRushmoreData}
         keyExtractor={(item) => item.rid.toString()}
-        renderItem={({ item }) => (
-          <RushmoreCard
-            rushmore={item}
-            onPress={() => navigateToRushmoreSettingsScreen(item)}
-          />
+        style={{ opacity: fadeAnim }}
+        renderItem={({ item, index }) => (
+          <>
+            <RushmoreCard
+              rushmore={item}
+              onPress={() => navigateToRushmoreSettingsScreen(item)}
+            />
+            {index !== filteredRushmoreData.length - 1 && (
+              <Divider style={{ backgroundColor: "teal" }} />
+            )}
+          </>
         )}
       />
     </SafeAreaView>

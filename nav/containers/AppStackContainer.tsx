@@ -13,6 +13,7 @@ import { UserProfileScreen } from "../../friends/UserProfileScreen";
 import TermsAndPolicyScreen from "../../profile/TermsAndPolicyScreen";
 import AccountScreen from "../../profile/AccountScreen";
 import ProfileSettingsScreen from "../../profile/ProfileSettingsScreen";
+import AddRushmoreItemsScreen from "../../rushmore/AddRushmoreItemsScreen";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
@@ -50,6 +51,14 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
       <AppStackNavigator.Screen
         name="EditUserRushmoreScreen"
         component={EditUserRushmoreScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+
+      <AppStackNavigator.Screen
+        name="AddRushmoreItemsScreen"
+        component={AddRushmoreItemsScreen}
         options={{
           gestureEnabled: false,
         }}

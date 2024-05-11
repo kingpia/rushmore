@@ -21,8 +21,8 @@ export interface UserRushmore {
   highScore: number;
   firstCompletedUser: User;
   firstCompletedDt: string;
-  version: number;
-  userRushmoreItemList: UserRushmoreItem[]; //List of items.
+  version: string;
+  itemList: UserRushmoreItem[]; //List of items.
   itemCount: number;
 }
 export { RushmoreVisibilityEnums, RushmoreGameTypeEnums, RushmoreType };

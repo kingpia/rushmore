@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 
-import { FlatList, View, StyleSheet } from "react-native";
+import { FlatList, View, StyleSheet, Animated } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -31,6 +31,19 @@ export const MyRushmoreListsComponent: React.FC<
   const [categories, setCategories] = useState<string[]>(["All"]); // Initialize with "All"
 
   const [isLoading, setLoading] = useState(true);
+
+  const [fadeAnim] = useState(new Animated.Value(0));
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fadeAnim.setValue(0); // Reset opacity to 0 when screen is focused
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000, // Adjust the duration as needed
+        useNativeDriver: true,
+      }).start();
+    }, [])
+  );
 
   const fetchData = async (selectedValue: string) => {
     setLoading(true); // Set loading to true when fetching data
@@ -119,13 +132,13 @@ export const MyRushmoreListsComponent: React.FC<
 
   const navigateToMyCompletedRushmore = (userRushmore: UserRushmoreDTO) => {
     navigation.navigate("EditUserRushmoreScreen", {
-      userRushmore,
+      userRushmore: userRushmore.userRushmore,
     });
   };
 
   const navigateToMyInProgressRushmore = (userRushmore: UserRushmoreDTO) => {
     navigation.navigate("EditUserRushmoreScreen", {
-      userRushmore,
+      userRushmore: userRushmore.userRushmore,
     });
   };
 
@@ -136,8 +149,9 @@ export const MyRushmoreListsComponent: React.FC<
 
   const renderInProgressRushmoreList = () => {
     return (
-      <FlatList
+      <Animated.FlatList
         data={filteredYourInProgressRushmoreData}
+        style={{ opacity: fadeAnim }}
         keyExtractor={(item) => item.userRushmore.rushmore.rid.toString()}
         renderItem={({ item }) => (
           <MyInProgressRushmoreCard
@@ -151,8 +165,9 @@ export const MyRushmoreListsComponent: React.FC<
 
   const renderCompletedRushmoreList = () => {
     return (
-      <FlatList
+      <Animated.FlatList
         data={filteredCompletedInProgressRushmoreData}
+        style={{ opacity: fadeAnim }}
         keyExtractor={(item) => item.userRushmore.rushmore.rid.toString()}
         renderItem={({ item }) => (
           <UserRushmoreListComponent

@@ -18,6 +18,7 @@ export const CreateRushmoreStackContainer = () => {
         component={CreateRushmoreHomeScreen}
         options={{
           headerShown: true,
+          headerTitle: "Create Rushmore",
         }}
       />
       <CreateRushmoreStackNavigator.Screen

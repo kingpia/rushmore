@@ -1,6 +1,4 @@
 export interface UserRushmoreItem {
-  urId: number;
-  uriId: number;
+  item: string;
   rank: number;
-  itemTitle: string;
 }

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { Avatar, Card, Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Rushmore } from "../model/Rushmore";
+import { formatCount } from "../utils/CountUtils";
 
 type RushmoreCardProps = {
   rushmore: Rushmore;
@@ -13,72 +14,47 @@ export const RushmoreCard: React.FC<RushmoreCardProps> = ({
   onPress,
 }) => {
   console.log("RushmoreCard:" + JSON.stringify(rushmore));
+  const [hasFunds, setHasFunds] = useState<boolean>(true);
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <Card style={styles.card}>
-        <Card.Content style={styles.cardContent}>
-          {/* Circular Avatar */}
-          <Avatar.Image
-            size={60}
-            source={{ uri: rushmore.icon }}
-            style={styles.avatar}
-          />
-
-          {/* Title and User Info */}
-          <View style={styles.titleUserInfoContainer}>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={styles.title}>{rushmore.title}</Text>
-            </View>
-
-            <View style={styles.infoItem}>
-              <MaterialCommunityIcons
-                name="check-circle"
-                size={24}
-                color="black"
-              />
-              <Text variant="bodyMedium">{rushmore.timesCompleted}</Text>
-            </View>
+      <View style={styles.container}>
+        <View style={styles.title_row}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text variant="titleMedium">{rushmore.title}</Text>
+            <Text style={styles.bullet}> •</Text>
+            <MaterialCommunityIcons
+              name="check-circle"
+              size={16}
+              color="black"
+            />
+            <Text variant="bodyMedium">
+              {formatCount(rushmore.completedCount)}
+            </Text>
           </View>
-        </Card.Content>
-      </Card>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <MaterialCommunityIcons name="hammer" size={16} color="black" />
+            <Text variant="bodyMedium">{rushmore.price}</Text>
+          </View>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
-    margin: 2,
+  container: {
+    marginLeft: 15,
+    marginRight: 15,
   },
-  cardContent: {
+  title_row: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 5,
   },
-  avatar: {
-    marginRight: 10,
-  },
-  titleUserInfoContainer: {
-    flex: 1,
-  },
-  title: {
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  crownUsernameContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 5,
-  },
-  username: {
-    marginLeft: 5,
-    fontSize: 14,
-  },
-  additionalInfoContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 5,
-  },
-  infoItem: {
-    alignItems: "center",
+  bullet: {
+    marginRight: 5,
+    fontSize: 20,
   },
 });

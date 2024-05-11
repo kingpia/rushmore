@@ -214,27 +214,64 @@ export class RushmoreService<T> {
   }
 
   // Inside RushmoreService class
-  async getUserRushmore(
-    urId: number,
-    requestingUid: string
-  ): Promise<UserRushmore> {
-    console.log("Getuserrushmore(urId:" + urId + ")");
+  async getUserRushmore(urId: number): Promise<UserRushmore> {
     try {
-      // Simulate a 3-second delay
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      if (urId === 6661) {
-        console.log("returning completed user rushmore");
-        let data: UserRushmore = require("../sampleApiData/completedUserRushmore.json");
-        // Mock response
-        return data;
-      } else {
-        let data: UserRushmore = require("../sampleApiData/inProgressUserRushmore.json");
-        // Mock response
-        return data;
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          getUserRushmore(urId: "${urId}") {
+            createdBy
+            completedCount
+            completedDt
+            createdDt
+            firstCompletedDt
+            firstCompletedUid
+            firstCompletedUser {
+              nickName
+              userName
+              uid
+            }
+            gameType
+            highScore
+            highScoreUid
+            highScoreUser {
+              nickName
+              userName
+              uid
+            }
+            itemCount
+            likeCount
+            ownerUser {
+              nickName
+              uid
+              userName
+            }
+            rushmore {
+              category
+              icon
+              completedCount
+              title
+              price
+              rid
+            }
+            rushmoreType
+            uid
+            updatedBy
+            updatedDt
+            urId
+            version
+            visibility
+            itemList {
+              item
+              rank
+            }
+          }
       }
+      `,
+      });
+      return response.data.data.getUserRushmore;
     } catch (error) {
-      console.error("Error fetching user rushmore:", error);
+      console.error("Error unfollowing user:", error);
       throw error;
     }
   }
@@ -623,7 +660,7 @@ export class RushmoreService<T> {
   ): Promise<any> {
     try {
       const response: AxiosResponse<{
-        data: { createUserRushmoreRequest: CreateUserRushmoreRequestDTO };
+        data: { createUserRushmore: any };
         errors?: GraphQLError[];
       }> = await api.post(`${this.baseURL}/graphql`, {
         query: `
@@ -631,11 +668,18 @@ export class RushmoreService<T> {
               createUserRushmore(
                 request: {rid: "${createUserRushmoreRequest.rid}", visibility: "${createUserRushmoreRequest.visibility}", gameType: "${createUserRushmoreRequest.gameType}", rushmoreType: "${createUserRushmoreRequest.rushmoreType}"}
               ) {
-                urId
-                visibility
-                version
-                rushmoreType
-                gameType
+                userRushmore {
+                  gameType
+                  rushmore {
+                    rid
+                    title
+                  }
+                  urId
+                  version
+                  visibility
+                  createdDt
+                  updatedDt
+                }
               }
             }
           `,
@@ -657,9 +701,9 @@ export class RushmoreService<T> {
         // Throw an error or handle the errors as needed
         throw new Error(errorMessage);
       }
-      console.log("CreateRushmoreResponse:" + JSON.stringify(response.data));
+
       // No errors, return the user data
-      return response.data.data;
+      return response.data.data.createUserRushmore;
     } catch (error) {
       // Handle network errors or unexpected errors
       console.error("Error updating user name:", error);

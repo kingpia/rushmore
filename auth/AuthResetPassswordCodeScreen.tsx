@@ -174,7 +174,7 @@ export const AuthResetPasswordCodeScreen = ({
           <>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Ionicons
-                name={isLengthValid ? "md-checkmark-circle" : "md-close-circle"}
+                name={isLengthValid ? "checkmark-circle" : "close-circle"}
                 size={15}
                 color={isLengthValid ? "green" : "red"}
               />
@@ -195,9 +195,7 @@ export const AuthResetPasswordCodeScreen = ({
               }}
             >
               <Ionicons
-                name={
-                  isComplexityValid ? "md-checkmark-circle" : "md-close-circle"
-                }
+                name={isComplexityValid ? "checkmark-circle" : "close-circle"}
                 size={15}
                 color={isComplexityValid ? "green" : "red"}
               />

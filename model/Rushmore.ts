@@ -5,7 +5,7 @@ export interface Rushmore {
   rid: string; // Unique identifier for Rushmore object
   title: string;
   category: string;
-  timesCompleted: number;
+  completedCount: number;
   icon: string;
   price: number;
 }

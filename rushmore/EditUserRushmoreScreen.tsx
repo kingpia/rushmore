@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
 import {
   ActivityIndicator,
@@ -29,6 +31,7 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import UserRushmoreStatsColumn from "../components/UserRushmoreStatsColumn";
+import { configure } from "@react-native-community/netinfo";
 
 type EditUserRushmoreScreenProps =
   StackContainerScreenProps<"EditUserRushmoreScreen">;
@@ -59,32 +62,99 @@ export const EditUserRushmoreScreen = ({
     setIsAddItemModalVisible(false);
   };
 
+  const navigateToAddItemsScreen = () => {
+    //Go to the addItemsScreen(draggableData) send the data so you can have it checked already
+    if (userRushmore) {
+      // Navigate only if userRushmore is not null
+      navigation.navigate("AddRushmoreItemsScreen", {
+        userRushmore: userRushmore,
+      });
+    } else {
+      // Handle the case where userRushmore is null
+      console.error("userRushmore is null");
+      // Optionally, you can provide a fallback or handle this case differently
+    }
+  };
+
+  // Inside ProfileHomeScreen component
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("EdiUserRushmore Use Effect Focus Running...");
+      const fetchUserRushmore = async () => {
+        try {
+          if (route.params.selectedItemUserRushmore) {
+            console.log(
+              "=====================SelectedItemsUserRushmore Found ======================="
+            );
+            //will have selected items.
+            setUserRushmore(route.params.selectedItemUserRushmore);
+
+            console.log(
+              "I set userrushmore with:" +
+                JSON.stringify(route.params.selectedItemUserRushmore)
+            );
+            console.log(
+              "UserRushmore in the useFocusEffect:" +
+                JSON.stringify(userRushmore)
+            );
+          } else if (route.params.userRushmore) {
+            console.log(
+              "=====================SelectedItemsUserRushmore NOT FOUND IT WAS FUCKING NUL ======================="
+            );
+
+            //Get the User Rushmore
+            const userRushmoreData = await rushmoreService.getUserRushmore(
+              route.params?.userRushmore.urId
+            );
+            console.log(
+              "User Rushomre data returned:" + JSON.stringify(userRushmoreData)
+            );
+            setUserRushmore(userRushmoreData);
+
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error("Error fetching user rushmore:", error);
+          setLoading(false);
+        }
+      };
+
+      console.log(
+        JSON.stringify(
+          "=====================Route Parameters::========" +
+            JSON.stringify(route.params)
+        )
+      );
+
+      fetchUserRushmore();
+    }, [route.params.userRushmore?.itemList])
+  );
+
+  //When the userRushmore Changes, configureDraggables again
   useEffect(() => {
-    const fetchUserRushmore = async () => {
-      try {
-        const userRushmoreData = await rushmoreService.getUserRushmore(
-          route.params.userRushmore.urId,
-          "piaUid"
-        );
-        setUserRushmore(userRushmoreData);
+    configureDraggables();
+  }, [userRushmore]);
 
-        const sortedItems = userRushmoreData.userRushmoreItemList.sort(
-          (a, b) => a.rank - b.rank
-        );
-        setDraggableData(sortedItems);
+  const configureDraggables = () => {
+    console.log(
+      "UserRushmore in the configureDraggables:" + JSON.stringify(userRushmore)
+    );
 
-        setIsRushmoreComplete(!!userRushmoreData.completedDt);
-        setIsEditMode(!userRushmoreData.completedDt);
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching user rushmore:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchUserRushmore();
-  }, [route.params.userRushmore.urId]);
+    console.log("===Configure Draggables");
+    if (userRushmore?.itemList && userRushmore?.itemList.length > 0) {
+      console.log(
+        "I have items in the itemList itemlist size:" +
+          userRushmore?.itemList.length
+      );
+      const sortedItems = userRushmore.itemList.sort((a, b) => a.rank - b.rank);
+      console.log("Sorted items size:" + sortedItems.length);
+      setDraggableData(sortedItems);
+    } else {
+      ("Item list is null");
+    }
+    setIsRushmoreComplete(!!userRushmore?.completedDt);
+    setIsEditMode(!userRushmore?.completedDt);
+  };
 
   const handleExitPress = () => {
     navigation.reset({
@@ -94,17 +164,24 @@ export const EditUserRushmoreScreen = ({
   };
 
   const handleDeletePress = (userRushmoreItem: UserRushmoreItem) => {
-    const index = draggableData.findIndex(
-      (item) => item.uriId === userRushmoreItem.uriId
+    // Find the index of the item in userRushmore.itemList
+    const index = userRushmore?.itemList.findIndex(
+      (item) => item.item === userRushmoreItem.item
     );
 
-    if (index !== -1) {
-      const updatedDraggableData = [...draggableData];
-      updatedDraggableData.splice(index, 1);
-      setDraggableData(updatedDraggableData);
+    if (index !== undefined && index !== -1) {
+      // Create a copy of userRushmore.itemList and remove the item at the found index
+      const updatedItemList = [...(userRushmore?.itemList || [])];
+      updatedItemList.splice(index, 1);
+
+      // Update the userRushmore state with the new itemList
+      setUserRushmore((prevUserRushmore) => ({
+        ...prevUserRushmore!,
+        itemList: updatedItemList,
+      }));
     } else {
       console.warn(
-        `Item with urId ${userRushmoreItem.uriId} not found in the data array.`
+        `Item with urId ${userRushmoreItem.item} not found in the itemList array.`
       );
     }
   };
@@ -160,7 +237,7 @@ export const EditUserRushmoreScreen = ({
           ]}
         >
           <View style={{ flexDirection: "row", flex: 1, alignItems: "center" }}>
-            <Text style={[styles.text, { flex: 1 }]}>{item.itemTitle}</Text>
+            <Text style={[styles.text, { flex: 1 }]}>{item.item}</Text>
             {isEditMode && (
               <IconButton
                 icon="delete"
@@ -219,8 +296,7 @@ export const EditUserRushmoreScreen = ({
     if (addItemText.trim() !== "") {
       // Create a new UserRushmoreItem with the entered text
       const newItem: UserRushmoreItem = {
-        uriId: Math.random(),
-        itemTitle: addItemText.trim(),
+        item: addItemText.trim(),
         rank: draggableData.length + 1, // Set rank as the next available position
       };
 
@@ -243,17 +319,13 @@ export const EditUserRushmoreScreen = ({
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
             <EditRushmoreAppBar
-              rushmoreTitle={
-                userRushmore?.rushmore?.rushmoreCategory?.toUpperCase() || ""
-              }
+              rushmoreTitle={userRushmore?.rushmore?.title || ""}
               rushmoreType={userRushmore?.rushmoreType || ""}
-              username={userRushmore?.user.userName || ""}
-              completedDt={userRushmore?.completedDt}
             />
             <DraggableFlatList
               data={draggableData}
               onDragEnd={handleDragEnd}
-              keyExtractor={(item) => item.uriId.toString()}
+              keyExtractor={(item) => item.item}
               renderItem={renderUserRushmoreItem}
             />
           </View>
@@ -263,7 +335,6 @@ export const EditUserRushmoreScreen = ({
                 likeCount={userRushmore?.likeCount || 0}
                 totalCompleted={userRushmore?.completedCount || 0}
                 highScoreUser={userRushmore?.highScoreUser}
-                firstToCompleteUser={userRushmore?.firstToCompleteUser}
               />
             </View>
           ) : (
@@ -293,7 +364,7 @@ export const EditUserRushmoreScreen = ({
                 alignItems: "center",
               }}
             >
-              <TouchableOpacity onPress={showModal}>
+              <TouchableOpacity onPress={navigateToAddItemsScreen}>
                 <IconButton icon="star" size={30} disabled={!isEditMode} />
               </TouchableOpacity>
               <TouchableOpacity onPress={showAddItemModal}>
@@ -316,8 +387,7 @@ export const EditUserRushmoreScreen = ({
               Confirm the following settings:
             </Text>
             <Text style={styles.modalText}>
-              Rushmore Category:{" "}
-              {userRushmore?.rushmore?.rushmoreCategory || ""}
+              Rushmore Category: {userRushmore?.rushmore?.category || ""}
             </Text>
             <Text style={styles.modalText}>
               Rushmore Type: {userRushmore?.rushmoreType || ""}

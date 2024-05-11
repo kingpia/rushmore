@@ -4,7 +4,6 @@ import { Text } from "react-native-paper";
 
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import { UserRushmore } from "../model/UserRushmore";
-import { formatDateToString } from "../utils/DateUtils";
 
 import { format, parse } from "date-fns";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";

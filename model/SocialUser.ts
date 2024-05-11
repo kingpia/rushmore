@@ -9,4 +9,6 @@ type SocialUser = {
   lastUserNameUpdatedDt: string;
   lastNickNameUpdatedDt: string;
   socialRelationship: SocialRelationship;
+  viewSolveCount: number;
+  gameSolveCount: number;
 };

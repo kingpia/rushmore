@@ -1,27 +1,57 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import * as SecureStore from "expo-secure-store";
 import amplifyconfig from "../src/amplifyconfiguration.json";
 const { aws_user_pools_web_client_id } = amplifyconfig;
+import { Alert } from "react-native";
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob"; // <- polyfill here
 
+interface GraphQLError {
+  message: string;
+  locations: { line: number; column: number }[];
+  path: string[];
+  extensions: { classification: string };
+}
 // Create Axios instance
 const api = axios.create({
   baseURL: "http://192.168.0.11:8080",
   timeout: 10000,
 });
+const cognitoAuthUrl = "https://cognito-idp.us-east-1.amazonaws.com";
 
 const headers = {
   "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth",
   "Content-Type": "application/x-amz-json-1.1",
 };
 
+// Axios response interceptor
+// Axios response interceptor
+api.interceptors.response.use((response) => {
+  if (response.data.errors) {
+    console.log(
+      "====================There are errors in ther Response===================="
+    );
+    //Problem here, which error do we display, we are assuming only 1
+    response.data.errors.forEach((error: GraphQLError) => {
+      console.error("GraphQL error:", error.message);
+      // You can also log additional information such as error locations and path if needed
+      console.error("Error locations:", error.locations);
+      console.error("Error path:", error.path);
+    });
+  }
+  return response;
+});
+
 // Axios request interceptor
 api.interceptors.request.use(
   async (config) => {
     // Check if access token is expired or not present
     let accessToken = await SecureStore.getItemAsync("accessToken");
-    console.log("Access Token:" + accessToken);
+    console.log(
+      "===============================================================================================================Access Token:\n" +
+        accessToken +
+        "\n=========================================================================================================================="
+    );
     //console.log("Access token:" + accessToken);
     if (!accessToken) {
       throw new Error("Access token not found.");
@@ -81,13 +111,9 @@ async function refreshAccessToken(): Promise<string> {
       },
     };
 
-    const response = await axios.post(
-      "https://cognito-idp.us-east-1.amazonaws.com",
-      requestData,
-      {
-        headers,
-      }
-    );
+    const response = await axios.post(cognitoAuthUrl, requestData, {
+      headers,
+    });
 
     console.log(
       "New Access Token:",

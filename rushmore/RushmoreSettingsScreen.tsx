@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet } from "react-native";
-import { Text, SegmentedButtons, Button } from "react-native-paper";
+import {
+  Text,
+  SegmentedButtons,
+  Button,
+  Portal,
+  Modal,
+  ActivityIndicator,
+} from "react-native-paper";
 import { CreateRushmoreStackParamList } from "../nav/params/CreateRushmoreStackParamList";
 import {
   RushmoreGameTypeEnums,
@@ -12,6 +19,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { CreateUserRushmoreRequestDTO } from "../model/CreateuserRushmoreRequestDTO";
 import { RushmoreService } from "../service/RushmoreService";
+import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 
 type RushmoreSettingsScreenProps = {
   navigation: NativeStackNavigationProp<
@@ -29,8 +37,14 @@ export const RushmoreSettingsScreen = ({
   const [rushmoreType, setRushmoreType] = useState("favorite");
   const [gameType, setGameType] = useState("game");
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  //Error Handling states
+  const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false); // State to manage error modal visibility
+  const [errorMessage, setErrorMessage] = useState<string>(""); // State to store error message
+
   console.log("The rushmore you are creating is :" + JSON.stringify(rushmore));
-  const handleCreatePress = () => {
+  const handleCreatePress = async () => {
     const rushmoreService = new RushmoreService<UserRushmore>();
 
     const createUserRushmoreRequest: CreateUserRushmoreRequestDTO = {
@@ -44,18 +58,32 @@ export const RushmoreSettingsScreen = ({
           ? RushmoreGameTypeEnums.GAME
           : RushmoreGameTypeEnums.OPEN,
       rushmoreType:
-        rushmoreType === "favorite" ? RushmoreType.Best : RushmoreType.Best,
+        rushmoreType === "favorite" ? RushmoreType.Favorite : RushmoreType.Best,
     };
 
-    rushmoreService.createUserRushmore(createUserRushmoreRequest);
+    try {
+      setIsLoading(true);
+      let useRushmoreResponse: UserRushmoreDTO =
+        await rushmoreService.createUserRushmore(createUserRushmoreRequest);
 
-    //TODO Create a userRushmore object using the fields the user set, along with
+      console.log(
+        "Returned created user rushmore:" + JSON.stringify(useRushmoreResponse)
+      );
+      console.log(
+        "userRushmore created. JSON:" +
+          JSON.stringify(useRushmoreResponse.userRushmore)
+      );
+      navigation.navigate("EditUserRushmoreScreen", {
+        userRushmore: useRushmoreResponse.userRushmore,
+        selectedItemUserRushmore: undefined,
+      });
+    } catch (error: any) {
+      setIsLoading(false);
 
-    //TODO call userRushmoreService.createUserRushmore(
-    console.log("Create Rushmore");
-    navigation.navigate("EditUserRushmoreScreen", {
-      userRushmore,
-    });
+      console.error("Error Creating Rushmore. DISPLAY MODAL", error);
+      setErrorMessage(error.message); // Set error message
+      setErrorModalVisible(true); // Show error modal
+    }
   };
 
   return (
@@ -112,8 +140,19 @@ export const RushmoreSettingsScreen = ({
               ]}
               style={styles.segmentedButtons}
             />
+            {/* Error Modal */}
+            <Portal>
+              <Modal
+                visible={errorModalVisible}
+                onDismiss={() => setErrorModalVisible(false)}
+                contentContainerStyle={styles.modalContent}
+              >
+                <Text>{errorMessage}</Text>
+              </Modal>
+            </Portal>
           </View>
         )}
+
         {/* Spacer to push Create button to the bottom */}
         <View style={styles.spacer} />
         {/* Create Button */}
@@ -123,7 +162,14 @@ export const RushmoreSettingsScreen = ({
             onPress={handleCreatePress}
             style={styles.createButton}
           >
-            Create
+            {isLoading ? (
+              <>
+                <Text>Creating Rushmore ...</Text>
+                <ActivityIndicator animating={true} color="#ffffff" />
+              </>
+            ) : (
+              "Create Rushmore"
+            )}
           </Button>
         </View>
       </View>
@@ -161,5 +207,12 @@ const styles = StyleSheet.create({
   },
   createButton: {
     width: "100%",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    marginHorizontal: 20,
+    borderRadius: 8,
+    elevation: 4,
   },
 });
