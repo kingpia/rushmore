@@ -4,18 +4,22 @@ import {
   StyleSheet,
   FlatList,
   Keyboard,
-  ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { Searchbar, Button, ActivityIndicator, Text } from "react-native-paper"; // Import ActivityIndicator from react-native-paper
-import { UserService } from "../service/UserService";
-import SocialUserCard from "../components/SocialUserCard";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
-  AppStackParamList,
-  StackContainerScreenProps,
-} from "../nav/params/AppStackParamList";
+  Searchbar,
+  Button,
+  ActivityIndicator,
+  Text,
+  Checkbox,
+  List,
+} from "react-native-paper"; // Import ActivityIndicator from react-native-paper
+import { UserService } from "../service/UserService";
+import { StackContainerScreenProps } from "../nav/params/AppStackParamList";
 import { UserRushmore } from "../model/UserRushmore";
+import { RushmoreService } from "../service/RushmoreService";
+import { RushmoreItem } from "../model/RushmoreItem";
+import { UserRushmoreItem } from "../model/UserRushmoreItem";
 
 const userService = new UserService(); // Instantiate UserService
 
@@ -27,25 +31,39 @@ export const AddRushmoreItemsScreen = ({
   route,
 }: AddRushmoreItemsScreenProps) => {
   const [searchText, setSearchText] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<String[]>([]); // Assuming the shape of your user data
+  const [searchResults, setSearchResults] = useState<RushmoreItem[]>([]); // Assuming the shape of your user data
   const [loading, setLoading] = useState<boolean>(false); // Track loading state
   const [userRushmore, setUserRushmore] = useState<UserRushmore>();
   const searchbarRef = useRef<any>(null); // Ref to Searchbar component
+  const [from, setFrom] = useState<number>(0);
+  const [noMoreItems, setNoMoreItems] = useState(false);
+
+  const [selectedItems, setSelectedItems] = useState<RushmoreItem[]>([]);
+  // Define a state to hold the checked state for each item
+  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+
+  const rushmoreService = new RushmoreService(); // Create an instance of RushmoreService
 
   //WHen I first show up here, I want to do a big search only once when the component is rendered
   //Then we can run useEffect only when searchText changes.
   useEffect(() => {
-    console.log("Should run only once when component mounts");
     setUserRushmore(route.params.userRushmore);
+    // Populate checkedItems with items from userRushmore
+    if (route.params.userRushmore) {
+      const initialCheckedItems: { [key: string]: boolean } = {};
+      route.params.userRushmore.itemList.forEach(
+        (item) => (initialCheckedItems[item.item] = true)
+      );
+      setCheckedItems(initialCheckedItems);
+    }
+
+    fetchRushmoreItems();
   }, []);
 
   useEffect(() => {
     if (searchText.trim() !== "") {
-      // Check if searchText is not empty
-      console.log(
-        "I dont want this runnning until searchText is changed.  So I don't want this running on component render."
-      );
-
       const fetchItems = async () => {
         console.log("fetch a few items here.");
 
@@ -61,6 +79,74 @@ export const AddRushmoreItemsScreen = ({
     }
   }, [searchText]);
 
+  const fetchRushmoreItems = async () => {
+    console.log("fetchRushmoreItems.  from value:" + from);
+    try {
+      setLoading(true);
+      const newItems = await rushmoreService.getRushmoreItemInitialList(
+        route.params.userRushmore.rushmore.rid,
+        12,
+        from
+      );
+
+      if (newItems.length < 12) {
+        // Set a flag indicating no more items to fetch
+        setNoMoreItems(true);
+      }
+      console.log("newItems lenth:" + newItems.length);
+      setSearchResults((prevItems) => [...prevItems, ...newItems]);
+      setFrom((prevFrom) => prevFrom + 12); // Increase `from` by 12 for the next fetch
+    } catch (error) {
+      console.error("Error fetching Rushmore items:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update the renderItem function to use the checkedItems state
+  const renderItem = ({ item }: { item: RushmoreItem }) => (
+    <TouchableOpacity
+      onPress={() => console.log("Pressed")}
+      activeOpacity={0.1}
+    >
+      <View
+        style={styles.itemContainer}
+        onTouchEnd={() => {
+          // Toggle the checked state for the clicked item
+          setCheckedItems((prevState) => ({
+            ...prevState,
+            [item.primary]: !prevState[item.primary],
+          }));
+        }}
+      >
+        <Text style={styles.primaryText}>{item.primary}</Text>
+        <View>
+          <Checkbox
+            status={checkedItems[item.primary] ? "checked" : "unchecked"}
+            onPress={() => {
+              // Toggle the checked state for the clicked item
+              setCheckedItems((prevState) => ({
+                ...prevState,
+                [item.primary]: !prevState[item.primary],
+              }));
+            }}
+          />
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const handleEndReached = () => {
+    console.log("handleEndReached()");
+    if (!loading) {
+      if (!noMoreItems) {
+        fetchRushmoreItems();
+      } else {
+        console.log("there are no more items do not fetch again");
+      }
+    }
+  };
+
   const handleSearchChange = (text: string) => {
     setSearchText(text);
   };
@@ -73,25 +159,24 @@ export const AddRushmoreItemsScreen = ({
   const goBackToEditRushmoreScreen = () => {
     console.log("Save the items for the rushmore before going back.");
     if (userRushmore) {
-      // Generate a unique number for testing purposes
-      const uniqueNumber = Math.floor(Math.random() * 1000);
+      let rank = 1; // Initialize rank to 1
 
-      // Generate a random rank between 1 and 100
-      const randomRank = Math.floor(Math.random() * 100) + 1;
+      // Map the checked items to UserRushmoreItem format
+      const updatedItemList: UserRushmoreItem[] = Object.entries(checkedItems)
+        .filter(([_, isChecked]) => isChecked)
+        .map(([item, _]) => ({ item, rank: rank++ }));
 
-      const updatedUserRushmore = {
-        ...userRushmore,
-        itemList: [
-          ...userRushmore.itemList,
-          {
-            item: `TestItem${uniqueNumber}FromSelectionScreen`,
-            rank: randomRank,
-          },
-        ],
-      };
+      // Update the itemList of userRushmore with the checked items
+      userRushmore.itemList = updatedItemList;
+
+      console.log(
+        "navigating back to the EdituserRushmoreScreen with the following Items selected:" +
+          JSON.stringify(userRushmore)
+      );
+
       navigation.navigate("EditUserRushmoreScreen", {
-        userRushmore: updatedUserRushmore,
-        selectedItemUserRushmore: updatedUserRushmore,
+        userRushmore: userRushmore,
+        selectedItemUserRushmore: userRushmore,
       });
     } else {
       console.error("userRushmore is null");
@@ -115,23 +200,43 @@ export const AddRushmoreItemsScreen = ({
         ) : null}
       </View>
 
-      {/* Display ActivityIndicator from react-native-paper when loading is true */}
-      <ActivityIndicator
-        animating={loading}
-        color="#0000ff" // Set your desired color
-        size="large" // Set the size of the indicator
-        hidesWhenStopped={true} // Hide the indicator when not animating
-        style={styles.activityIndicator}
-      />
+      <List.Accordion
+        title="Selected Items"
+        left={(props) => <List.Icon {...props} icon="star" />}
+      >
+        {Object.entries(checkedItems).map(([key, isChecked]) => {
+          if (isChecked) {
+            return (
+              <List.Item
+                key={key}
+                title={key}
+                right={(props) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      const updatedCheckedItems = { ...checkedItems };
+                      updatedCheckedItems[key] = false;
+                      setCheckedItems(updatedCheckedItems);
+                    }}
+                  >
+                    <List.Icon {...props} icon="trash-can-outline" />
+                  </TouchableOpacity>
+                )}
+              />
+            );
+          } else {
+            return null;
+          }
+        })}
+      </List.Accordion>
 
       <View style={styles.flatListContainer}>
-        {/* Render user cards */}
         <FlatList
           data={searchResults}
-          keyExtractor={(item) => item.toString()}
-          renderItem={({ item }) => <Text>{item}</Text>}
-          keyboardShouldPersistTaps="handled" // Handle taps even when the keyboard is displayed
-          style={styles.flatList} // Add any additional styles if needed
+          renderItem={renderItem}
+          keyExtractor={(item) => item.primary}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={loading ? <ActivityIndicator animating /> : null}
         />
       </View>
       <Button onPress={goBackToEditRushmoreScreen}>Select Items</Button>
@@ -166,6 +271,17 @@ const styles = StyleSheet.create({
   },
   flatList: {
     flex: 1, // Ensure FlatList takes up remaining space
+  },
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+  },
+  primaryText: {
+    flex: 1, // Take up remaining space
   },
 });
 

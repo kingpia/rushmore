@@ -8,6 +8,8 @@ import { RushmoreType } from "../model/RushmoreTypeEnums";
 import { RushmoreVisibilityEnums } from "../model/RushmoreVisibilityEnums";
 import { UserRushmore } from "../model/UserRushmore";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
+import { RushmoreItem } from "../model/RushmoreItem";
+
 import { UserRushmoreGameSession } from "../model/UserRushmoreGameSession";
 import {
   rushmoreListURL,
@@ -213,7 +215,6 @@ export class RushmoreService<T> {
     }
   }
 
-  // Inside RushmoreService class
   async getUserRushmore(urId: number): Promise<UserRushmore> {
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
@@ -704,6 +705,100 @@ export class RushmoreService<T> {
 
       // No errors, return the user data
       return response.data.data.createUserRushmore;
+    } catch (error) {
+      // Handle network errors or unexpected errors
+      console.error("Error updating user name:", error);
+      throw error;
+    }
+  }
+
+  async getRushmoreItemInitialList(
+    rid: string,
+    size: number,
+    from: number
+  ): Promise<RushmoreItem[]> {
+    console.log("getRushmoreItemInitialList");
+
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          getRushmoreItemInitialList(rid: "${rid}", size: ${size} from: ${from}) {
+            primary
+          }
+        }
+      `,
+      });
+      console.log("OUTPUT:" + JSON.stringify(response.data.data));
+
+      return response.data.data.getRushmoreItemInitialList;
+    } catch (error) {
+      console.error("Error fetching completed Rushmore list:", error);
+      throw error;
+    }
+  }
+
+  async editUserRushmoreItems(
+    userRushmore: UserRushmore
+  ): Promise<UserRushmore> {
+    console.log("editUserRushmoreItems:", JSON.stringify(userRushmore));
+    try {
+      const response: AxiosResponse<{
+        data: { editUserRushmoreItems: UserRushmore };
+        errors?: GraphQLError[];
+      }> = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+          mutation($request: EditUserRushmoreItemListRequestDTO!) {
+            editUserRushmoreItems(request: $request) {
+              urId
+              uid
+              rushmore {
+                icon
+                price
+                rid
+                title
+              }
+              ownerUser {
+                nickName
+                uid
+                userName
+              }
+              visibility
+              gameType
+              rushmoreType
+              createdDt
+              version
+              itemList {
+                item
+                rank
+              }
+            }
+          }
+        `,
+        variables: {
+          request: {
+            urId: userRushmore.urId,
+            itemList: userRushmore.itemList.map((item) => ({
+              item: item.item,
+              rank: item.rank,
+            })),
+          },
+        },
+      });
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        const errorMessage = response.data.errors[0].message;
+        console.error("GraphQL error:", errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      console.log(
+        "Edited user Rushmore and got response:",
+        JSON.stringify(response.data.data.editUserRushmoreItems)
+      );
+      // No errors, return the user data
+      return response.data.data.editUserRushmoreItems;
     } catch (error) {
       // Handle network errors or unexpected errors
       console.error("Error updating user name:", error);

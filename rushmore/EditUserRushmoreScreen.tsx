@@ -31,7 +31,6 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import UserRushmoreStatsColumn from "../components/UserRushmoreStatsColumn";
-import { configure } from "@react-native-community/netinfo";
 
 type EditUserRushmoreScreenProps =
   StackContainerScreenProps<"EditUserRushmoreScreen">;
@@ -89,6 +88,11 @@ export const EditUserRushmoreScreen = ({
             //will have selected items.
             setUserRushmore(route.params.selectedItemUserRushmore);
 
+            //Save the selected items in the rushmore. No need to wait since we have the object already.
+            rushmoreService.editUserRushmoreItems(
+              route.params.selectedItemUserRushmore
+            );
+
             console.log(
               "I set userrushmore with:" +
                 JSON.stringify(route.params.selectedItemUserRushmore)
@@ -97,6 +101,7 @@ export const EditUserRushmoreScreen = ({
               "UserRushmore in the useFocusEffect:" +
                 JSON.stringify(userRushmore)
             );
+            configureDraggables();
           } else if (route.params.userRushmore) {
             console.log(
               "=====================SelectedItemsUserRushmore NOT FOUND IT WAS FUCKING NUL ======================="
@@ -150,7 +155,8 @@ export const EditUserRushmoreScreen = ({
       console.log("Sorted items size:" + sortedItems.length);
       setDraggableData(sortedItems);
     } else {
-      ("Item list is null");
+      console.log("Item list is null");
+      setDraggableData([]);
     }
     setIsRushmoreComplete(!!userRushmore?.completedDt);
     setIsEditMode(!userRushmore?.completedDt);
@@ -164,12 +170,15 @@ export const EditUserRushmoreScreen = ({
   };
 
   const handleDeletePress = (userRushmoreItem: UserRushmoreItem) => {
+    console.log("Current itemList:", JSON.stringify(userRushmore?.itemList));
+    console.log("Deleting item:", JSON.stringify(userRushmoreItem));
     // Find the index of the item in userRushmore.itemList
     const index = userRushmore?.itemList.findIndex(
       (item) => item.item === userRushmoreItem.item
     );
 
     if (index !== undefined && index !== -1) {
+      console.log("index found:");
       // Create a copy of userRushmore.itemList and remove the item at the found index
       const updatedItemList = [...(userRushmore?.itemList || [])];
       updatedItemList.splice(index, 1);
@@ -180,6 +189,7 @@ export const EditUserRushmoreScreen = ({
         itemList: updatedItemList,
       }));
     } else {
+      console.log("Why wasn't this item found if it's displayed");
       console.warn(
         `Item with urId ${userRushmoreItem.item} not found in the itemList array.`
       );
@@ -218,6 +228,8 @@ export const EditUserRushmoreScreen = ({
 
   const saveUserRushmore = () => {
     console.log("Saving user rushmore:", userRushmore);
+
+    //When we save, update the rushmore, do not go back go home
   };
 
   const renderUserRushmoreItem = ({
