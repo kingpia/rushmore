@@ -309,9 +309,9 @@ export const ProfileHomeScreen = ({
         <>
           <View style={styles.container}>
             <Avatar.Image
-              size={150}
+              size={125}
               source={{
-                uri: userData?.profileImagePath || "",
+                uri: userData?.profileImagePath || defaultImage,
               }}
               style={styles.avatar}
             />

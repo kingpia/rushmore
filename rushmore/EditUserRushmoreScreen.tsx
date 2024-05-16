@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Button,
   Dialog,
+  FAB,
   IconButton,
   Portal,
   Text,
@@ -48,6 +49,12 @@ export const EditUserRushmoreScreen = ({
   const [isEditMode, setIsEditMode] = useState(false);
   const [addItemText, setAddItemText] = useState("");
   const [isAddItemModalVisible, setIsAddItemModalVisible] = useState(false);
+  const [fabVisible, setFabVisible] = useState(true);
+
+  const [
+    isPublishUserRushmoreModalVisible,
+    setIsPublishUserRushmoreModalVisible,
+  ] = useState(false);
 
   const showModal = () => setIsModalVisible(true);
   const hideModal = () => setIsModalVisible(false);
@@ -89,7 +96,7 @@ export const EditUserRushmoreScreen = ({
             setUserRushmore(route.params.selectedItemUserRushmore);
 
             //Save the selected items in the rushmore. No need to wait since we have the object already.
-            rushmoreService.editUserRushmoreItems(
+            rushmoreService.editUserRushmore(
               route.params.selectedItemUserRushmore
             );
 
@@ -163,6 +170,13 @@ export const EditUserRushmoreScreen = ({
   };
 
   const handleExitPress = () => {
+    console.log("Saving user rushmore:", userRushmore);
+
+    if (userRushmore) {
+      console.log("saving the user rushmore:" + JSON.stringify(userRushmore));
+      rushmoreService.editUserRushmore(userRushmore);
+    }
+
     navigation.reset({
       index: 0,
       routes: [{ name: "RushmoreTabContainer" }],
@@ -229,6 +243,10 @@ export const EditUserRushmoreScreen = ({
   const saveUserRushmore = () => {
     console.log("Saving user rushmore:", userRushmore);
 
+    if (userRushmore) {
+      console.log("saving the user rushmore:" + JSON.stringify(userRushmore));
+      rushmoreService.editUserRushmore(userRushmore);
+    }
     //When we save, update the rushmore, do not go back go home
   };
 
@@ -323,6 +341,21 @@ export const EditUserRushmoreScreen = ({
     hideAddItemModal();
   };
 
+  const publishUserRushmore = async () => {
+    // Add logic to publish user rushmore
+    setIsPublishUserRushmoreModalVisible(false); // Close the modal after publishing
+
+    if (userRushmore) {
+      let response: UserRushmore = await rushmoreService.publishUserRushmore(
+        userRushmore
+      );
+    }
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "RushmoreTabContainer" }],
+    });
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {loading ? (
@@ -376,18 +409,30 @@ export const EditUserRushmoreScreen = ({
                 alignItems: "center",
               }}
             >
-              <TouchableOpacity onPress={navigateToAddItemsScreen}>
-                <IconButton icon="star" size={30} disabled={!isEditMode} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={showAddItemModal}>
-                <IconButton icon="plus" size={30} disabled={!isEditMode} />
-              </TouchableOpacity>
+              <Button
+                onPress={() => setIsPublishUserRushmoreModalVisible(true)}
+                disabled={
+                  !userRushmore ||
+                  !userRushmore.itemList ||
+                  userRushmore.itemList.length === 0
+                }
+              >
+                Publish
+              </Button>
             </View>
             <TouchableOpacity
               onPress={() => (canEdit() ? toggleEditMode() : showEditModal())}
             >
               <IconButton icon={isEditMode ? "floppy" : "pencil"} size={30} />
             </TouchableOpacity>
+          </View>
+          <View style={styles.fab}>
+            <FAB
+              visible={fabVisible}
+              icon="plus"
+              onPress={navigateToAddItemsScreen}
+              style={styles.fab}
+            />
           </View>
         </View>
       )}
@@ -451,6 +496,28 @@ export const EditUserRushmoreScreen = ({
           </Dialog.Actions>
         </Dialog>
       </Portal>
+
+      <Portal>
+        <Dialog
+          visible={isPublishUserRushmoreModalVisible}
+          onDismiss={() => setIsModalVisible(false)}
+        >
+          <Dialog.Content>
+            <Text>
+              {userRushmore?.rushmoreType} {userRushmore?.rushmore?.title}
+            </Text>
+            <Text>Visibility: {userRushmore?.visibility}</Text>
+
+            <Text>Type: {userRushmore?.gameType}</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setIsPublishUserRushmoreModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button onPress={publishUserRushmore}>Publish</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </SafeAreaView>
   );
 };
@@ -470,5 +537,11 @@ const styles = StyleSheet.create({
   text: {
     color: "green",
     fontSize: 20,
+  },
+  fab: {
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 20,
   },
 });

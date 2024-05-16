@@ -10,8 +10,9 @@ import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { RushmoreService } from "../service/RushmoreService";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
-import UserRushmoreListComponent from "./UserRushmoreListComponent";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
+import MyCompletedRushmoreCard from "./MyCompletedRushmoreCard";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type MyRushmoreListsComponentProps = {
   navigation: NativeStackNavigationProp<HomeStackParamList & AppStackParamList>;
@@ -33,6 +34,7 @@ export const MyRushmoreListsComponent: React.FC<
   const [isLoading, setLoading] = useState(true);
 
   const [fadeAnim] = useState(new Animated.Value(0));
+  const rushmoreService = new RushmoreService();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -46,13 +48,14 @@ export const MyRushmoreListsComponent: React.FC<
   );
 
   const fetchData = async (selectedValue: string) => {
+    console.log("Fetching data in MyRushmoreListsComponent");
     setLoading(true); // Set loading to true when fetching data
-    const rushmoreService = new RushmoreService();
 
     try {
       if (selectedValue === "inprogress") {
         const myInProgressRushmoreData =
           await rushmoreService.getMyInProgressRushmoreList();
+        console.log("Settingg MyInProgressRushmoreList");
         setMyInProgressRushmoreList(myInProgressRushmoreData);
 
         const categoriesSet = new Set<string>();
@@ -74,17 +77,32 @@ export const MyRushmoreListsComponent: React.FC<
           "MyInProgressRushmoreData:" + JSON.stringify(myInProgressRushmoreData)
         );
       } else if (selectedValue === "complete") {
+        console.log("selected cat is complete");
         const myCompletedRushmoreData =
           await rushmoreService.getMyCompletedRushmoreList();
+        console.log(
+          "Back from fetching data, setting completed rushmore data:" +
+            JSON.stringify(myCompletedRushmoreData)
+        );
         setMyCompletedRushmoreList(myCompletedRushmoreData);
-        console.log("Completed rushmore response:" + myCompletedRushmoreData);
+        console.log(
+          "Done setting completed rushmore list with size:" +
+            myCompletedRushmoreData.length
+        );
 
         const categoriesSet = new Set<string>();
 
         // Loop through UserRushmoreDTO and extract categories
         myCompletedRushmoreData.forEach((userRushmoreDTO) => {
+          console.log(
+            "Got a user rushmore item:" +
+              JSON.stringify(userRushmoreDTO.userRushmore.rushmore.category)
+          );
           categoriesSet.add(userRushmoreDTO.userRushmore.rushmore.category);
         });
+        console.log(
+          "Done doing for each on the categories for completed rushmores  "
+        );
 
         const categoriesArray = Array.from(categoriesSet);
         categoriesArray.unshift("All");
@@ -111,12 +129,14 @@ export const MyRushmoreListsComponent: React.FC<
   };
 
   const countByCategory = (category: string) => {
+    console.log("CountByCategory");
     if (value === "inprogress") {
       return myInProgressRushmoreList.filter(
         (item) =>
           category === "All" || item.userRushmore.rushmore.category === category
       ).length;
     } else {
+      console.log("returning myCompletedRushmoreList.filter");
       return myCompletedRushmoreList.filter(
         (item) =>
           category === "All" || item.userRushmore.rushmore.category === category
@@ -152,7 +172,7 @@ export const MyRushmoreListsComponent: React.FC<
       <Animated.FlatList
         data={filteredYourInProgressRushmoreData}
         style={{ opacity: fadeAnim }}
-        keyExtractor={(item) => item.userRushmore.rushmore.rid.toString()}
+        keyExtractor={(item) => item.userRushmore.urId.toString()}
         renderItem={({ item }) => (
           <MyInProgressRushmoreCard
             myInProgressRushmore={item}
@@ -166,11 +186,11 @@ export const MyRushmoreListsComponent: React.FC<
   const renderCompletedRushmoreList = () => {
     return (
       <Animated.FlatList
-        data={filteredCompletedInProgressRushmoreData}
+        data={filteredCompletedRushmoreData}
         style={{ opacity: fadeAnim }}
-        keyExtractor={(item) => item.userRushmore.rushmore.rid.toString()}
+        keyExtractor={(item) => item.userRushmore.urId.toString()}
         renderItem={({ item }) => (
-          <UserRushmoreListComponent
+          <MyCompletedRushmoreCard
             userRushmoreDTO={item}
             onPress={() => navigateToMyCompletedRushmore(item)}
           />
@@ -187,7 +207,7 @@ export const MyRushmoreListsComponent: React.FC<
         item.userRushmore.rushmore.category === selectedCategory
     ) || [];
 
-  const filteredCompletedInProgressRushmoreData =
+  const filteredCompletedRushmoreData =
     myCompletedRushmoreList?.filter(
       (item) =>
         selectedCategory === "All" ||
@@ -195,32 +215,37 @@ export const MyRushmoreListsComponent: React.FC<
     ) || [];
 
   return (
-    <View>
-      <RushmoreHorizontalView
-        selectedCategory={selectedCategory}
-        onPressCategory={handleCategoryPress}
-        countByCategory={countByCategory}
-        categories={categories}
-      />
-      <SegmentedButtons
-        style={{ margin: 10 }}
-        value={value}
-        onValueChange={setValue}
-        buttons={[
-          {
-            value: "inprogress",
-            label: "In-Progress",
-          },
-          {
-            value: "complete",
-            label: "Completed",
-          },
-        ]}
-      />
-
-      {value === "inprogress"
-        ? renderInProgressRushmoreList()
-        : renderCompletedRushmoreList()}
+    <View style={styles.container}>
+      <View>
+        <RushmoreHorizontalView
+          selectedCategory={selectedCategory}
+          onPressCategory={handleCategoryPress}
+          countByCategory={countByCategory}
+          categories={categories}
+        />
+      </View>
+      <View>
+        <SegmentedButtons
+          style={{ margin: 10 }}
+          value={value}
+          onValueChange={setValue}
+          buttons={[
+            {
+              value: "inprogress",
+              label: "In-Progress",
+            },
+            {
+              value: "complete",
+              label: "Published",
+            },
+          ]}
+        />
+        <View style={{ backgroundColor: "yellow" }}>
+          {value === "inprogress"
+            ? renderInProgressRushmoreList()
+            : renderCompletedRushmoreList()}
+        </View>
+      </View>
     </View>
   );
 };
@@ -229,5 +254,9 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: "#CCCCCC",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "blue",
   },
 });

@@ -37,8 +37,10 @@ export const AddRushmoreItemsScreen = ({
   const searchbarRef = useRef<any>(null); // Ref to Searchbar component
   const [from, setFrom] = useState<number>(0);
   const [noMoreItems, setNoMoreItems] = useState(false);
+  const [originalRushmoreItems, setOriginalRushmoreItems] = useState<
+    RushmoreItem[]
+  >([]);
 
-  const [selectedItems, setSelectedItems] = useState<RushmoreItem[]>([]);
   // Define a state to hold the checked state for each item
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
     {}
@@ -66,9 +68,23 @@ export const AddRushmoreItemsScreen = ({
     if (searchText.trim() !== "") {
       const fetchItems = async () => {
         console.log("fetch a few items here.");
+        if (userRushmore) {
+          let searchStringResponse =
+            await rushmoreService.getRushmoreItemBySearchString(
+              userRushmore?.rushmore.rid,
+              searchText
+            );
+          console.log("RESPONSE:", searchStringResponse);
+          setSearchResults(searchStringResponse);
 
-        //TODO: Fetch about 25 items limit to get them started.
-        //TODO this is where it gets tricky.
+          // Update the checked items based on the search results
+          if (searchStringResponse && searchStringResponse.length > 0) {
+            console.log("We have a response, let's do an update");
+            console.log("Current checked items:", checkedItems);
+          } else {
+            console.log("No items found in the search response.");
+          }
+        }
       };
 
       const debounceTimer = setTimeout(fetchItems, 1000);
@@ -76,8 +92,11 @@ export const AddRushmoreItemsScreen = ({
       return () => {
         clearTimeout(debounceTimer);
       };
+    } else {
+      console.log("no search string");
+      setSearchResults(originalRushmoreItems);
     }
-  }, [searchText]);
+  }, [searchText, userRushmore, checkedItems]);
 
   const fetchRushmoreItems = async () => {
     console.log("fetchRushmoreItems.  from value:" + from);
@@ -93,6 +112,15 @@ export const AddRushmoreItemsScreen = ({
         // Set a flag indicating no more items to fetch
         setNoMoreItems(true);
       }
+
+      // If it's the initial fetch, set originalRushmoreItems to the fetched items
+      if (from === 0) {
+        setOriginalRushmoreItems(newItems);
+      } else {
+        // If it's a subsequent fetch, concatenate the new items to originalRushmoreItems
+        setOriginalRushmoreItems((prevItems) => [...prevItems, ...newItems]);
+      }
+
       console.log("newItems lenth:" + newItems.length);
       setSearchResults((prevItems) => [...prevItems, ...newItems]);
       setFrom((prevFrom) => prevFrom + 12); // Increase `from` by 12 for the next fetch
@@ -138,21 +166,27 @@ export const AddRushmoreItemsScreen = ({
 
   const handleEndReached = () => {
     console.log("handleEndReached()");
-    if (!loading) {
+    //Do not fetch more when we are doing searching
+    if (!loading && searchText === "") {
       if (!noMoreItems) {
         fetchRushmoreItems();
       } else {
         console.log("there are no more items do not fetch again");
       }
+    } else {
+      console.log("Search text is null, not fetching on end reach");
     }
   };
 
   const handleSearchChange = (text: string) => {
+    console.log("Setting Search Text");
     setSearchText(text);
   };
 
+  // Modify clearSearchText to revert to original rushmore items
   const clearSearchText = () => {
     setSearchText("");
+    setSearchResults(originalRushmoreItems);
     Keyboard.dismiss(); // Hide the keyboard
   };
 

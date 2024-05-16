@@ -73,9 +73,18 @@ export const RushmoreSettingsScreen = ({
         "userRushmore created. JSON:" +
           JSON.stringify(useRushmoreResponse.userRushmore)
       );
-      navigation.navigate("EditUserRushmoreScreen", {
-        userRushmore: useRushmoreResponse.userRushmore,
-        selectedItemUserRushmore: undefined,
+
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: "EditUserRushmoreScreen",
+            params: {
+              userRushmore: useRushmoreResponse.userRushmore,
+              selectedItemUserRushmore: undefined,
+            },
+          },
+        ],
       });
     } catch (error: any) {
       setIsLoading(false);

@@ -586,6 +586,7 @@ export class RushmoreService<T> {
               }
               rushmoreType
               completedCount
+              bookmarkCount
               urId
               version
               visibility
@@ -614,7 +615,7 @@ export class RushmoreService<T> {
         }
       `,
       });
-      console.log("OUTPUT:" + response.data);
+      console.log("OUTPUT:" + JSON.stringify(response.data));
 
       return response.data.data.myCompletedUserRushmores;
     } catch (error) {
@@ -738,9 +739,7 @@ export class RushmoreService<T> {
     }
   }
 
-  async editUserRushmoreItems(
-    userRushmore: UserRushmore
-  ): Promise<UserRushmore> {
+  async editUserRushmore(userRushmore: UserRushmore): Promise<UserRushmore> {
     console.log("editUserRushmoreItems:", JSON.stringify(userRushmore));
     try {
       const response: AxiosResponse<{
@@ -748,8 +747,8 @@ export class RushmoreService<T> {
         errors?: GraphQLError[];
       }> = await api.post(`${this.baseURL}/graphql`, {
         query: `
-          mutation($request: EditUserRushmoreItemListRequestDTO!) {
-            editUserRushmoreItems(request: $request) {
+          mutation($request: EditUserRushmoreRequestDTO!) {
+            editUserRushmore(request: $request) {
               urId
               uid
               rushmore {
@@ -782,6 +781,9 @@ export class RushmoreService<T> {
               item: item.item,
               rank: item.rank,
             })),
+            visibility: userRushmore.visibility,
+            rushmoreType: userRushmore.rushmoreType,
+            gameType: userRushmore.gameType,
           },
         },
       });
@@ -802,6 +804,100 @@ export class RushmoreService<T> {
     } catch (error) {
       // Handle network errors or unexpected errors
       console.error("Error updating user name:", error);
+      throw error;
+    }
+  }
+
+  async publishUserRushmore(userRushmore: UserRushmore): Promise<UserRushmore> {
+    console.log("editUserRushmoreItems:", JSON.stringify(userRushmore));
+    try {
+      const response: AxiosResponse<{
+        data: { publishUserRushmore: UserRushmore };
+        errors?: GraphQLError[];
+      }> = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+          mutation($request: EditUserRushmoreRequestDTO!) {
+            publishUserRushmore(request: $request) {
+              urId
+              uid
+              rushmore {
+                icon
+                price
+                rid
+                title
+              }
+              ownerUser {
+                nickName
+                uid
+                userName
+              }
+              visibility
+              gameType
+              rushmoreType
+              createdDt
+              version
+              itemList {
+                item
+                rank
+              }
+            }
+          }
+        `,
+        variables: {
+          request: {
+            urId: userRushmore.urId,
+            itemList: userRushmore.itemList.map((item) => ({
+              item: item.item,
+              rank: item.rank,
+            })),
+            visibility: userRushmore.visibility,
+            rushmoreType: userRushmore.rushmoreType,
+            gameType: userRushmore.gameType,
+          },
+        },
+      });
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        const errorMessage = response.data.errors[0].message;
+        console.error("GraphQL error:", errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      console.log(
+        "Edited user Rushmore and got response:",
+        JSON.stringify(response.data.data.publishUserRushmore)
+      );
+      // No errors, return the user data
+      return response.data.data.publishUserRushmore;
+    } catch (error) {
+      // Handle network errors or unexpected errors
+      console.error("Error updating user name:", error);
+      throw error;
+    }
+  }
+
+  async getRushmoreItemBySearchString(
+    rid: string,
+    searchString: string
+  ): Promise<RushmoreItem[]> {
+    console.log("getRushmoreItemBySearchString");
+
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          getRushmoreItemBySearchString(rid: "${rid}", searchString:"${searchString}") {
+            primary
+          }
+        }
+      `,
+      });
+      console.log("OUTPUT:" + JSON.stringify(response.data.data));
+
+      return response.data.data.getRushmoreItemBySearchString;
+    } catch (error) {
+      console.error("Error fetching completed Rushmore list:", error);
       throw error;
     }
   }

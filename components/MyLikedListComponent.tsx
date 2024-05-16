@@ -9,7 +9,7 @@ import { RushmoreService } from "../service/RushmoreService";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
-import UserRushmoreListComponent from "./UserRushmoreListComponent";
+import UserRushmoreListComponent from "./MyCompletedRushmoreCard";
 
 type MyLikedListsComponentProps = {
   navigation: NativeStackNavigationProp<HomeStackParamList & AppStackParamList>;

@@ -15,6 +15,7 @@ export interface UserRushmore {
   createdDt: string;
   completedDt: string;
   likeCount: number; //0 if private
+  bookmarkCount: number;
   completedCount: number; //times completed by other, almost like the popularity
   icon: string;
   highScoreUser: User;
