@@ -14,6 +14,11 @@ import TermsAndPolicyScreen from "../../profile/TermsAndPolicyScreen";
 import AccountScreen from "../../profile/AccountScreen";
 import ProfileSettingsScreen from "../../profile/ProfileSettingsScreen";
 import AddRushmoreItemsScreen from "../../rushmore/AddRushmoreItemsScreen";
+import { RushmoreSettingsScreen } from "../../rushmore/RushmoreSettingsScreen";
+import { UserInfoSettingsScreen } from "../../profile/UserInfoSettingsScreen";
+import { PasswordChangeSettingsScreen } from "../../profile/PasswordChangeSettingsScreen";
+import { DeleteAccountSettingsScreen } from "../../profile/DeleteAccountSettingsScreen";
+import { DeactivateAccountSettingsScreen } from "../../profile/DeactivateAccountSettingsScreen";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
@@ -134,6 +139,49 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
         component={ProfileSettingsScreen}
         options={{
           headerTitle: "Settings", // Empty string to hide the title
+          headerShown: true,
+        }}
+      />
+      <AppStackNavigator.Screen
+        name="RushmoreSettingsScreen"
+        component={RushmoreSettingsScreen}
+        options={({ route }) => ({
+          headerTitle: `${route.params?.rushmore.title}`,
+        })}
+      />
+
+      <AppStackNavigator.Screen
+        name="UserInfoSettingsScreen"
+        component={UserInfoSettingsScreen}
+        options={{
+          headerTitle: "User Information", // Empty string to hide the title
+          headerShown: true,
+        }}
+      />
+
+      <AppStackNavigator.Screen
+        name="PasswordChangeSettingsScreen"
+        component={PasswordChangeSettingsScreen}
+        options={{
+          headerTitle: "Change Password", // Empty string to hide the title
+          headerShown: true,
+        }}
+      />
+
+      <AppStackNavigator.Screen
+        name="DeleteAccountSettingsScreen"
+        component={DeleteAccountSettingsScreen}
+        options={{
+          headerTitle: "Delete Account", // Empty string to hide the title
+          headerShown: true,
+        }}
+      />
+
+      <AppStackNavigator.Screen
+        name="DeactivateAccountSettingsScreen"
+        component={DeactivateAccountSettingsScreen}
+        options={{
+          headerTitle: "Delete Account", // Empty string to hide the title
           headerShown: true,
         }}
       />

@@ -21,13 +21,6 @@ export const CreateRushmoreStackContainer = () => {
           headerTitle: "Create Rushmore",
         }}
       />
-      <CreateRushmoreStackNavigator.Screen
-        name="RushmoreSettingsScreen"
-        component={RushmoreSettingsScreen}
-        options={({ route }) => ({
-          headerTitle: `${route.params?.rushmore.title}`,
-        })}
-      />
     </CreateRushmoreStackNavigator.Navigator>
   );
 };

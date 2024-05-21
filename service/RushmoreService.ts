@@ -408,6 +408,7 @@ export class RushmoreService<T> {
                 userName
               }
               likeCount
+              bookmarkCount
               ownerUser {
                 userName
                 uid

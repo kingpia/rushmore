@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Animated } from "react-native";
 import { Avatar, Button, Text } from "react-native-paper";
 import { UserService } from "../service/UserService";
 import { UserRushmore } from "../model/UserRushmore";
-import { UserRushmoreCard } from "../components/UserRushmoreCard";
+import UserRushmoreCard from "../components/UserRushmoreCard";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { getSocialNetworkButtonText } from "../utils/SocialUtils";
 import { useUserFocus } from "../service/UserFocusContext";
+import { RushmoreService } from "../service/RushmoreService";
+import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 
 type UserProfileScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -21,7 +23,7 @@ export const UserProfileScreen = ({
   navigation,
 }: UserProfileScreenProps) => {
   const [userData, setUserData] = useState<SocialUser>();
-  const [userRushmoreData, setUserRushmoreData] = useState<UserRushmore[]>();
+  const [userRushmoreData, setUserRushmoreData] = useState<UserRushmoreDTO[]>();
   const defaultImage = require("../assets/shylo.png");
   const [categories, setCategories] = useState<string[]>(["All"]); // Initialize with "All"
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -32,8 +34,17 @@ export const UserProfileScreen = ({
 
   console.log("UserProfileScreen");
 
+  const renderItemSeparator = () => <View style={styles.divider} />;
+  const [fadeAnim] = useState(new Animated.Value(0));
+
   useFocusEffect(
     React.useCallback(() => {
+      fadeAnim.setValue(0); // Reset opacity to 0 when screen is focused
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000, // Adjust the duration as needed
+        useNativeDriver: true,
+      }).start();
       const unsubscribe = navigation.addListener("state", (e) => {
         console.log("Current navigation state:", e.data.state);
       });
@@ -54,7 +65,13 @@ export const UserProfileScreen = ({
         setUserFocus(user.uid);
 
         console.log("User Profile Data:" + JSON.stringify(user));
-        setUserRushmoreData(userRushmoreData);
+
+        //TODO: Need to get the user rushmores for this user. Only the non privates.
+        const userRushmoreList = await userService.userRushmoresByUid(
+          route.params.user.uid
+        );
+        console.log("useRushmoreListData:" + JSON.stringify(userRushmoreList));
+        setUserRushmoreData(userRushmoreList);
         setSocialButtonText(
           getSocialNetworkButtonText(user.socialRelationship)
         );
@@ -74,7 +91,9 @@ export const UserProfileScreen = ({
   const countByCategory = (category: string): number => {
     return (
       userRushmoreData?.filter((item) =>
-        category === "All" ? true : item.rushmore.category === category
+        category === "All"
+          ? true
+          : item.userRushmore.rushmore.category === category
       ).length || 0
     );
   };
@@ -86,7 +105,8 @@ export const UserProfileScreen = ({
 
   const filteredUserRushmoreData = userRushmoreData?.filter(
     (item) =>
-      selectedCategory === "All" || item.rushmore.category === selectedCategory
+      selectedCategory === "All" ||
+      item.userRushmore.rushmore.category === selectedCategory
   );
 
   const navigateToRushmoreGameScreen = (userRushmore: UserRushmore) => {
@@ -254,15 +274,17 @@ export const UserProfileScreen = ({
       </View>
 
       {filteredUserRushmoreData && filteredUserRushmoreData.length > 0 ? (
-        <FlatList
+        <Animated.FlatList
           data={filteredUserRushmoreData}
-          keyExtractor={(item) => item.urId.toString()}
+          style={{ opacity: fadeAnim }}
+          keyExtractor={(item) => item.userRushmore.urId.toString()}
           renderItem={({ item }) => (
             <UserRushmoreCard
-              userRushmore={item}
-              onPress={() => navigateToRushmoreGameScreen(item)}
+              userRushmoreDTO={item}
+              onPress={() => navigateToRushmoreGameScreen(item.userRushmore)}
             />
           )}
+          ItemSeparatorComponent={renderItemSeparator}
         />
       ) : (
         <Text style={styles.noResultsText}>No Rushmore Results</Text>
@@ -313,5 +335,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginTop: 20,
     alignSelf: "center",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#CCCCCC",
   },
 });

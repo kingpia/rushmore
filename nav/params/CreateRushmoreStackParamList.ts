@@ -5,9 +5,6 @@ import { AppStackParamList } from "./AppStackParamList";
 
 export type CreateRushmoreStackParamList = {
   CreateRushmoreHomeScreen: undefined;
-  RushmoreSettingsScreen: {
-    rushmore: Rushmore;
-  };
 };
 
 export type StackContainerScreenProps<

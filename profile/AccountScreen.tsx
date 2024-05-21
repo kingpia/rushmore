@@ -1,38 +1,53 @@
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
 
-const AccountScreen: React.FC = () => {
-  const navigation = useNavigation();
+type AccountScreenProps = {
+  navigation: NativeStackNavigationProp<AppStackParamList>;
+  route: any;
+};
 
-  const navigateTo = (routeName: string) => {
-    console.log("Navigate to:" + routeName);
+export const AccountScreen = ({ navigation, route }: AccountScreenProps) => {
+  const navigateToUserInfoSettingsScreen = () => {
+    navigation.navigate("UserInfoSettingsScreen");
   };
 
+  const PasswordChangeSettingsScreen = () => {
+    navigation.navigate("PasswordChangeSettingsScreen");
+  };
+
+  const DeleteAccountSettingsScreen = () => {
+    navigation.navigate("DeleteAccountSettingsScreen");
+  };
+
+  const DeactivateAccountSettingsScreen = () => {
+    navigation.navigate("DeactivateAccountSettingsScreen");
+  };
   return (
     <View>
       <List.Item
         title="User Info"
-        onPress={() => navigateTo("UserInfoScreen")}
+        onPress={() => navigateToUserInfoSettingsScreen()}
         left={(props) => <List.Icon {...props} icon="account-circle" />}
         right={(props) => <List.Icon {...props} icon="chevron-right" />}
       />
       <List.Item
         title="Password"
-        onPress={() => navigateTo("PasswordScreen")}
+        onPress={() => PasswordChangeSettingsScreen()}
         left={(props) => <List.Icon {...props} icon="lock" />}
         right={(props) => <List.Icon {...props} icon="chevron-right" />}
       />
       <List.Item
         title="Delete Account"
-        onPress={() => navigateTo("DeleteAccountScreen")}
+        onPress={() => DeleteAccountSettingsScreen()}
         left={(props) => <List.Icon {...props} icon="delete" />}
         right={(props) => <List.Icon {...props} icon="chevron-right" />}
       />
       <List.Item
         title="Deactivate Account"
-        onPress={() => navigateTo("DeactivateAccountScreen")}
+        onPress={() => DeactivateAccountSettingsScreen()}
         left={(props) => <List.Icon {...props} icon="cancel" />}
         right={(props) => <List.Icon {...props} icon="chevron-right" />}
       />

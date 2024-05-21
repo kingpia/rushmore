@@ -3,6 +3,7 @@ import { AuthStackParamList } from "./AuthStackParamList";
 import { RushmoreTabContainerParamList } from "../params/RushmoreTabContainerParamList";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { UserRushmore } from "../../model/UserRushmore";
+import { Rushmore } from "../../model/Rushmore";
 
 export type AppStackParamList = {
   AuthStackContainer: NavigatorScreenParams<AuthStackParamList>;
@@ -25,7 +26,15 @@ export type AppStackParamList = {
   UserProfileScreen: { user: SocialUser };
   TermsAndPolicyScreen: undefined;
   ProfileSettingsScreen: undefined;
+  AccountSettingsScreen: undefined;
+  UserInfoSettingsScreen: { user: User };
+  PasswordChangeSettingsScreen: undefined;
+  DeleteAccountSettingsScreen: undefined;
+  DeactivateAccountSettingsScreen: undefined;
   AccountScreen: undefined;
+  RushmoreSettingsScreen: {
+    rushmore: Rushmore;
+  };
 };
 
 export type StackContainerScreenProps<S extends keyof AppStackParamList> =

@@ -4,10 +4,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
 import {
   ActivityIndicator,
+  Appbar,
   Button,
   Dialog,
   FAB,
   IconButton,
+  Menu,
   Portal,
   Text,
   TextInput,
@@ -25,7 +27,6 @@ import {
   RushmoreVisibilityEnums,
   UserRushmore,
 } from "../model/UserRushmore";
-import EditRushmoreAppBar from "../components/header/EditRushmoreAppBar";
 import { UserRushmoreItem } from "../model/UserRushmoreItem";
 import DraggableFlatList, {
   RenderItemParams,
@@ -50,6 +51,10 @@ export const EditUserRushmoreScreen = ({
   const [addItemText, setAddItemText] = useState("");
   const [isAddItemModalVisible, setIsAddItemModalVisible] = useState(false);
   const [fabVisible, setFabVisible] = useState(true);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const showDeleteDialog = () => setIsDeleteDialogVisible(true);
+  const hideDeleteDialog = () => setIsDeleteDialogVisible(false);
+  const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
 
   const [
     isPublishUserRushmoreModalVisible,
@@ -66,20 +71,6 @@ export const EditUserRushmoreScreen = ({
   const hideAddItemModal = () => {
     setAddItemText("");
     setIsAddItemModalVisible(false);
-  };
-
-  const navigateToAddItemsScreen = () => {
-    //Go to the addItemsScreen(draggableData) send the data so you can have it checked already
-    if (userRushmore) {
-      // Navigate only if userRushmore is not null
-      navigation.navigate("AddRushmoreItemsScreen", {
-        userRushmore: userRushmore,
-      });
-    } else {
-      // Handle the case where userRushmore is null
-      console.error("userRushmore is null");
-      // Optionally, you can provide a fallback or handle this case differently
-    }
   };
 
   // Inside ProfileHomeScreen component
@@ -141,6 +132,20 @@ export const EditUserRushmoreScreen = ({
       fetchUserRushmore();
     }, [route.params.userRushmore?.itemList])
   );
+
+  const navigateToAddItemsScreen = () => {
+    //Go to the addItemsScreen(draggableData) send the data so you can have it checked already
+    if (userRushmore) {
+      // Navigate only if userRushmore is not null
+      navigation.navigate("AddRushmoreItemsScreen", {
+        userRushmore: userRushmore,
+      });
+    } else {
+      // Handle the case where userRushmore is null
+      console.error("userRushmore is null");
+      // Optionally, you can provide a fallback or handle this case differently
+    }
+  };
 
   //When the userRushmore Changes, configureDraggables again
   useEffect(() => {
@@ -250,6 +255,19 @@ export const EditUserRushmoreScreen = ({
     //When we save, update the rushmore, do not go back go home
   };
 
+  const closeMenu = () => {
+    setMenuVisible(false);
+  };
+
+  const handleDeleteUserRushmorePress = () => {
+    closeMenu();
+    showDeleteDialog(); // Show the confirmation dialog
+  };
+
+  const handleMenuPress = () => {
+    setMenuVisible(true);
+  };
+
   const renderUserRushmoreItem = ({
     item,
     drag,
@@ -349,11 +367,27 @@ export const EditUserRushmoreScreen = ({
       let response: UserRushmore = await rushmoreService.publishUserRushmore(
         userRushmore
       );
+      console.log("Setting UserRushmore:" + JSON.stringify(response));
+      setUserRushmore(response);
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "RushmoreTabContainer" }],
-    });
+
+    //Put us in "Edit Mode for the completed Rushmore"
+  };
+
+  const confirmDeleteUserRushmore = async () => {
+    try {
+      if (userRushmore) {
+        console.log("Deleting UserRushmore:", userRushmore);
+        //await rushmoreService.deleteUserRushmore(userRushmore.urId);
+        //navigation.goBack(); // Navigate back to the previous screen
+      } else {
+        console.log("UserRushmore is null, nothing to delete.");
+      }
+    } catch (error) {
+      console.error("Error deleting UserRushmore:", error);
+    } finally {
+      hideDeleteDialog(); // Hide the confirmation dialog
+    }
   };
 
   return (
@@ -363,10 +397,26 @@ export const EditUserRushmoreScreen = ({
       ) : (
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
-            <EditRushmoreAppBar
-              rushmoreTitle={userRushmore?.rushmore?.title || ""}
-              rushmoreType={userRushmore?.rushmoreType || ""}
-            />
+            <Appbar.Header statusBarHeight={0}>
+              <Appbar.Content
+                title={`${userRushmore?.rushmoreType || ""} ${
+                  userRushmore?.rushmore?.title || ""
+                }`.trim()}
+              />
+              <Menu
+                visible={menuVisible}
+                onDismiss={closeMenu}
+                anchor={
+                  <IconButton icon="dots-vertical" onPress={handleMenuPress} />
+                }
+              >
+                <Menu.Item
+                  onPress={handleDeleteUserRushmorePress}
+                  title="Delete Rushmore"
+                />
+              </Menu>
+            </Appbar.Header>
+
             <DraggableFlatList
               data={draggableData}
               onDragEnd={handleDragEnd}
@@ -414,7 +464,8 @@ export const EditUserRushmoreScreen = ({
                 disabled={
                   !userRushmore ||
                   !userRushmore.itemList ||
-                  userRushmore.itemList.length === 0
+                  userRushmore.itemList.length === 0 ||
+                  !isEditMode
                 }
               >
                 Publish
@@ -515,6 +566,25 @@ export const EditUserRushmoreScreen = ({
               Cancel
             </Button>
             <Button onPress={publishUserRushmore}>Publish</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
+      <Portal>
+        <Dialog visible={isDeleteDialogVisible} onDismiss={hideDeleteDialog}>
+          <Dialog.Title>Confirm Delete</Dialog.Title>
+          <Dialog.Content>
+            <Text>
+              Are you sure? Consider editing, as an edit increments the version.
+              {"\n\n"}
+              With edit, you can still have visibility to previous versions.
+              {"\n\n"}
+              Choose Wisely.
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={hideDeleteDialog}>Cancel</Button>
+            <Button onPress={confirmDeleteUserRushmore}>Delete</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

@@ -4,6 +4,7 @@ import { UserRushmore } from "../model/UserRushmore";
 import FormData from "form-data";
 import api from "./api";
 import { AxiosResponse } from "axios";
+import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 
 interface GraphQLError {
   message: string;
@@ -38,41 +39,53 @@ export class UserService<T> {
     }
   }
 
-  async getUserRushmoreList(uid: string): Promise<UserRushmore[]> {
+  async userRushmoresByUid(uid: string): Promise<UserRushmoreDTO[]> {
     console.log("GetUserRushmoreList UID:" + uid);
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
-          userRushmoresByUid(uid: "${uid}") {
-            completedCount
-            completedDt
-            createdBy
-            firstCompletedDt
-            firstCompletedUid
-            gameType
-            firstCompletedUser {
-              nickName
-              uid
-              userName
+          userRushmoresByUid(uid: "54888418-f001-70ba-0e9b-2d7445855466") {
+            userRushmore {
+              completedCount
+              firstCompletedDt
+              firstCompletedUid
+              firstCompletedUser {
+                nickName
+                uid
+                userName
+              }
+              gameType
+              highScore
+              highScoreUid
+              highScoreUser {
+                nickName
+                uid
+                userName
+              }
+              likeCount
+              bookmarkCount
+              ownerUser {
+                userName
+                uid
+              }
+              rushmore {
+                category
+                icon
+                rid
+                title
+              }
+              rushmoreType
+              urId
+              completedDt
+              version
             }
-            urId
-            highScoreUser {
-              nickName
-              uid
-              userName
+            userRushmoreGameSession {
+              score
+              urgsId
+              completedDt
+              createdDt
             }
-            rushmore {
-              category
-              icon
-              rid
-              title
-            }
-            highScore
-            highScoreUid
-            likeCount
-            rushmoreType
-            userId
           }
         }
         `,
@@ -86,6 +99,7 @@ export class UserService<T> {
   }
 
   async getUserByUserId(uid: string): Promise<SocialUser> {
+    console.log("getuserByUserId");
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
