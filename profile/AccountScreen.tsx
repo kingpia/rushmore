@@ -1,8 +1,9 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { UserService } from "../service/UserService";
 
 type AccountScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -10,6 +11,8 @@ type AccountScreenProps = {
 };
 
 export const AccountScreen = ({ navigation, route }: AccountScreenProps) => {
+  const userService = new UserService();
+  const [userData, setUserData] = useState<User>();
   const navigateToUserInfoSettingsScreen = () => {
     navigation.navigate("UserInfoSettingsScreen");
   };

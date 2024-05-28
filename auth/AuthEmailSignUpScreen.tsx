@@ -495,8 +495,8 @@ export const AuthEmailSignUpScreen = ({
         >
           {isSigningIn ? ( // Display "Signing in..." when signing in
             <>
-              <Text>Signing in... </Text>
               <ActivityIndicator animating={true} color="#ffffff" />
+              <Text>Signing in... </Text>
             </>
           ) : (
             "Next"

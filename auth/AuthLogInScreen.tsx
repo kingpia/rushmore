@@ -159,8 +159,8 @@ export const AuthLogInScreen = ({
       >
         {isLoading ? (
           <>
-            <Text>Logging in... </Text>
             <ActivityIndicator animating={true} color="#ffffff" />
+            <Text>Logging in... </Text>
           </>
         ) : (
           "Log in"

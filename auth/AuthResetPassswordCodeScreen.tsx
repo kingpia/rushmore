@@ -220,8 +220,8 @@ export const AuthResetPasswordCodeScreen = ({
       >
         {isLoading ? (
           <>
-            <Text>Resetting... </Text>
             <ActivityIndicator animating={true} color="#ffffff" />
+            <Text>Resetting... </Text>
           </>
         ) : (
           "Reset"

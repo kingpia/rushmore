@@ -5,6 +5,9 @@ import {
   FlatList,
   Keyboard,
   TouchableOpacity,
+  LayoutAnimation,
+  UIManager,
+  Platform,
 } from "react-native";
 import {
   Searchbar,
@@ -22,6 +25,13 @@ import { RushmoreItem } from "../model/RushmoreItem";
 import { UserRushmoreItem } from "../model/UserRushmoreItem";
 
 const userService = new UserService(); // Instantiate UserService
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 type AddRushmoreItemsScreenProps =
   StackContainerScreenProps<"AddRushmoreItemsScreen">;
@@ -45,6 +55,9 @@ export const AddRushmoreItemsScreen = ({
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
     {}
   );
+
+  const [selectedAccordionExpanded, setSelectedAccordionExpanded] =
+    React.useState(false);
 
   const rushmoreService = new RushmoreService(); // Create an instance of RushmoreService
 
@@ -217,6 +230,11 @@ export const AddRushmoreItemsScreen = ({
     }
   };
 
+  const toggleAccordion = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setSelectedAccordionExpanded(!selectedAccordionExpanded);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.searchbarContainer}>
@@ -236,6 +254,8 @@ export const AddRushmoreItemsScreen = ({
 
       <List.Accordion
         title="Selected Items"
+        expanded={selectedAccordionExpanded}
+        onPress={toggleAccordion}
         left={(props) => <List.Icon {...props} icon="star" />}
       >
         {Object.entries(checkedItems).map(([key, isChecked]) => {
@@ -244,6 +264,7 @@ export const AddRushmoreItemsScreen = ({
               <List.Item
                 key={key}
                 title={key}
+                titleStyle={styles.listItemTitle}
                 right={(props) => (
                   <TouchableOpacity
                     onPress={() => {
@@ -316,6 +337,9 @@ const styles = StyleSheet.create({
   },
   primaryText: {
     flex: 1, // Take up remaining space
+  },
+  listItemTitle: {
+    marginLeft: 20, // Add your desired margin here
   },
 });
 

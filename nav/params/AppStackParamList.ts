@@ -26,8 +26,7 @@ export type AppStackParamList = {
   UserProfileScreen: { user: SocialUser };
   TermsAndPolicyScreen: undefined;
   ProfileSettingsScreen: undefined;
-  AccountSettingsScreen: undefined;
-  UserInfoSettingsScreen: { user: User };
+  UserInfoSettingsScreen: undefined;
   PasswordChangeSettingsScreen: undefined;
   DeleteAccountSettingsScreen: undefined;
   DeactivateAccountSettingsScreen: undefined;
@@ -35,6 +34,8 @@ export type AppStackParamList = {
   RushmoreSettingsScreen: {
     rushmore: Rushmore;
   };
+  ChangeEmailScreen: undefined;
+  ChangeEmailCodeValidationScreen: undefined;
 };
 
 export type StackContainerScreenProps<S extends keyof AppStackParamList> =

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { FlatList, View, StyleSheet, Animated } from "react-native";
-import { SegmentedButtons } from "react-native-paper";
+import { ActivityIndicator, SegmentedButtons } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { MyInProgressRushmoreCard } from "../components/MyInProgressRushmoreCard";
@@ -240,7 +240,14 @@ export const MyRushmoreListsComponent: React.FC<
             },
           ]}
         />
-        <View style={{ backgroundColor: "yellow" }}>
+        {isLoading && (
+          <ActivityIndicator
+            style={styles.loadingIndicator}
+            animating={true}
+            size="large"
+          />
+        )}
+        <View>
           {value === "inprogress"
             ? renderInProgressRushmoreList()
             : renderCompletedRushmoreList()}
@@ -257,6 +264,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "blue",
+  },
+  loadingIndicator: {
+    marginVertical: 10,
   },
 });

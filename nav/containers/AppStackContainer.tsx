@@ -19,6 +19,8 @@ import { UserInfoSettingsScreen } from "../../profile/UserInfoSettingsScreen";
 import { PasswordChangeSettingsScreen } from "../../profile/PasswordChangeSettingsScreen";
 import { DeleteAccountSettingsScreen } from "../../profile/DeleteAccountSettingsScreen";
 import { DeactivateAccountSettingsScreen } from "../../profile/DeactivateAccountSettingsScreen";
+import { ChangeEmailScreen } from "../../profile/ChangeEmailScreen";
+import ChangeEmailCodeValidationScreen from "../../profile/ChangeEmailCodeValidationScreen";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
@@ -154,7 +156,7 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
         name="UserInfoSettingsScreen"
         component={UserInfoSettingsScreen}
         options={{
-          headerTitle: "User Information", // Empty string to hide the title
+          headerTitle: "Account Settings", // Empty string to hide the title
           headerShown: true,
         }}
       />
@@ -163,7 +165,7 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
         name="PasswordChangeSettingsScreen"
         component={PasswordChangeSettingsScreen}
         options={{
-          headerTitle: "Change Password", // Empty string to hide the title
+          headerTitle: "Account Settings", // Empty string to hide the title
           headerShown: true,
         }}
       />
@@ -172,7 +174,7 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
         name="DeleteAccountSettingsScreen"
         component={DeleteAccountSettingsScreen}
         options={{
-          headerTitle: "Delete Account", // Empty string to hide the title
+          headerTitle: "Account Settings", // Empty string to hide the title
           headerShown: true,
         }}
       />
@@ -181,7 +183,24 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
         name="DeactivateAccountSettingsScreen"
         component={DeactivateAccountSettingsScreen}
         options={{
-          headerTitle: "Delete Account", // Empty string to hide the title
+          headerTitle: "Account Settings", // Empty string to hide the title
+          headerShown: true,
+        }}
+      />
+
+      <AppStackNavigator.Screen
+        name="ChangeEmailScreen"
+        component={ChangeEmailScreen}
+        options={{
+          headerTitle: "Account Settings", // Empty string to hide the title
+          headerShown: true,
+        }}
+      />
+      <AppStackNavigator.Screen
+        name="ChangeEmailCodeValidationScreen"
+        component={ChangeEmailCodeValidationScreen}
+        options={{
+          headerTitle: "Account Settings", // Empty string to hide the title
           headerShown: true,
         }}
       />

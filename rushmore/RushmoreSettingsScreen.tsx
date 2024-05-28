@@ -173,8 +173,8 @@ export const RushmoreSettingsScreen = ({
           >
             {isLoading ? (
               <>
-                <Text>Creating Rushmore ...</Text>
                 <ActivityIndicator animating={true} color="#ffffff" />
+                <Text>Creating Rushmore ...</Text>
               </>
             ) : (
               "Create Rushmore"

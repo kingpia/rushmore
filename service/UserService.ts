@@ -511,4 +511,29 @@ export class UserService<T> {
       throw error;
     }
   }
+
+  async getUserAccountInformation(): Promise<User> {
+    console.log("getUserAccountInformation");
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          getUserAccountInformation {
+            nickName
+            uid
+            userName
+            dob
+            email
+          }
+        }
+        `,
+      });
+
+      //console.log("OUTPUT:" + JSON.stringify(response.data));
+      return response.data.data.getUserAccountInformation;
+    } catch (error) {
+      console.error("Error fetching user by user ID:", error);
+      throw error;
+    }
+  }
 }

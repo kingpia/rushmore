@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 
-import { SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  LayoutAnimation,
+  UIManager,
+  Platform,
+  FlatList,
+} from "react-native";
 import {
   ActivityIndicator,
   Appbar,
@@ -9,6 +18,7 @@ import {
   Dialog,
   FAB,
   IconButton,
+  List,
   Menu,
   Portal,
   Text,
@@ -18,6 +28,13 @@ import {
 import UserRushmoreSettingsColumn from "../components/UserRushmoreSettingsColumn";
 
 const rushmoreService = new RushmoreService(); // Create an instance of RushmoreService
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 import { StackContainerScreenProps } from "../nav/params/AppStackParamList";
 import { RushmoreService } from "../service/RushmoreService";
@@ -45,16 +62,16 @@ export const EditUserRushmoreScreen = ({
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [isRushmoreComplete, setIsRushmoreComplete] = useState(false);
   const [draggableData, setDraggableData] = useState<UserRushmoreItem[]>([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [addItemText, setAddItemText] = useState("");
   const [isAddItemModalVisible, setIsAddItemModalVisible] = useState(false);
-  const [fabVisible, setFabVisible] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
   const showDeleteDialog = () => setIsDeleteDialogVisible(true);
   const hideDeleteDialog = () => setIsDeleteDialogVisible(false);
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
+  const [settingsAccordionExpanded, setSettingsAccordionExpanded] =
+    React.useState(true);
 
   const [
     isPublishUserRushmoreModalVisible,
@@ -67,11 +84,18 @@ export const EditUserRushmoreScreen = ({
   const showEditModal = () => setIsEditModalVisible(true);
   const hideEditModal = () => setIsEditModalVisible(false);
 
-  const showAddItemModal = () => setIsAddItemModalVisible(true);
   const hideAddItemModal = () => {
     setAddItemText("");
     setIsAddItemModalVisible(false);
   };
+
+  const [userRushmoreVisibility, setUserRushmoreVisibility] =
+    useState<RushmoreVisibilityEnums>(RushmoreVisibilityEnums.PUBLIC);
+  const [userRushmoreType, setUserRushmoreType] = useState<RushmoreType>(
+    RushmoreType.Favorite
+  );
+  const [userRushmoreGameType, setUserRushmoreGameType] =
+    useState<RushmoreGameTypeEnums>(RushmoreGameTypeEnums.GAME);
 
   // Inside ProfileHomeScreen component
   useFocusEffect(
@@ -102,7 +126,7 @@ export const EditUserRushmoreScreen = ({
             configureDraggables();
           } else if (route.params.userRushmore) {
             console.log(
-              "=====================SelectedItemsUserRushmore NOT FOUND IT WAS FUCKING NUL ======================="
+              "=====================SelectedItemsUserRushmore NOT FOUND ======================="
             );
 
             //Get the User Rushmore
@@ -113,6 +137,9 @@ export const EditUserRushmoreScreen = ({
               "User Rushomre data returned:" + JSON.stringify(userRushmoreData)
             );
             setUserRushmore(userRushmoreData);
+            setUserRushmoreVisibility(userRushmoreData.visibility);
+            setUserRushmoreType(userRushmoreData.rushmoreType);
+            setUserRushmoreGameType(userRushmoreData.gameType);
 
             setLoading(false);
           }
@@ -170,16 +197,15 @@ export const EditUserRushmoreScreen = ({
       console.log("Item list is null");
       setDraggableData([]);
     }
-    setIsRushmoreComplete(!!userRushmore?.completedDt);
     setIsEditMode(!userRushmore?.completedDt);
   };
 
-  const handleExitPress = () => {
+  const handleExitPress = async () => {
     console.log("Saving user rushmore:", userRushmore);
 
     if (userRushmore) {
       console.log("saving the user rushmore:" + JSON.stringify(userRushmore));
-      rushmoreService.editUserRushmore(userRushmore);
+      await rushmoreService.editUserRushmore(userRushmore);
     }
 
     navigation.reset({
@@ -188,69 +214,74 @@ export const EditUserRushmoreScreen = ({
     });
   };
 
-  const handleDeletePress = (userRushmoreItem: UserRushmoreItem) => {
-    console.log("Current itemList:", JSON.stringify(userRushmore?.itemList));
-    console.log("Deleting item:", JSON.stringify(userRushmoreItem));
-    // Find the index of the item in userRushmore.itemList
-    const index = userRushmore?.itemList.findIndex(
-      (item) => item.item === userRushmoreItem.item
-    );
-
-    if (index !== undefined && index !== -1) {
-      console.log("index found:");
-      // Create a copy of userRushmore.itemList and remove the item at the found index
-      const updatedItemList = [...(userRushmore?.itemList || [])];
-      updatedItemList.splice(index, 1);
-
-      // Update the userRushmore state with the new itemList
-      setUserRushmore((prevUserRushmore) => ({
-        ...prevUserRushmore!,
-        itemList: updatedItemList,
-      }));
-    } else {
-      console.log("Why wasn't this item found if it's displayed");
-      console.warn(
-        `Item with urId ${userRushmoreItem.item} not found in the itemList array.`
-      );
-    }
-  };
-
   const handleVisibilityToggle = () => {
-    setUserRushmore((prevUserRushmore) => ({
-      ...prevUserRushmore!,
-      visibility:
-        prevUserRushmore!.visibility === RushmoreVisibilityEnums.PUBLIC
+    setUserRushmoreVisibility((prevVisibility) => {
+      const newVisibility =
+        prevVisibility === RushmoreVisibilityEnums.PUBLIC
           ? RushmoreVisibilityEnums.PRIVATE
-          : RushmoreVisibilityEnums.PUBLIC,
-    }));
+          : RushmoreVisibilityEnums.PUBLIC;
+
+      if (userRushmore) {
+        console.log("Setting the User Rushmore Visibility");
+        userRushmore.visibility = newVisibility;
+        console.log("UserRushmore: " + JSON.stringify(userRushmore));
+        // Call a function to save userRushmore or perform any other actions
+        // saveUserRushmore();
+      }
+
+      return newVisibility;
+    });
   };
 
   const handleGameTypeToggle = () => {
-    setUserRushmore((prevUserRushmore) => ({
-      ...prevUserRushmore!,
-      gameType:
-        prevUserRushmore!.gameType === RushmoreGameTypeEnums.GAME
+    setUserRushmoreGameType((prevGameType) => {
+      const newGameType =
+        prevGameType === RushmoreGameTypeEnums.GAME
           ? RushmoreGameTypeEnums.OPEN
-          : RushmoreGameTypeEnums.GAME,
-    }));
+          : RushmoreGameTypeEnums.GAME;
+
+      if (userRushmore) {
+        console.log("Setting the User Rushmore Game Type");
+        userRushmore.gameType = newGameType;
+        console.log("UserRushmore: " + JSON.stringify(userRushmore));
+        // Call a function to save userRushmore or perform any other actions
+        // saveUserRushmore();
+      }
+
+      return newGameType;
+    });
   };
 
   const handleRushmoreTypeToggle = () => {
-    setUserRushmore((prevUserRushmore) => ({
-      ...prevUserRushmore!,
-      rushmoreType:
-        prevUserRushmore!.rushmoreType === RushmoreType.Favorite
+    setUserRushmoreType((prevRushmoreType) => {
+      const newRushmoreType =
+        prevRushmoreType === RushmoreType.Favorite
           ? RushmoreType.Best
-          : RushmoreType.Favorite,
-    }));
+          : RushmoreType.Favorite;
+
+      if (userRushmore) {
+        console.log("Setting the User Rushmore Type");
+        userRushmore.rushmoreType = newRushmoreType;
+        console.log("UserRushmore: " + JSON.stringify(userRushmore));
+        // Call a function to save userRushmore or perform any other actions
+        // saveUserRushmore();
+      }
+
+      return newRushmoreType;
+    });
   };
 
-  const saveUserRushmore = () => {
+  const toggleAccordion = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setSettingsAccordionExpanded(!settingsAccordionExpanded);
+  };
+
+  const saveUserRushmore = async () => {
     console.log("Saving user rushmore:", userRushmore);
 
     if (userRushmore) {
       console.log("saving the user rushmore:" + JSON.stringify(userRushmore));
-      rushmoreService.editUserRushmore(userRushmore);
+      await rushmoreService.editUserRushmore(userRushmore);
     }
     //When we save, update the rushmore, do not go back go home
   };
@@ -281,22 +312,80 @@ export const EditUserRushmoreScreen = ({
           disabled={isActive}
           style={[
             styles.draggableItem,
-            { backgroundColor: isActive ? "red" : "orange" },
+            { backgroundColor: isActive ? "#14f3ff" : "#ffffff" },
           ]}
         >
-          <View style={{ flexDirection: "row", flex: 1, alignItems: "center" }}>
-            <Text style={[styles.text, { flex: 1 }]}>{item.item}</Text>
+          <View style={styles.itemContainer}>
+            <Text style={styles.rankText}>{item.rank}</Text>
+            <Text style={styles.itemText}>{item.item}</Text>
             {isEditMode && (
               <IconButton
                 icon="delete"
                 size={30}
                 onPress={() => handleDeletePress(item)}
+                style={styles.iconButton}
               />
             )}
           </View>
         </TouchableOpacity>
       </ScaleDecorator>
     );
+  };
+
+  const renderNonDraggableItem = ({ item }: { item: UserRushmoreItem }) => {
+    return (
+      <List.Item
+        title={item.item}
+        description={`Rank: ${item.rank}`}
+        right={(props) =>
+          isEditMode && (
+            <IconButton
+              {...props}
+              icon="delete"
+              onPress={() => handleDeletePress(item)}
+            />
+          )
+        }
+        style={{
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderColor: "#ccc",
+        }}
+      />
+    );
+  };
+
+  const handleDeletePress = (userRushmoreItem: UserRushmoreItem) => {
+    console.log("Current itemList:", JSON.stringify(userRushmore?.itemList));
+    console.log("Deleting item:", JSON.stringify(userRushmoreItem));
+
+    const index = userRushmore?.itemList.findIndex(
+      (item) => item.item === userRushmoreItem.item
+    );
+
+    if (index !== undefined && index !== -1) {
+      console.log("index found:");
+
+      const updatedItemList = [...(userRushmore?.itemList || [])];
+      updatedItemList.splice(index, 1);
+
+      // Animate the deletion
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
+      // Update the rank of remaining items
+      updatedItemList.forEach((item, idx) => {
+        item.rank = idx + 1;
+      });
+
+      setUserRushmore((prevUserRushmore) => ({
+        ...prevUserRushmore!,
+        itemList: updatedItemList,
+      }));
+    } else {
+      console.log("Why wasn't this item found if it's displayed");
+      console.warn(
+        `Item with urId ${userRushmoreItem.item} not found in the itemList array.`
+      );
+    }
   };
 
   const handleDragEnd = ({ data }: { data: UserRushmoreItem[] }) => {
@@ -306,6 +395,17 @@ export const EditUserRushmoreScreen = ({
     }));
 
     setDraggableData(updatedItems);
+
+    // Update the userRushmore.itemList
+    if (userRushmore) {
+      const updatedUserRushmore = {
+        ...userRushmore,
+        itemList: updatedItems,
+      };
+
+      setUserRushmore(updatedUserRushmore);
+    }
+
     console.log("DragEnd:" + JSON.stringify(updatedItems));
   };
 
@@ -369,6 +469,7 @@ export const EditUserRushmoreScreen = ({
       );
       console.log("Setting UserRushmore:" + JSON.stringify(response));
       setUserRushmore(response);
+      setIsEditMode(true);
     }
 
     //Put us in "Edit Mode for the completed Rushmore"
@@ -416,32 +517,100 @@ export const EditUserRushmoreScreen = ({
                 />
               </Menu>
             </Appbar.Header>
+            <List.Accordion
+              title="Rushmore Settings"
+              expanded={settingsAccordionExpanded}
+              onPress={toggleAccordion}
+              left={(props) => <List.Icon {...props} icon="cog" />}
+            >
+              <TouchableOpacity onPress={handleVisibilityToggle}>
+                <List.Item
+                  title="Visibility"
+                  description={userRushmoreVisibility}
+                  titleStyle={styles.listItemTitle}
+                  descriptionStyle={styles.listItemDescription}
+                  style={styles.listItem}
+                  left={() => (
+                    <IconButton
+                      icon={
+                        userRushmoreVisibility ===
+                        RushmoreVisibilityEnums.PUBLIC
+                          ? "eye"
+                          : "eye-off"
+                      }
+                      disabled={!isEditMode}
+                    />
+                  )}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleRushmoreTypeToggle}>
+                <List.Item
+                  title="Rushmore Type"
+                  description={userRushmoreType}
+                  titleStyle={styles.listItemTitle}
+                  descriptionStyle={styles.listItemDescription}
+                  style={styles.listItem}
+                  left={() => (
+                    <IconButton
+                      icon={
+                        userRushmoreType === RushmoreType.Favorite
+                          ? "heart"
+                          : "trophy"
+                      }
+                      disabled={!isEditMode}
+                    />
+                  )}
+                />
+              </TouchableOpacity>
+              {userRushmore?.visibility != RushmoreVisibilityEnums.PRIVATE && (
+                <TouchableOpacity onPress={handleGameTypeToggle}>
+                  <List.Item
+                    title="Game Type"
+                    description={userRushmoreGameType}
+                    titleStyle={styles.listItemTitle}
+                    descriptionStyle={styles.listItemDescription}
+                    style={styles.listItem}
+                    left={() => (
+                      <IconButton
+                        icon={
+                          userRushmoreGameType === RushmoreGameTypeEnums.GAME
+                            ? "gamepad-variant"
+                            : "earth"
+                        }
+                        disabled={!isEditMode}
+                      />
+                    )}
+                  />
+                </TouchableOpacity>
+              )}
+            </List.Accordion>
 
-            <DraggableFlatList
-              data={draggableData}
-              onDragEnd={handleDragEnd}
-              keyExtractor={(item) => item.item}
-              renderItem={renderUserRushmoreItem}
-            />
+            {loading ? (
+              <ActivityIndicator style={styles.loadingIndicator} />
+            ) : userRushmore ? (
+              <View style={styles.listContainer}>
+                {isEditMode ? (
+                  <DraggableFlatList
+                    data={draggableData}
+                    renderItem={renderUserRushmoreItem}
+                    keyExtractor={(item) => item.item}
+                    onDragEnd={(result) => handleDragEnd(result)}
+                    contentContainerStyle={styles.listContentContainer}
+                  />
+                ) : (
+                  <FlatList
+                    data={draggableData}
+                    renderItem={renderNonDraggableItem}
+                    keyExtractor={(item) => item.item}
+                    contentContainerStyle={styles.listContentContainer}
+                  />
+                )}
+              </View>
+            ) : (
+              <Text>No Rushmore data available</Text>
+            )}
           </View>
-          {isRushmoreComplete ? (
-            <View style={{ position: "absolute", right: 10, top: 450 }}>
-              <UserRushmoreStatsColumn
-                likeCount={userRushmore?.likeCount || 0}
-                totalCompleted={userRushmore?.completedCount || 0}
-                highScoreUser={userRushmore?.highScoreUser}
-              />
-            </View>
-          ) : (
-            <View style={{ position: "absolute", right: 10, top: 450 }}>
-              <UserRushmoreSettingsColumn
-                userRushmore={userRushmore!}
-                onVisibilityToggle={handleVisibilityToggle}
-                onGameTypeToggle={handleGameTypeToggle}
-                onRushmoreTypeToggle={handleRushmoreTypeToggle}
-              />
-            </View>
-          )}
+
           <View
             style={{
               flexDirection: "row",
@@ -459,17 +628,19 @@ export const EditUserRushmoreScreen = ({
                 alignItems: "center",
               }}
             >
-              <Button
-                onPress={() => setIsPublishUserRushmoreModalVisible(true)}
-                disabled={
-                  !userRushmore ||
-                  !userRushmore.itemList ||
-                  userRushmore.itemList.length === 0 ||
-                  !isEditMode
-                }
-              >
-                Publish
-              </Button>
+              {userRushmore?.completedDt === null && isEditMode && (
+                <Button
+                  onPress={() => setIsPublishUserRushmoreModalVisible(true)}
+                  disabled={
+                    !userRushmore ||
+                    !userRushmore.itemList ||
+                    userRushmore.itemList.length === 0 ||
+                    !isEditMode
+                  }
+                >
+                  Publish
+                </Button>
+              )}
             </View>
             <TouchableOpacity
               onPress={() => (canEdit() ? toggleEditMode() : showEditModal())}
@@ -479,7 +650,7 @@ export const EditUserRushmoreScreen = ({
           </View>
           <View style={styles.fab}>
             <FAB
-              visible={fabVisible}
+              visible={isEditMode}
               icon="plus"
               onPress={navigateToAddItemsScreen}
               style={styles.fab}
@@ -597,15 +768,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   draggableItem: {
-    justifyContent: "space-between",
-    flexDirection: "row",
     paddingHorizontal: 50,
-    borderColor: "blue",
-    borderRadius: 5,
+    borderRadius: 10,
     margin: 2,
   },
   text: {
-    color: "green",
+    color: "blue",
     fontSize: 20,
   },
   fab: {
@@ -613,5 +781,40 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 20,
+  },
+  listItem: {
+    paddingVertical: 8, // Adjust the vertical padding as needed
+  },
+  listItemTitle: {
+    fontSize: 16, // Adjust the font size as needed
+  },
+  listItemDescription: {
+    fontSize: 14, // Adjust the font size as needed
+  },
+  loadingIndicator: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  listContainer: {
+    flex: 1,
+  },
+  listContentContainer: {
+    padding: 16,
+  },
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  itemText: {
+    flex: 1, // Let the item text take up remaining space
+    // Add any styles needed for item text
+  },
+  rankText: {
+    // Add any styles needed for rank text
+    marginRight: 15,
+  },
+  iconButton: {
+    // Add any styles needed for the icon button
   },
 });

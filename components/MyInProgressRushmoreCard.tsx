@@ -28,7 +28,7 @@ export const MyInProgressRushmoreCard: React.FC<
   if (visibility === RushmoreVisibilityEnums.PUBLIC) {
     visibilityIcon = <MaterialCommunityIcons name="eye" size={17} />;
   } else {
-    visibilityIcon = <MaterialCommunityIcons name="lock" size={17} />;
+    visibilityIcon = <MaterialCommunityIcons name="eye-off" size={17} />;
   }
 
   let gameTypeIcon;
