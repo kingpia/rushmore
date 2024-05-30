@@ -160,7 +160,23 @@ export class UserService<T> {
     }
   }
 
+  async removeProfileImage(): Promise<void> {
+    console.log("RemoveProfileImage");
+    try {
+      const response = await api.post(`${this.baseURL}/removeProfileImage`);
+
+      if (response.status !== 200) {
+        throw new Error("Failed to remove profile image");
+      }
+      console.log("Profile image removed successfully");
+    } catch (error) {
+      console.error("Error removing profile image:", error);
+      throw error;
+    }
+  }
+
   async userProfileImageUpdate(imageUri: string): Promise<void> {
+    console.log("userProfileImageUpdate");
     try {
       const formData = new FormData();
 
@@ -174,19 +190,16 @@ export class UserService<T> {
       // Append the image file to FormData
       formData.append("image", imageFile);
 
-      // Make the HTTP request
-      const response = await fetch(`${this.baseURL}/updateUserProfileImage`, {
-        method: "POST",
-        body: formData,
+      // Make the HTTP request using api.post
+      const response = await api.post("/updateUserProfileImage", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      //const responseData = await response.json();
-      console.log("Response from API:", JSON.stringify(response));
+      console.log("Response from API:", response);
     } catch (error) {
-      console.log("Why am I here, what is erroing out");
+      console.log("Error during userProfileImageUpdate:", error);
       throw error; // Re-throw the error for the component to handle
     }
   }

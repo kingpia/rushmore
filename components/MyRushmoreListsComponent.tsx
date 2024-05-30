@@ -129,7 +129,6 @@ export const MyRushmoreListsComponent: React.FC<
   };
 
   const countByCategory = (category: string) => {
-    console.log("CountByCategory");
     if (value === "inprogress") {
       return myInProgressRushmoreList.filter(
         (item) =>

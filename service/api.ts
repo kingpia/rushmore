@@ -2,7 +2,6 @@ import axios, { AxiosError } from "axios";
 import * as SecureStore from "expo-secure-store";
 import amplifyconfig from "../src/amplifyconfiguration.json";
 const { aws_user_pools_web_client_id } = amplifyconfig;
-import { Alert } from "react-native";
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob"; // <- polyfill here
 

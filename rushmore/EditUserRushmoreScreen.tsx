@@ -20,6 +20,7 @@ import {
   IconButton,
   List,
   Menu,
+  Modal,
   Portal,
   Text,
   TextInput,
@@ -72,6 +73,7 @@ export const EditUserRushmoreScreen = ({
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
   const [settingsAccordionExpanded, setSettingsAccordionExpanded] =
     React.useState(true);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const [
     isPublishUserRushmoreModalVisible,
@@ -320,8 +322,8 @@ export const EditUserRushmoreScreen = ({
             <Text style={styles.itemText}>{item.item}</Text>
             {isEditMode && (
               <IconButton
-                icon="delete"
-                size={30}
+                icon="close-circle-outline"
+                size={24}
                 onPress={() => handleDeletePress(item)}
                 style={styles.iconButton}
               />
@@ -335,8 +337,16 @@ export const EditUserRushmoreScreen = ({
   const renderNonDraggableItem = ({ item }: { item: UserRushmoreItem }) => {
     return (
       <List.Item
-        title={item.item}
-        description={`Rank: ${item.rank}`}
+        titleStyle={{ flexDirection: "row", justifyContent: "space-between" }} // Align title and description horizontally
+        title={
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text style={{ marginLeft: 5, marginRight: 15 }}>{item.rank}</Text>
+
+            <Text>{item.item}</Text>
+          </View>
+        }
         right={(props) =>
           isEditMode && (
             <IconButton
@@ -460,13 +470,17 @@ export const EditUserRushmoreScreen = ({
   };
 
   const publishUserRushmore = async () => {
+    console.log("PublishUserRushmore");
     // Add logic to publish user rushmore
-    setIsPublishUserRushmoreModalVisible(false); // Close the modal after publishing
 
     if (userRushmore) {
+      console.log("Calling publish userRushmore");
       let response: UserRushmore = await rushmoreService.publishUserRushmore(
         userRushmore
       );
+      console.log("Done alling publish userRushmore");
+      setIsPublishUserRushmoreModalVisible(false); // Close the modal after publishing
+
       console.log("Setting UserRushmore:" + JSON.stringify(response));
       setUserRushmore(response);
       setIsEditMode(true);
@@ -523,7 +537,10 @@ export const EditUserRushmoreScreen = ({
               onPress={toggleAccordion}
               left={(props) => <List.Icon {...props} icon="cog" />}
             >
-              <TouchableOpacity onPress={handleVisibilityToggle}>
+              <TouchableOpacity
+                onPress={handleVisibilityToggle}
+                disabled={!isEditMode}
+              >
                 <List.Item
                   title="Visibility"
                   description={userRushmoreVisibility}
@@ -543,7 +560,10 @@ export const EditUserRushmoreScreen = ({
                   )}
                 />
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleRushmoreTypeToggle}>
+              <TouchableOpacity
+                onPress={handleRushmoreTypeToggle}
+                disabled={!isEditMode}
+              >
                 <List.Item
                   title="Rushmore Type"
                   description={userRushmoreType}
@@ -563,7 +583,10 @@ export const EditUserRushmoreScreen = ({
                 />
               </TouchableOpacity>
               {userRushmore?.visibility != RushmoreVisibilityEnums.PRIVATE && (
-                <TouchableOpacity onPress={handleGameTypeToggle}>
+                <TouchableOpacity
+                  onPress={handleGameTypeToggle}
+                  disabled={!isEditMode}
+                >
                   <List.Item
                     title="Game Type"
                     description={userRushmoreGameType}
@@ -720,25 +743,44 @@ export const EditUserRushmoreScreen = ({
       </Portal>
 
       <Portal>
-        <Dialog
+        <Modal
           visible={isPublishUserRushmoreModalVisible}
-          onDismiss={() => setIsModalVisible(false)}
+          onDismiss={() => setIsPublishUserRushmoreModalVisible(false)}
+          contentContainerStyle={{
+            backgroundColor: "white",
+            padding: 20,
+            marginHorizontal: 20,
+            borderRadius: 10,
+          }}
         >
-          <Dialog.Content>
-            <Text>
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleText}>
               {userRushmore?.rushmoreType} {userRushmore?.rushmore?.title}
             </Text>
-            <Text>Visibility: {userRushmore?.visibility}</Text>
-
-            <Text>Type: {userRushmore?.gameType}</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setIsPublishUserRushmoreModalVisible(false)}>
-              Cancel
+          </View>
+          <View style={styles.detailContainer}>
+            <Text style={styles.label}>Visibility:</Text>
+            <Text style={styles.detail}>{userRushmore?.visibility}</Text>
+          </View>
+          <View style={styles.detailContainer}>
+            <Text style={styles.label}>Type:</Text>
+            <Text style={styles.detail}>{userRushmore?.gameType}</Text>
+          </View>
+          {isPublishing ? (
+            <ActivityIndicator style={{ marginVertical: 10 }} />
+          ) : (
+            <Button
+              mode="contained"
+              onPress={publishUserRushmore}
+              style={{ marginVertical: 10 }}
+            >
+              Publish
             </Button>
-            <Button onPress={publishUserRushmore}>Publish</Button>
-          </Dialog.Actions>
-        </Dialog>
+          )}
+          <Button onPress={() => setIsPublishUserRushmoreModalVisible(false)}>
+            Cancel
+          </Button>
+        </Modal>
       </Portal>
 
       <Portal>
@@ -772,10 +814,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 2,
   },
-  text: {
-    color: "blue",
-    fontSize: 20,
-  },
+
   fab: {
     position: "absolute",
     margin: 16,
@@ -783,13 +822,13 @@ const styles = StyleSheet.create({
     bottom: 20,
   },
   listItem: {
-    paddingVertical: 8, // Adjust the vertical padding as needed
+    paddingVertical: 0, // Adjust the vertical padding as needed
   },
   listItemTitle: {
-    fontSize: 16, // Adjust the font size as needed
+    fontSize: 14, // Adjust the font size as needed
   },
   listItemDescription: {
-    fontSize: 14, // Adjust the font size as needed
+    fontSize: 12, // Adjust the font size as needed
   },
   loadingIndicator: {
     flex: 1,
@@ -816,5 +855,24 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     // Add any styles needed for the icon button
+  },
+  titleContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  titleText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  detailContainer: {
+    flexDirection: "row",
+    marginBottom: 10,
+  },
+  label: {
+    fontWeight: "bold",
+    marginRight: 5,
+  },
+  detail: {
+    flex: 1,
   },
 });

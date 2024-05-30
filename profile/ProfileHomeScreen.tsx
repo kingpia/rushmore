@@ -11,6 +11,7 @@ import {
   Appbar,
   Menu,
   Divider,
+  Portal,
 } from "react-native-paper";
 import { UserService } from "../service/UserService";
 import * as ImagePicker from "expo-image-picker";
@@ -100,7 +101,6 @@ export const ProfileHomeScreen = ({
   navigation,
 }: ProfileStackContainerScreenProps) => {
   const [userData, setUserData] = useState<SocialUser>();
-  const defaultImage = require("../assets/shylo.png");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [profileImage, setProfileImage] = useState<string | undefined>(
     undefined
@@ -111,6 +111,7 @@ export const ProfileHomeScreen = ({
   const [menuVisible, setMenuVisible] = useState(false);
   console.log("ProfileHomeScreen");
   const { userFocus, setUserFocus } = useUserFocus(); // Destructure setUserFocus here
+  const defaultImage = require("../assets/shylo.png");
 
   // Inside ProfileHomeScreen component
   useFocusEffect(
@@ -212,38 +213,65 @@ export const ProfileHomeScreen = ({
       });
 
       if (!result.canceled) {
-        const croppedImage = await ImageManipulator.manipulateAsync(
-          result.assets[0].uri,
+        const { uri, width, height } = result.assets[0];
+        let compressedImageUri = uri;
+        let fileSize = await getImageSize(uri);
+        console.log("Initial File Size:", fileSize);
+
+        // Initial image manipulation
+        let croppedImage = await ImageManipulator.manipulateAsync(
+          uri,
           [
             {
               crop: {
                 originX: 0,
                 originY: 0,
-                width: result.assets[0].width,
-                height: result.assets[0].height,
+                width,
+                height,
               },
             },
             {
               resize: {
-                width: 150,
-                height: 150,
+                width: 200,
+                height: 200,
               },
             },
           ],
           { compress: 1, format: ImageManipulator.SaveFormat.PNG }
         );
 
+        // Ensure the image is below 65KB by adjusting the compression
+        let quality = 1;
+        fileSize = await getImageSize(croppedImage.uri);
+        console.log("Cropped Image Size:", fileSize);
+
+        while (fileSize > 65 * 1024 && quality > 0) {
+          quality -= 0.005;
+          console.log("Adjusting Compression, Quality:", quality);
+
+          croppedImage = await ImageManipulator.manipulateAsync(
+            croppedImage.uri, // Use the manipulated image URI for further compression
+            [{ resize: { width: 200, height: 200 } }],
+            { compress: quality, format: ImageManipulator.SaveFormat.JPEG }
+          );
+
+          fileSize = await getImageSize(croppedImage.uri);
+          console.log("New File Size:", fileSize);
+        }
+
+        console.log("Final Image Size:", fileSize);
+
         const blob = await fetch(croppedImage.uri).then((res) => res.blob());
 
-        const file = new File([blob], "profile_image.png", {
-          type: "image/png",
+        const file = new File([blob], "profile_image.jpg", {
+          type: "image/jpeg",
         });
 
         await userService.userProfileImageUpdate(croppedImage.uri);
 
         setUserData((prevUserData: UserDataState) => ({
           ...prevUserData,
-          profileImagePath: croppedImage.uri,
+          profileImagePath: `${croppedImage.uri}?${new Date().getTime()}`, // Adding timestamp to bypass cache
         }));
       }
     } catch (error) {
@@ -252,15 +280,25 @@ export const ProfileHomeScreen = ({
       setIsModalVisible(false);
     }
   };
+  // Helper function to get image size
+  const getImageSize = async (uri: string): Promise<number> => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    return blob.size;
+  };
 
   const handleRemoveButtonPress = async () => {
     try {
       setProfileImage(undefined);
-      await userService.updateUserProfileImage(null);
+      await userService.removeProfileImage();
     } catch (error) {
       console.log("Error removing image:", error);
       setErrorModalVisible(true);
     } finally {
+      setUserData((prevUserData: UserDataState) => ({
+        ...prevUserData,
+        profileImagePath: null,
+      }));
       setIsModalVisible(false);
     }
   };
@@ -309,11 +347,12 @@ export const ProfileHomeScreen = ({
         <>
           <View style={styles.container}>
             <Avatar.Image
-              size={125}
-              source={{
-                uri: userData?.profileImagePath || defaultImage,
-              }}
-              style={styles.avatar}
+              size={120}
+              source={
+                userData?.profileImagePath
+                  ? { uri: userData.profileImagePath }
+                  : defaultImage
+              }
             />
             <IconButton
               icon="camera"
@@ -387,37 +426,40 @@ export const ProfileHomeScreen = ({
           <Divider style={{ marginTop: 10 }} />
           <ProfileTabs />
 
-          <Modal
-            visible={isModalVisible}
-            transparent={true}
-            onRequestClose={handleModalClose}
-          >
-            <TouchableOpacity
-              style={styles.modalContainer}
-              activeOpacity={1}
-              onPress={handleModalClose}
+          <Portal>
+            <Modal
+              visible={isModalVisible}
+              transparent={true}
+              onRequestClose={handleModalClose}
             >
-              <View style={styles.modalContent}>
-                <Text style={styles.modalHeader}>Profile Photo</Text>
-                <View style={styles.buttonRow}>
-                  <Button
-                    icon="image"
-                    mode="contained"
-                    onPress={handleGalleryButtonPress}
-                  >
-                    Gallery
-                  </Button>
-                  <Button
-                    icon="delete"
-                    mode="contained"
-                    onPress={handleRemoveButtonPress}
-                  >
-                    Remove
-                  </Button>
+              <TouchableOpacity
+                style={styles.modalContainer}
+                activeOpacity={1}
+                onPress={handleModalClose}
+              >
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalHeader}>Profile Photo</Text>
+                  <View style={styles.buttonRow}>
+                    <Button
+                      icon="image"
+                      mode="contained"
+                      onPress={handleGalleryButtonPress}
+                      style={{ marginRight: 10 }}
+                    >
+                      Gallery
+                    </Button>
+                    <Button
+                      icon="delete"
+                      mode="contained"
+                      onPress={handleRemoveButtonPress}
+                    >
+                      Remove
+                    </Button>
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          </Modal>
+              </TouchableOpacity>
+            </Modal>
+          </Portal>
 
           <ErrorMessage
             isVisible={errorModalVisible}
@@ -480,7 +522,5 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    alignSelf: "center",
   },
 });

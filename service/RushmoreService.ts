@@ -810,7 +810,6 @@ export class RushmoreService<T> {
   }
 
   async publishUserRushmore(userRushmore: UserRushmore): Promise<UserRushmore> {
-    console.log("editUserRushmoreItems:", JSON.stringify(userRushmore));
     try {
       const response: AxiosResponse<{
         data: { publishUserRushmore: UserRushmore };

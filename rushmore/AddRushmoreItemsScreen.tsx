@@ -23,6 +23,7 @@ import { UserRushmore } from "../model/UserRushmore";
 import { RushmoreService } from "../service/RushmoreService";
 import { RushmoreItem } from "../model/RushmoreItem";
 import { UserRushmoreItem } from "../model/UserRushmoreItem";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const userService = new UserService(); // Instantiate UserService
 
@@ -144,37 +145,19 @@ export const AddRushmoreItemsScreen = ({
     }
   };
 
-  // Update the renderItem function to use the checkedItems state
   const renderItem = ({ item }: { item: RushmoreItem }) => (
-    <TouchableOpacity
-      onPress={() => console.log("Pressed")}
-      activeOpacity={0.1}
-    >
-      <View
-        style={styles.itemContainer}
-        onTouchEnd={() => {
-          // Toggle the checked state for the clicked item
-          setCheckedItems((prevState) => ({
-            ...prevState,
-            [item.primary]: !prevState[item.primary],
-          }));
-        }}
-      >
-        <Text style={styles.primaryText}>{item.primary}</Text>
-        <View>
-          <Checkbox
-            status={checkedItems[item.primary] ? "checked" : "unchecked"}
-            onPress={() => {
-              // Toggle the checked state for the clicked item
-              setCheckedItems((prevState) => ({
-                ...prevState,
-                [item.primary]: !prevState[item.primary],
-              }));
-            }}
-          />
-        </View>
-      </View>
-    </TouchableOpacity>
+    <Checkbox.Item
+      label={item.primary}
+      status={checkedItems[item.primary] ? "checked" : "unchecked"}
+      onPress={() => {
+        // Toggle the checked state for the clicked item
+        setCheckedItems((prevState) => ({
+          ...prevState,
+          [item.primary]: !prevState[item.primary],
+        }));
+      }}
+      labelStyle={styles.primaryText} // Apply your primaryText style here
+    />
   );
 
   const handleEndReached = () => {
@@ -273,7 +256,10 @@ export const AddRushmoreItemsScreen = ({
                       setCheckedItems(updatedCheckedItems);
                     }}
                   >
-                    <List.Icon {...props} icon="trash-can-outline" />
+                    <MaterialCommunityIcons
+                      name="close-circle-outline"
+                      size={24}
+                    />
                   </TouchableOpacity>
                 )}
               />
