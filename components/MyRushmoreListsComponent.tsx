@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { FlatList, View, StyleSheet, Animated } from "react-native";
-import { ActivityIndicator, SegmentedButtons } from "react-native-paper";
+import { ActivityIndicator, SegmentedButtons, Text } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { MyInProgressRushmoreCard } from "../components/MyInProgressRushmoreCard";
@@ -167,6 +167,18 @@ export const MyRushmoreListsComponent: React.FC<
   const renderItemSeparator = () => <View style={styles.divider} />;
 
   const renderInProgressRushmoreList = () => {
+    if (!myInProgressRushmoreList || myInProgressRushmoreList.length === 0) {
+      return <Text style={styles.emptyMessage}>No in-progress Rushmores</Text>;
+    }
+
+    if (filteredYourInProgressRushmoreData.length === 0) {
+      return (
+        <Text style={styles.emptyMessage}>
+          No in-progress Rushmores for {selectedCategory}
+        </Text>
+      );
+    }
+
     return (
       <Animated.FlatList
         data={filteredYourInProgressRushmoreData}
@@ -183,6 +195,22 @@ export const MyRushmoreListsComponent: React.FC<
   };
 
   const renderCompletedRushmoreList = () => {
+    if (isLoading) {
+      return null;
+    }
+
+    if (!myCompletedRushmoreList || myCompletedRushmoreList.length === 0) {
+      return <Text style={styles.emptyMessage}>No completed Rushmores</Text>;
+    }
+
+    if (filteredYourInProgressRushmoreData.length === 0) {
+      return (
+        <Text style={styles.emptyMessage}>
+          No completed Rushmores for {selectedCategory}
+        </Text>
+      );
+    }
+
     return (
       <Animated.FlatList
         data={filteredCompletedRushmoreData}
@@ -266,5 +294,11 @@ const styles = StyleSheet.create({
   },
   loadingIndicator: {
     marginVertical: 10,
+  },
+  emptyMessage: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
+    color: "#888",
   },
 });

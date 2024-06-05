@@ -5,6 +5,7 @@ import { InboxHomeScreen } from "../../inbox/InboxHomeScreen";
 import { HomeStackContainer } from "./HomeStackContainer";
 import { CreateRushmoreStackContainer } from "./CreateRushmoreStackContainer";
 import { SettingsStackContainer } from "./SettingsStackContainer";
+import { UserNetworkTopTabContainer } from "./UserNetworkTopTabContainer";
 
 const Tab = createBottomTabNavigator<RushmoreTabContainerParamList>();
 
@@ -23,6 +24,23 @@ export const RushmoreTabContainer = () => {
           tabBarIcon: ({ color, size }) => {
             return (
               <MaterialCommunityIcons name="home" size={size} color={color} />
+            );
+          },
+        }}
+      />
+
+      <Tab.Screen
+        name="UserNetworkTopTabContainer"
+        component={UserNetworkTopTabContainer}
+        options={{
+          tabBarLabel: "Social",
+          tabBarIcon: ({ color, size }) => {
+            return (
+              <MaterialCommunityIcons
+                name="account-group"
+                size={size}
+                color={color}
+              />
             );
           },
         }}

@@ -4,6 +4,7 @@ import { Text, TextInput, Button, HelperText } from "react-native-paper";
 import { CognitoService } from "../service/CognitoService";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import LoadingButton from "../components/LoadingButton";
 
 type ChangeEmailCodeValidationScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -58,15 +59,14 @@ export const ChangeEmailCodeValidationScreen = ({
       <HelperText type="error" visible={!!error}>
         {error}
       </HelperText>
-      <Button
-        mode="contained"
+      <LoadingButton
         onPress={handleChangeEmail}
+        isLoading={isChangingEmail}
         disabled={!isCodeValid || isChangingEmail}
-        loading={isChangingEmail}
+        loadingText="Changing Email..."
+        buttonText="Change Email"
         style={styles.changeEmailButton}
-      >
-        Change Email
-      </Button>
+      />
     </SafeAreaView>
   );
 };

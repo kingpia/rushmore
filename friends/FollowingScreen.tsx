@@ -4,9 +4,11 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
+  View,
+  Text,
 } from "react-native";
 import { ActivityIndicator, Searchbar } from "react-native-paper";
-import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
+import { useFocusEffect } from "@react-navigation/native";
 import { UserService } from "../service/UserService";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import SocialUserCard from "../components/SocialUserCard";
@@ -22,37 +24,40 @@ type FollowingScreenProps = {
   route: any;
 };
 
-const userService = new UserService(); // Instantiate UserService
+const userService = new UserService();
 
 export const FollowingScreen = ({
   navigation,
   route,
 }: FollowingScreenProps) => {
   const [followingList, setFollowingList] = useState<SocialUser[]>([]);
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [fadeAnim] = useState(new Animated.Value(0)); // Initial value for opacity: 0
+  const [fadeAnim] = useState(new Animated.Value(0));
   const { userFocus } = useUserFocus();
 
   const onChangeSearch = (query: string) => setSearchQuery(query);
 
   const fetchData = async () => {
     setLoading(true);
-    console.log("User Focus from Other Screen:", userFocus);
+    console.log("UserFocus from Other Screen:", userFocus);
 
     try {
-      const userData: SocialUser | undefined = route.params?.params?.user; // Access userData from route params
+      const userData: SocialUser | undefined = route.params?.params?.user;
       console.log("THE UID is :" + userData?.uid ?? "");
 
       let uid: string = "";
       if (userData?.uid) {
         console.log("userData UID:" + userData?.uid);
         uid = userData?.uid;
-      } else {
-        //userFocus should always be set
+      } else if (userFocus) {
         console.log("Using UserFocus:" + userFocus);
+
         uid = userFocus || "";
+      } else {
+        console.log("Everything is null, fetch for current user");
       }
+
       const followingUsers = await userService.getFollowingUserList(uid);
       setFollowingList(followingUsers);
     } catch (error) {
@@ -62,23 +67,16 @@ export const FollowingScreen = ({
     }
   };
 
-  // Use useFocusEffect to fetch data when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
       fetchData();
-      const unsubscribe = navigation.addListener("state", (e) => {
-        console.log("Current navigation state:", e.data.state);
-      });
-
-      return unsubscribe;
-    }, [navigation]) // Empty dependency array to run the effect only once when the component mounts
+    }, [])
   );
 
   useEffect(() => {
-    // Fade in animation
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 1000, // Adjust the duration as needed
+      duration: 1000,
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
@@ -94,8 +92,6 @@ export const FollowingScreen = ({
 
       navigation.navigate("ProfileHomeScreen");
     } else {
-      //ARE YOU NAVIGATING TO YOUR PROFILE???
-
       navigation.navigate("UserProfileScreen", {
         user,
       });
@@ -134,6 +130,10 @@ export const FollowingScreen = ({
           color="#0000ff"
           style={styles.loadingIndicator}
         />
+      ) : followingList.length === 0 ? (
+        <View style={styles.messageContainer}>
+          <Text style={styles.emptyMessage}>Not following anyone</Text>
+        </View>
       ) : (
         <Animated.FlatList
           data={followingList}
@@ -162,5 +162,14 @@ const styles = StyleSheet.create({
   },
   flatList: {
     flex: 1,
+  },
+  messageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyMessage: {
+    fontSize: 16,
+    color: "#888",
   },
 });

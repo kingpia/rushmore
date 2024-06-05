@@ -16,6 +16,7 @@ import {
 } from "@react-navigation/native-stack";
 import { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import LoadingButton from "../components/LoadingButton";
 
 type AuthResetPasswordCodeScreenProps = {
   route: RouteProp<AuthStackParamList, "AuthResetPasswordCodeScreen">;
@@ -210,23 +211,14 @@ export const AuthResetPasswordCodeScreen = ({
             </View>
           </>
         )}
-      <Button
-        mode="contained"
+      <LoadingButton
         onPress={forgotPasswordSubmit}
+        isLoading={isLoading}
         disabled={!isFormValid()}
-        style={{ marginVertical: 25 }}
-        contentStyle={{ flexDirection: "row-reverse" }}
-        labelStyle={{ marginLeft: 5 }}
-      >
-        {isLoading ? (
-          <>
-            <ActivityIndicator animating={true} color="#ffffff" />
-            <Text>Resetting... </Text>
-          </>
-        ) : (
-          "Reset"
-        )}
-      </Button>
+        loadingText="Resetting..."
+        buttonText="Reset"
+        style={{ marginTop: 30 }}
+      />
     </SafeAreaView>
   );
 };

@@ -15,12 +15,20 @@ export const RushmoreCard: React.FC<RushmoreCardProps> = ({
 }) => {
   console.log("RushmoreCard:" + JSON.stringify(rushmore));
   const [hasFunds, setHasFunds] = useState<boolean>(true);
+  const defaultImage = require("../assets/shylo.png");
 
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.container}>
         <View style={styles.title_row}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View
+            style={{ flexDirection: "row", alignItems: "center", margin: 5 }}
+          >
+            <Avatar.Image
+              size={45}
+              source={rushmore?.icon ? { uri: rushmore.icon } : defaultImage}
+              style={{ backgroundColor: "transparent", marginRight: 5 }} // Ensure transparent background to avoid cropping
+            />
             <Text variant="titleMedium">{rushmore.title}</Text>
             <Text style={styles.bullet}> •</Text>
             <MaterialCommunityIcons

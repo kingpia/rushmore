@@ -1,10 +1,18 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, Alert } from "react-native";
-import { Text, TextInput, Button, HelperText } from "react-native-paper";
+import { SafeAreaView, StyleSheet, Alert, View } from "react-native";
+import {
+  Text,
+  TextInput,
+  Button,
+  HelperText,
+  ActivityIndicator,
+} from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { Ionicons } from "@expo/vector-icons";
 import { CognitoService } from "../service/CognitoService";
+import { globalStyles } from "../styles/globalStyles";
+import LoadingButton from "../components/LoadingButton";
 
 const validateEmail = (email: string) => {
   // A simple email validation regex
@@ -67,15 +75,14 @@ export const ChangeEmailScreen = ({ navigation }: ChangeEmailScreenProps) => {
       <HelperText type="error" visible={!!emailError}>
         {emailError}
       </HelperText>
-      <Button
-        mode="contained"
+      <LoadingButton
         onPress={sendVerificationCode}
+        isLoading={isSendingCode}
         disabled={!isEmailValid || isSendingCode}
-        loading={isSendingCode}
+        loadingText="Sending Code..."
+        buttonText="Send Code"
         style={styles.sendCodeButton}
-      >
-        Send Code
-      </Button>
+      />
     </SafeAreaView>
   );
 };

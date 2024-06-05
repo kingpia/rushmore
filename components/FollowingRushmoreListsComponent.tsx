@@ -37,6 +37,7 @@ const FollowingRushmoreListsComponent = ({
       let data: any[] = [];
 
       if (selectedValue === "inprogress") {
+        console.log("Getting myInProgresssUserRushmoreGameSessions");
         //TODO API TO GET the users in progress UserRushmoreGameSessions
         data = await rushmoreService.getMyInProgressUserRushmoreGameSessions();
         console.log(
@@ -44,6 +45,8 @@ const FollowingRushmoreListsComponent = ({
         );
         setFollowingInProgressUserRushmoreList(data);
       } else if (selectedValue === "solved") {
+        console.log("Getting getMySolvedUserRushmoreGameSessions");
+
         //TODO API TO GET the users completed UserRushmoreGameSessions
         data = await rushmoreService.getMySolvedUserRushmoreGameSessions();
         console.log(

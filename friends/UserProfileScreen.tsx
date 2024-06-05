@@ -287,7 +287,7 @@ export const UserProfileScreen = ({
           ItemSeparatorComponent={renderItemSeparator}
         />
       ) : (
-        <Text style={styles.noResultsText}>No Rushmore Results</Text>
+        <Text style={styles.emptyMessage}>No Rushmore Results</Text>
       )}
     </View>
   );
@@ -331,10 +331,11 @@ const styles = StyleSheet.create({
   centeredText: {
     alignItems: "center",
   },
-  noResultsText: {
-    fontSize: 15,
+  emptyMessage: {
+    textAlign: "center",
     marginTop: 20,
-    alignSelf: "center",
+    fontSize: 16,
+    color: "#888",
   },
   divider: {
     height: 1,

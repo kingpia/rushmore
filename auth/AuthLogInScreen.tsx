@@ -15,6 +15,8 @@ import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import { UserService } from "../service/UserService";
 import { AuthStackParamList } from "../nav/params/AuthStackParamList";
+import { globalStyles } from "../styles/globalStyles"; // Adjust the import path accordingly
+import LoadingButton from "../components/LoadingButton";
 
 type AppContainerStackScreenProps = NativeStackScreenProps<
   AppStackParamList & AuthStackParamList
@@ -149,23 +151,14 @@ export const AuthLogInScreen = ({
         </Button>
       </View>
 
-      <Button
-        mode="contained"
+      <LoadingButton
         onPress={handleLoginPress}
+        isLoading={isLoading}
         disabled={!isButtonEnabled || isLoading}
-        style={{ marginTop: 30 }}
-        contentStyle={{ flexDirection: "row-reverse" }}
-        labelStyle={{ marginLeft: 5 }}
-      >
-        {isLoading ? (
-          <>
-            <ActivityIndicator animating={true} color="#ffffff" />
-            <Text>Logging in... </Text>
-          </>
-        ) : (
-          "Log in"
-        )}
-      </Button>
+        loadingText="Logging In..."
+        buttonText="Log in"
+        style={{ marginLeft: 5 }}
+      />
 
       <View
         style={{

@@ -21,6 +21,14 @@ const TermsAndPolicyScreen: React.FC = () => {
           reserve the right to suspend or terminate your account if you violate
           these terms or engage in any prohibited activities.
         </Paragraph>
+        <Paragraph>
+          This application allows users to select and display items from
+          provided lists. Please note that these lists may not be comprehensive
+          and may not include all possible items. We are not liable for any
+          omissions or the inability to find specific items within these lists.
+          By using this application, you acknowledge and accept that the
+          provided lists are not exhaustive and may be incomplete.
+        </Paragraph>
       </ScrollView>
     </View>
   );

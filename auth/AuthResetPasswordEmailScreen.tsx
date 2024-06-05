@@ -1,11 +1,12 @@
 import * as React from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { SafeAreaView, View, StyleSheet, Alert } from "react-native";
 
 import { Text, TextInput, Button, HelperText } from "react-native-paper";
 import { useState } from "react";
 import { Auth } from "aws-amplify";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../nav/params/AuthStackParamList";
+import LoadingButton from "../components/LoadingButton";
 
 type AuthResetPasswordEmailScreenProps =
   NativeStackScreenProps<AuthStackParamList>;
@@ -16,6 +17,7 @@ export const AuthResetPasswordEmailScreen = ({
   const [emailText, setEmailText] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
   const isResetDisabled = !emailText || !!emailError;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const validateEmail = (email: string) => {
     // A simple email validation regex
@@ -25,15 +27,17 @@ export const AuthResetPasswordEmailScreen = ({
 
   const handleResetPassword = async () => {
     try {
+      setIsLoading(true);
       await Auth.forgotPassword(emailText);
       console.log("Password reset instructions sent to:", emailText);
-      // Navigate to the next screen (e.g., confirmation screen)
       navigation.push("AuthResetPasswordCodeScreen", {
         email: emailText,
       });
     } catch (error) {
       console.error("Error resetting password:", error);
-      // Handle error (e.g., display error message)
+      Alert.alert("Error", "Failed to reset password. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,14 +64,14 @@ export const AuthResetPasswordEmailScreen = ({
       <HelperText type="error" visible={!!emailError}>
         {emailError}
       </HelperText>
-      <Button
-        mode="contained"
+      <LoadingButton
         onPress={handleResetPassword}
+        isLoading={isLoading}
         disabled={isResetDisabled}
+        loadingText="Sending Code..."
+        buttonText="Reset Password"
         style={{ marginVertical: 10 }}
-      >
-        Reset Password
-      </Button>
+      />
     </SafeAreaView>
   );
 };

@@ -21,6 +21,8 @@ import { DeleteAccountSettingsScreen } from "../../profile/DeleteAccountSettings
 import { DeactivateAccountSettingsScreen } from "../../profile/DeactivateAccountSettingsScreen";
 import { ChangeEmailScreen } from "../../profile/ChangeEmailScreen";
 import ChangeEmailCodeValidationScreen from "../../profile/ChangeEmailCodeValidationScreen";
+import { IconButton } from "react-native-paper";
+import { View, StyleSheet } from "react-native";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
@@ -74,9 +76,19 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
       <AppStackNavigator.Screen
         name="UserNetworkTopTabContainer"
         component={UserNetworkTopTabContainer}
-        options={({ route }) => ({
+        options={({ route, navigation }) => ({
           headerShown: true,
           title: route.params.user.nickName,
+          headerRight: () => (
+            <View style={styles.iconContainer}>
+              <IconButton
+                icon="account-plus"
+                size={24}
+                iconColor="black"
+                onPress={() => navigation.navigate("AddFriendScreen")}
+              />
+            </View>
+          ),
         })}
       />
 
@@ -207,3 +219,9 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
     </AppStackNavigator.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    height: "110%",
+  },
+});

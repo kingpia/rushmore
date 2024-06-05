@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { CognitoService } from "../service/CognitoService";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { globalStyles } from "../styles/globalStyles"; // Adjust the import path accordingly
 
 type PassswordChangeSettingsScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -223,16 +224,20 @@ export const PasswordChangeSettingsScreen = ({
       <Button
         mode="contained"
         onPress={changePasswordSubmit}
-        disabled={!isFormValid()}
+        disabled={!isFormValid() || isLoading}
         style={{ marginVertical: 25 }}
         contentStyle={{ flexDirection: "row-reverse" }}
         labelStyle={{ marginLeft: 5 }}
       >
         {isLoading ? (
-          <>
-            <Text>Resetting... </Text>
-            <ActivityIndicator animating={true} color="#ffffff" />
-          </>
+          <View style={globalStyles.loadingContainer}>
+            <ActivityIndicator
+              animating={true}
+              color="#ffffff"
+              style={globalStyles.activityIndicator}
+            />
+            <Text style={globalStyles.loadingText}>Changing Password...</Text>
+          </View>
         ) : (
           "Change Password"
         )}
