@@ -6,84 +6,95 @@ import { HomeStackContainer } from "./HomeStackContainer";
 import { CreateRushmoreStackContainer } from "./CreateRushmoreStackContainer";
 import { SettingsStackContainer } from "./SettingsStackContainer";
 import { UserNetworkTopTabContainer } from "./UserNetworkTopTabContainer";
+import { SafeAreaView } from "react-native";
 
 const Tab = createBottomTabNavigator<RushmoreTabContainerParamList>();
 
 export const RushmoreTabContainer = () => {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false, // Hide the back button label
-      }}
-    >
-      <Tab.Screen
-        name="HomeStackContainer"
-        component={HomeStackContainer}
-        options={{
-          tabBarLabel: "Home",
-          tabBarIcon: ({ color, size }) => {
-            return (
-              <MaterialCommunityIcons name="home" size={size} color={color} />
-            );
-          },
+    <SafeAreaView style={{ flex: 1 }}>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false, // Hide the back button label
         }}
-      />
+      >
+        <Tab.Screen
+          name="HomeStackContainer"
+          component={HomeStackContainer}
+          options={{
+            tabBarLabel: "Home",
+            tabBarIcon: ({ color, size }) => {
+              return (
+                <MaterialCommunityIcons name="home" size={size} color={color} />
+              );
+            },
+          }}
+        />
 
-      <Tab.Screen
-        name="UserNetworkTopTabContainer"
-        component={UserNetworkTopTabContainer}
-        options={{
-          tabBarLabel: "Social",
-          tabBarIcon: ({ color, size }) => {
-            return (
+        <Tab.Screen
+          name="UserNetworkTopTabContainer"
+          component={UserNetworkTopTabContainer}
+          options={{
+            tabBarLabel: "Social",
+            tabBarIcon: ({ color, size }) => {
+              return (
+                <MaterialCommunityIcons
+                  name="account-group"
+                  size={size}
+                  color={color}
+                />
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
+          name="CreateRushmoreStackContainer"
+          component={CreateRushmoreStackContainer}
+          options={{
+            tabBarLabel: "Create",
+            tabBarIcon: ({ color, size }) => {
+              return (
+                <MaterialCommunityIcons
+                  name="plus-box"
+                  size={size}
+                  color={color}
+                />
+              );
+            },
+          }}
+        />
+        <Tab.Screen
+          name="InboxHomeScreen"
+          component={InboxHomeScreen}
+          options={{
+            tabBarLabel: "Inbox",
+            tabBarIcon: ({ color, size }) => {
+              return (
+                <MaterialCommunityIcons
+                  name="email"
+                  size={size}
+                  color={color}
+                />
+              );
+            },
+          }}
+        />
+        <Tab.Screen
+          name="SettingsStackContainer"
+          component={SettingsStackContainer}
+          options={({ route }) => ({
+            tabBarLabel: "Profile",
+            tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
-                name="account-group"
+                name="account-circle"
                 size={size}
                 color={color}
               />
-            );
-          },
-        }}
-      />
-
-      <Tab.Screen
-        name="CreateRushmoreStackContainer"
-        component={CreateRushmoreStackContainer}
-        options={{
-          tabBarLabel: "",
-          tabBarIcon: ({ color, size }) => {
-            return (
-              <MaterialCommunityIcons name="plus-box" size={38} color="green" />
-            );
-          },
-        }}
-      />
-      <Tab.Screen
-        name="InboxHomeScreen"
-        component={InboxHomeScreen}
-        options={{
-          tabBarLabel: "Inbox",
-          tabBarIcon: ({ color, size }) => {
-            return (
-              <MaterialCommunityIcons name="email" size={size} color={color} />
-            );
-          },
-        }}
-      />
-      <Tab.Screen
-        name="SettingsStackContainer"
-        component={SettingsStackContainer}
-        options={({ route }) => ({
-          tabBarLabel: "Profile",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="account-circle"
-              size={size}
-              color={color}
-            />
-          ),
-        })}
-      />
-    </Tab.Navigator>
+            ),
+          })}
+        />
+      </Tab.Navigator>
+    </SafeAreaView>
   );
 };

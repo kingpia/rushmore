@@ -1,4 +1,4 @@
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, StyleSheet } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 
@@ -13,8 +13,13 @@ export const MyRushmoreHomeScreen = ({
   navigation,
 }: MyRushmoreHomeScreenProps) => {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <MyRushmoreListsComponent navigation={navigation} />
     </SafeAreaView>
   );
 };
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

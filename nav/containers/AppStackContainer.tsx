@@ -22,7 +22,7 @@ import { DeactivateAccountSettingsScreen } from "../../profile/DeactivateAccount
 import { ChangeEmailScreen } from "../../profile/ChangeEmailScreen";
 import ChangeEmailCodeValidationScreen from "../../profile/ChangeEmailCodeValidationScreen";
 import { IconButton } from "react-native-paper";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, SafeAreaView } from "react-native";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
@@ -34,189 +34,191 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
   initialScreen,
 }) => {
   return (
-    <AppStackNavigator.Navigator
-      screenOptions={{
-        headerShown: false, // Hide the back button label
-        headerBackTitleVisible: false, // Hide the title of the last screen next to the back button
-      }}
-      initialRouteName={initialScreen}
-    >
-      <AppStackNavigator.Screen
-        name="AuthStackContainer"
-        component={AuthStackContainer}
-      />
-      <AppStackNavigator.Screen
-        name="RushmoreTabContainer"
-        component={RushmoreTabContainer}
-      />
-      <AppStackNavigator.Screen
-        name="RushmoreGameScreen"
-        component={RushmoreGameScreen}
-        options={{
-          gestureEnabled: false,
-          headerShown: false, // You can also hide the header here
+    <SafeAreaView style={{ flex: 1 }}>
+      <AppStackNavigator.Navigator
+        screenOptions={{
+          headerShown: false, // Hide the back button label
+          headerBackTitleVisible: false, // Hide the title of the last screen next to the back button
         }}
-      />
-      <AppStackNavigator.Screen
-        name="EditUserRushmoreScreen"
-        component={EditUserRushmoreScreen}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
+        initialRouteName={initialScreen}
+      >
+        <AppStackNavigator.Screen
+          name="AuthStackContainer"
+          component={AuthStackContainer}
+        />
+        <AppStackNavigator.Screen
+          name="RushmoreTabContainer"
+          component={RushmoreTabContainer}
+        />
+        <AppStackNavigator.Screen
+          name="RushmoreGameScreen"
+          component={RushmoreGameScreen}
+          options={{
+            gestureEnabled: false,
+            headerShown: false, // You can also hide the header here
+          }}
+        />
+        <AppStackNavigator.Screen
+          name="EditUserRushmoreScreen"
+          component={EditUserRushmoreScreen}
+          options={{
+            gestureEnabled: false,
+          }}
+        />
 
-      <AppStackNavigator.Screen
-        name="AddRushmoreItemsScreen"
-        component={AddRushmoreItemsScreen}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
+        <AppStackNavigator.Screen
+          name="AddRushmoreItemsScreen"
+          component={AddRushmoreItemsScreen}
+          options={{
+            gestureEnabled: false,
+          }}
+        />
 
-      <AppStackNavigator.Screen
-        name="UserNetworkTopTabContainer"
-        component={UserNetworkTopTabContainer}
-        options={({ route, navigation }) => ({
-          headerShown: true,
-          title: route.params.user.nickName,
-          headerRight: () => (
-            <View style={styles.iconContainer}>
-              <IconButton
-                icon="account-plus"
-                size={24}
-                iconColor="black"
-                onPress={() => navigation.navigate("AddFriendScreen")}
-              />
-            </View>
-          ),
-        })}
-      />
+        <AppStackNavigator.Screen
+          name="UserNetworkTopTabContainer"
+          component={UserNetworkTopTabContainer}
+          options={({ route, navigation }) => ({
+            headerShown: true,
+            title: route.params.user.nickName,
+            headerRight: () => (
+              <View style={styles.iconContainer}>
+                <IconButton
+                  icon="account-plus"
+                  size={24}
+                  iconColor="black"
+                  onPress={() => navigation.navigate("AddFriendScreen")}
+                />
+              </View>
+            ),
+          })}
+        />
 
-      <AppStackNavigator.Screen
-        name="EditProfileScreen"
-        component={EditProfileScreen}
-        options={({ route }) => ({
-          headerShown: true,
-          headerTitle: "Edit Profile", // Empty string to hide the title
-        })}
-      />
+        <AppStackNavigator.Screen
+          name="EditProfileScreen"
+          component={EditProfileScreen}
+          options={({ route }) => ({
+            headerShown: true,
+            headerTitle: "Edit Profile", // Empty string to hide the title
+          })}
+        />
 
-      <AppStackNavigator.Screen
-        name="EditNameScreen"
-        component={EditNameScreen}
-        options={{
-          headerTitle: "", // Empty string to hide the title
-        }}
-      />
-      <AppStackNavigator.Screen
-        name="EditUsernameScreen"
-        component={EditUsernameScreen}
-        options={{
-          headerTitle: "", // Empty string to hide the title
-        }}
-      />
-      <AppStackNavigator.Screen
-        name="AddFriendScreen"
-        component={AddFriendsScreen}
-        options={{
-          headerShown: true,
-          headerTitle: "Add Friends", // Empty string to hide the title
-        }}
-      />
-      <AppStackNavigator.Screen
-        name="UserProfileScreen"
-        component={UserProfileScreen} // Added here
-        options={({ route }) => ({
-          title: route.params.user.nickName, // Set the title dynamically
-          headerShown: true,
-        })}
-      />
+        <AppStackNavigator.Screen
+          name="EditNameScreen"
+          component={EditNameScreen}
+          options={{
+            headerTitle: "", // Empty string to hide the title
+          }}
+        />
+        <AppStackNavigator.Screen
+          name="EditUsernameScreen"
+          component={EditUsernameScreen}
+          options={{
+            headerTitle: "", // Empty string to hide the title
+          }}
+        />
+        <AppStackNavigator.Screen
+          name="AddFriendScreen"
+          component={AddFriendsScreen}
+          options={{
+            headerShown: true,
+            headerTitle: "Add Friends", // Empty string to hide the title
+          }}
+        />
+        <AppStackNavigator.Screen
+          name="UserProfileScreen"
+          component={UserProfileScreen} // Added here
+          options={({ route }) => ({
+            title: route.params.user.nickName, // Set the title dynamically
+            headerShown: true,
+          })}
+        />
 
-      <AppStackNavigator.Screen
-        name="TermsAndPolicyScreen"
-        component={TermsAndPolicyScreen}
-        options={{
-          headerTitle: "Terms and Policy", // Empty string to hide the title
-          headerShown: true,
-        }}
-      />
-      <AppStackNavigator.Screen
-        name="AccountScreen"
-        component={AccountScreen}
-        options={{
-          headerTitle: "Account", // Empty string to hide the title
-          headerShown: true,
-        }}
-      />
-      <AppStackNavigator.Screen
-        name="ProfileSettingsScreen"
-        component={ProfileSettingsScreen}
-        options={{
-          headerTitle: "Settings", // Empty string to hide the title
-          headerShown: true,
-        }}
-      />
-      <AppStackNavigator.Screen
-        name="RushmoreSettingsScreen"
-        component={RushmoreSettingsScreen}
-        options={({ route }) => ({
-          headerTitle: `${route.params?.rushmore.title}`,
-        })}
-      />
+        <AppStackNavigator.Screen
+          name="TermsAndPolicyScreen"
+          component={TermsAndPolicyScreen}
+          options={{
+            headerTitle: "Terms and Policy", // Empty string to hide the title
+            headerShown: true,
+          }}
+        />
+        <AppStackNavigator.Screen
+          name="AccountScreen"
+          component={AccountScreen}
+          options={{
+            headerTitle: "Account", // Empty string to hide the title
+            headerShown: true,
+          }}
+        />
+        <AppStackNavigator.Screen
+          name="ProfileSettingsScreen"
+          component={ProfileSettingsScreen}
+          options={{
+            headerTitle: "Settings", // Empty string to hide the title
+            headerShown: true,
+          }}
+        />
+        <AppStackNavigator.Screen
+          name="RushmoreSettingsScreen"
+          component={RushmoreSettingsScreen}
+          options={({ route }) => ({
+            headerTitle: `${route.params?.rushmore.title}`,
+          })}
+        />
 
-      <AppStackNavigator.Screen
-        name="UserInfoSettingsScreen"
-        component={UserInfoSettingsScreen}
-        options={{
-          headerTitle: "Account Settings", // Empty string to hide the title
-          headerShown: true,
-        }}
-      />
+        <AppStackNavigator.Screen
+          name="UserInfoSettingsScreen"
+          component={UserInfoSettingsScreen}
+          options={{
+            headerTitle: "Account Settings", // Empty string to hide the title
+            headerShown: true,
+          }}
+        />
 
-      <AppStackNavigator.Screen
-        name="PasswordChangeSettingsScreen"
-        component={PasswordChangeSettingsScreen}
-        options={{
-          headerTitle: "Account Settings", // Empty string to hide the title
-          headerShown: true,
-        }}
-      />
+        <AppStackNavigator.Screen
+          name="PasswordChangeSettingsScreen"
+          component={PasswordChangeSettingsScreen}
+          options={{
+            headerTitle: "Account Settings", // Empty string to hide the title
+            headerShown: true,
+          }}
+        />
 
-      <AppStackNavigator.Screen
-        name="DeleteAccountSettingsScreen"
-        component={DeleteAccountSettingsScreen}
-        options={{
-          headerTitle: "Account Settings", // Empty string to hide the title
-          headerShown: true,
-        }}
-      />
+        <AppStackNavigator.Screen
+          name="DeleteAccountSettingsScreen"
+          component={DeleteAccountSettingsScreen}
+          options={{
+            headerTitle: "Account Settings", // Empty string to hide the title
+            headerShown: true,
+          }}
+        />
 
-      <AppStackNavigator.Screen
-        name="DeactivateAccountSettingsScreen"
-        component={DeactivateAccountSettingsScreen}
-        options={{
-          headerTitle: "Account Settings", // Empty string to hide the title
-          headerShown: true,
-        }}
-      />
+        <AppStackNavigator.Screen
+          name="DeactivateAccountSettingsScreen"
+          component={DeactivateAccountSettingsScreen}
+          options={{
+            headerTitle: "Account Settings", // Empty string to hide the title
+            headerShown: true,
+          }}
+        />
 
-      <AppStackNavigator.Screen
-        name="ChangeEmailScreen"
-        component={ChangeEmailScreen}
-        options={{
-          headerTitle: "Account Settings", // Empty string to hide the title
-          headerShown: true,
-        }}
-      />
-      <AppStackNavigator.Screen
-        name="ChangeEmailCodeValidationScreen"
-        component={ChangeEmailCodeValidationScreen}
-        options={{
-          headerTitle: "Account Settings", // Empty string to hide the title
-          headerShown: true,
-        }}
-      />
-    </AppStackNavigator.Navigator>
+        <AppStackNavigator.Screen
+          name="ChangeEmailScreen"
+          component={ChangeEmailScreen}
+          options={{
+            headerTitle: "Account Settings", // Empty string to hide the title
+            headerShown: true,
+          }}
+        />
+        <AppStackNavigator.Screen
+          name="ChangeEmailCodeValidationScreen"
+          component={ChangeEmailCodeValidationScreen}
+          options={{
+            headerTitle: "Account Settings", // Empty string to hide the title
+            headerShown: true,
+          }}
+        />
+      </AppStackNavigator.Navigator>
+    </SafeAreaView>
   );
 };
 

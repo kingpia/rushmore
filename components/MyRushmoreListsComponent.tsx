@@ -1,10 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-
-import { FlatList, View, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated, FlatList } from "react-native";
 import { ActivityIndicator, SegmentedButtons, Text } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
 import { MyInProgressRushmoreCard } from "../components/MyInProgressRushmoreCard";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { RushmoreService } from "../service/RushmoreService";
@@ -12,7 +10,6 @@ import { HomeStackParamList } from "../nav/params/HomeStackParamList";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import MyCompletedRushmoreCard from "./MyCompletedRushmoreCard";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 type MyRushmoreListsComponentProps = {
   navigation: NativeStackNavigationProp<HomeStackParamList & AppStackParamList>;
@@ -55,7 +52,7 @@ export const MyRushmoreListsComponent: React.FC<
       if (selectedValue === "inprogress") {
         const myInProgressRushmoreData =
           await rushmoreService.getMyInProgressRushmoreList();
-        console.log("Settingg MyInProgressRushmoreList");
+        console.log("Setting MyInProgressRushmoreList");
         setMyInProgressRushmoreList(myInProgressRushmoreData);
 
         const categoriesSet = new Set<string>();
@@ -71,11 +68,6 @@ export const MyRushmoreListsComponent: React.FC<
         console.log("Categories Array:" + JSON.stringify(categoriesArray));
 
         setCategories(categoriesArray);
-
-        console.log("CategoriesL" + JSON.stringify(categories));
-        console.log(
-          "MyInProgressRushmoreData:" + JSON.stringify(myInProgressRushmoreData)
-        );
       } else if (selectedValue === "complete") {
         console.log("selected cat is complete");
         const myCompletedRushmoreData =
@@ -85,24 +77,13 @@ export const MyRushmoreListsComponent: React.FC<
             JSON.stringify(myCompletedRushmoreData)
         );
         setMyCompletedRushmoreList(myCompletedRushmoreData);
-        console.log(
-          "Done setting completed rushmore list with size:" +
-            myCompletedRushmoreData.length
-        );
 
         const categoriesSet = new Set<string>();
 
         // Loop through UserRushmoreDTO and extract categories
         myCompletedRushmoreData.forEach((userRushmoreDTO) => {
-          console.log(
-            "Got a user rushmore item:" +
-              JSON.stringify(userRushmoreDTO.userRushmore.rushmore.category)
-          );
           categoriesSet.add(userRushmoreDTO.userRushmore.rushmore.category);
         });
-        console.log(
-          "Done doing for each on the categories for completed rushmores  "
-        );
 
         const categoriesArray = Array.from(categoriesSet);
         categoriesArray.unshift("All");
@@ -110,17 +91,8 @@ export const MyRushmoreListsComponent: React.FC<
         console.log("Categories Array:" + JSON.stringify(categoriesArray));
 
         setCategories(categoriesArray);
-
-        console.log("CategoriesL" + JSON.stringify(categories));
-
-        console.log(
-          "setMyCompletedRushmoreList:" +
-            JSON.stringify(myCompletedRushmoreData)
-        );
       }
       setLoading(false); // Set loading to false after fetching data
-      // Calculate category counts after setting the state
-      // Update category counts
       countByCategory(selectedCategory);
     } catch (error) {
       console.error("Error fetching Rushmore items:", error);
@@ -135,7 +107,6 @@ export const MyRushmoreListsComponent: React.FC<
           category === "All" || item.userRushmore.rushmore.category === category
       ).length;
     } else {
-      console.log("returning myCompletedRushmoreList.filter");
       return myCompletedRushmoreList.filter(
         (item) =>
           category === "All" || item.userRushmore.rushmore.category === category
@@ -164,6 +135,7 @@ export const MyRushmoreListsComponent: React.FC<
   const handleCategoryPress = (category: string) => {
     setSelectedCategory(category);
   };
+
   const renderItemSeparator = () => <View style={styles.divider} />;
 
   const renderInProgressRushmoreList = () => {
@@ -190,6 +162,7 @@ export const MyRushmoreListsComponent: React.FC<
             onPress={() => navigateToMyInProgressRushmore(item)}
           />
         )}
+        ItemSeparatorComponent={renderItemSeparator}
       />
     );
   };
@@ -251,9 +224,9 @@ export const MyRushmoreListsComponent: React.FC<
           categories={categories}
         />
       </View>
-      <View>
+      <View style={styles.segmentedButtonsContainer}>
         <SegmentedButtons
-          style={{ margin: 10 }}
+          style={styles.segmentedButtons}
           value={value}
           onValueChange={setValue}
           buttons={[
@@ -274,7 +247,7 @@ export const MyRushmoreListsComponent: React.FC<
             size="large"
           />
         )}
-        <View>
+        <View style={styles.listContainer}>
           {value === "inprogress"
             ? renderInProgressRushmoreList()
             : renderCompletedRushmoreList()}
@@ -300,5 +273,14 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: "#888",
+  },
+  segmentedButtonsContainer: {
+    flex: 1,
+  },
+  segmentedButtons: {
+    margin: 10,
+  },
+  listContainer: {
+    flex: 1,
   },
 });

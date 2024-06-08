@@ -5,6 +5,7 @@ import { MyCompletedRushmoreScreen } from "../../rushmore/MyCompletedRushmoreScr
 import { HomeTopTabContainer } from "./HomeTopTabContainer";
 import { FollowingSolvedRushmoreScreen } from "../../rushmore/FollowingSolvedRushmoreScreen";
 import { MyInProgressRushmoreScreen } from "../../rushmore/MyInProgressRushmoreScreen";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeStackNavigaor = createNativeStackNavigator<HomeStackParamList>();
 

@@ -66,10 +66,6 @@ export const MyInProgressRushmoreCard: React.FC<
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    marginLeft: 15,
-    marginRight: 15,
-  },
   title_row: {
     flexDirection: "row",
     alignItems: "center",

@@ -2,7 +2,14 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 
-import { View, StyleSheet, Modal, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Modal,
+  Text,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import {
   Avatar,
   Button,
@@ -31,6 +38,7 @@ import { useUserFocus } from "../service/UserFocusContext";
 type ProfileStackContainerScreenProps = NativeStackScreenProps<
   SettingsStackParamList & AppStackParamList
 >;
+const Item = ({ title }) => <Text style={styles.item}>{title}</Text>;
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -323,6 +331,11 @@ export const ProfileHomeScreen = ({
   const handleMenuPress = () => {
     setMenuVisible(true);
   };
+  const DATA = Array.from({ length: 50 }, (_, index) => ({
+    id: index.toString(),
+    title: `Item ${index + 1}`,
+  }));
+  const renderItem = ({ item }) => <Item title={item.title} />;
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>

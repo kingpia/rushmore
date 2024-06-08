@@ -61,7 +61,6 @@ export const EditUserRushmoreScreen = ({
 }: EditUserRushmoreScreenProps) => {
   const [userRushmore, setUserRushmore] = useState<UserRushmore | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [draggableData, setDraggableData] = useState<UserRushmoreItem[]>([]);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -483,10 +482,8 @@ export const EditUserRushmoreScreen = ({
 
       console.log("Setting UserRushmore:" + JSON.stringify(response));
       setUserRushmore(response);
-      setIsEditMode(true);
+      setIsEditMode(false);
     }
-
-    //Put us in "Edit Mode for the completed Rushmore"
   };
 
   const confirmDeleteUserRushmore = async () => {
@@ -681,66 +678,6 @@ export const EditUserRushmoreScreen = ({
           </View>
         </View>
       )}
-      <Portal>
-        <Dialog visible={isModalVisible} onDismiss={hideModal}>
-          <Dialog.Title>Rushmore Complete?</Dialog.Title>
-          <Dialog.Content>
-            <Text style={styles.modalText}>
-              Confirm the following settings:
-            </Text>
-            <Text style={styles.modalText}>
-              Rushmore Category: {userRushmore?.rushmore?.category || ""}
-            </Text>
-            <Text style={styles.modalText}>
-              Rushmore Type: {userRushmore?.rushmoreType || ""}
-            </Text>
-            <Text style={styles.modalText}>
-              Visibility: {userRushmore?.visibility || ""}
-            </Text>
-            <Text style={styles.modalText}>
-              Game Type: {userRushmore?.gameType || ""}
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={hideModal}>Cancel</Button>
-            <Button
-              onPress={() => {
-                hideModal();
-                saveUserRushmore();
-              }}
-            >
-              Complete
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-        <Dialog visible={isEditModalVisible} onDismiss={hideEditModal}>
-          <Dialog.Title>Cannot Modify Rushmore</Dialog.Title>
-          <Dialog.Content>
-            <Text style={styles.modalText}>
-              Cannot modify Rushmore. A Rushmore must be active for 30 days
-              after completion before it can be modified.
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={hideEditModal}>OK</Button>
-          </Dialog.Actions>
-        </Dialog>
-        <Dialog visible={isAddItemModalVisible} onDismiss={hideAddItemModal}>
-          <Dialog.Title>Add Item to Rushmore</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              label="Item Title"
-              value={addItemText}
-              onChangeText={(text) => setAddItemText(text)}
-              maxLength={100}
-            />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={hideAddItemModal}>Cancel</Button>
-            <Button onPress={handleAddItem}>Add Item</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
 
       <Portal>
         <Modal
