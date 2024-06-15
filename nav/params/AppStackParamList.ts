@@ -32,7 +32,7 @@ export type AppStackParamList = {
   DeactivateAccountSettingsScreen: undefined;
   AccountScreen: undefined;
   RushmoreSettingsScreen: {
-    rushmore: Rushmore;
+    userRushmore: UserRushmore;
   };
   ChangeEmailScreen: undefined;
   ChangeEmailCodeValidationScreen: undefined;

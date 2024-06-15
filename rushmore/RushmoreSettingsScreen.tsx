@@ -1,25 +1,31 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  LayoutAnimation,
+} from "react-native";
 import {
   Text,
-  SegmentedButtons,
   Button,
-  Portal,
-  Modal,
-  ActivityIndicator,
+  TextInput,
+  List,
+  IconButton,
+  Appbar,
 } from "react-native-paper";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CreateRushmoreStackParamList } from "../nav/params/CreateRushmoreStackParamList";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
 import {
   RushmoreGameTypeEnums,
   RushmoreType,
   RushmoreVisibilityEnums,
   UserRushmore,
 } from "../model/UserRushmore";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { AppStackParamList } from "../nav/params/AppStackParamList";
-import { CreateUserRushmoreRequestDTO } from "../model/CreateuserRushmoreRequestDTO";
 import { RushmoreService } from "../service/RushmoreService";
-import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
+import LoadingButton from "../components/LoadingButton";
 
 type RushmoreSettingsScreenProps = {
   navigation: NativeStackNavigationProp<
@@ -32,156 +38,297 @@ export const RushmoreSettingsScreen = ({
   route,
   navigation,
 }: RushmoreSettingsScreenProps) => {
-  let rushmore = route.params.rushmore;
-  const [isPrivate, setIsPrivate] = useState("no");
-  const [rushmoreType, setRushmoreType] = useState("favorite");
-  const [gameType, setGameType] = useState("game");
+  const rushmoreService = new RushmoreService(); // Create an instance of RushmoreService
 
-  const [isLoading, setIsLoading] = useState(false);
+  const userRushmore = route.params.userRushmore;
+  const [formEnabled, setFormEnabled] = useState(true);
 
-  //Error Handling states
-  const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false); // State to manage error modal visibility
-  const [errorMessage, setErrorMessage] = useState<string>(""); // State to store error message
+  const [inputText, setInputText] = useState("");
+  const [versionAccordionExpanded, setVersionAccordionExpanded] =
+    useState(false);
+  const [tagAccordionExpanded, setTagAccordionExpanded] = useState(false);
+  const [visibilityAccordionExpanded, setVisibilityAccordionExpanded] =
+    useState(false);
+  const [rushmoreTypeAccordionExpanded, setRushmoreTypeAccordionExpanded] =
+    useState(false);
+  const [gameTypeAccordionExpanded, setGameTypeAccordionExpanded] =
+    useState(false);
+  const [versionText, setVersionText] = useState("Latest");
+  const [tagInput, setTagInput] = useState("");
+  const [userRushmoreVisibility, setUserRushmoreVisibility] = useState(
+    RushmoreVisibilityEnums.PUBLIC
+  );
+  const [rushmoreType, setRushmoreType] = useState(RushmoreType.Favorite);
+  const [gameType, setGameType] = useState(RushmoreGameTypeEnums.GAME);
 
-  console.log("The rushmore you are creating is :" + JSON.stringify(rushmore));
-  const handleCreatePress = async () => {
-    const rushmoreService = new RushmoreService<UserRushmore>();
+  const [isLoading, setIsLoading] = useState(false); // Loading state for login process
 
-    const createUserRushmoreRequest: CreateUserRushmoreRequestDTO = {
-      rid: rushmore.rid,
-      visibility:
-        isPrivate === "yes"
-          ? RushmoreVisibilityEnums.PRIVATE
-          : RushmoreVisibilityEnums.PUBLIC,
-      gameType:
-        gameType === "game"
-          ? RushmoreGameTypeEnums.GAME
-          : RushmoreGameTypeEnums.OPEN,
-      rushmoreType:
-        rushmoreType === "favorite" ? RushmoreType.Favorite : RushmoreType.Best,
-    };
+  const handleVersionAccordionPress = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
-    try {
-      setIsLoading(true);
-      let useRushmoreResponse: UserRushmoreDTO =
-        await rushmoreService.createUserRushmore(createUserRushmoreRequest);
+    setVersionAccordionExpanded(!versionAccordionExpanded);
+  };
+  const handleTagAccordionPress = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setTagAccordionExpanded(!tagAccordionExpanded);
+  };
+  const toggleVisibilityAccordion = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setVisibilityAccordionExpanded(!visibilityAccordionExpanded);
+  };
 
-      console.log(
-        "Returned created user rushmore:" + JSON.stringify(useRushmoreResponse)
-      );
-      console.log(
-        "userRushmore created. JSON:" +
-          JSON.stringify(useRushmoreResponse.userRushmore)
-      );
+  const toggleRushmoreTypeAccordion = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: "EditUserRushmoreScreen",
-            params: {
-              userRushmore: useRushmoreResponse.userRushmore,
-              selectedItemUserRushmore: undefined,
-            },
+    setRushmoreTypeAccordionExpanded(!rushmoreTypeAccordionExpanded);
+  };
+  const toggleGameTypeAccordion = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
+    setGameTypeAccordionExpanded(!gameTypeAccordionExpanded);
+  };
+
+  const handleVisibilityToggle = () => {
+    setUserRushmoreVisibility((prevVisibility) =>
+      prevVisibility === RushmoreVisibilityEnums.PUBLIC
+        ? RushmoreVisibilityEnums.PRIVATE
+        : RushmoreVisibilityEnums.PUBLIC
+    );
+  };
+
+  const handleRushmoreTypeToggle = () => {
+    setRushmoreType((prevType) =>
+      prevType === RushmoreType.Favorite
+        ? RushmoreType.Best
+        : RushmoreType.Favorite
+    );
+  };
+
+  const handleGameTypeToggle = () => {
+    setGameType((prevType) =>
+      prevType === RushmoreGameTypeEnums.GAME
+        ? RushmoreGameTypeEnums.OPEN
+        : RushmoreGameTypeEnums.GAME
+    );
+  };
+
+  const goBackToEditRushmore = () => {
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: "EditUserRushmoreScreen",
+          params: {
+            userRushmore: userRushmore,
+            selectedItemUserRushmore: undefined,
           },
-        ],
-      });
-    } catch (error: any) {
-      setIsLoading(false);
+        },
+      ],
+    });
+  };
 
-      console.error("Error Creating Rushmore. DISPLAY MODAL", error);
-      setErrorMessage(error.message); // Set error message
-      setErrorModalVisible(true); // Show error modal
+  const handlePublishPress = async () => {
+    console.log("PublishUserRushmore");
+    setFormEnabled(false);
+    setIsLoading(true);
+
+    // Add logic to publish user rushmore
+
+    if (userRushmore) {
+      console.log("Calling publish userRushmore");
+
+      await rushmoreService.publishUserRushmore(userRushmore);
+      goBackToEditRushmore();
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.contentContainer}>
-        <View style={styles.row}>
-          <Text style={styles.settingsText} variant="headlineSmall">
-            Rushmore
-          </Text>
-          <SegmentedButtons
-            value={rushmoreType}
-            onValueChange={setRushmoreType}
-            buttons={[
-              {
-                value: "favorite",
-                label: "Favorite",
-              },
-              { value: "best", label: "Best" },
-            ]}
-            style={styles.segmentedButtons}
+      <Appbar.Header statusBarHeight={0}>
+        <Appbar.BackAction onPress={goBackToEditRushmore} />
+        <Appbar.Content title="Settings" />
+      </Appbar.Header>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            label="Input"
+            value={inputText}
+            disabled={!formEnabled}
+            onChangeText={(text) => setInputText(text)}
+            style={styles.textInput}
           />
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.settingsText} variant="headlineSmall">
-            Private
-          </Text>
-          <SegmentedButtons
-            value={isPrivate}
-            onValueChange={setIsPrivate}
-            buttons={[
-              {
-                value: "yes",
-                label: "Yes",
-              },
-              { value: "no", label: "No" },
-            ]}
-            style={styles.segmentedButtons}
-          />
-        </View>
-        {isPrivate !== "yes" && (
-          <View style={styles.row}>
-            <Text style={styles.settingsText} variant="headlineSmall">
-              Type
-            </Text>
-            <SegmentedButtons
-              value={gameType}
-              onValueChange={setGameType}
-              buttons={[
-                {
-                  value: "game",
-                  label: "Game",
-                },
-                { value: "open", label: "Open" },
-              ]}
-              style={styles.segmentedButtons}
-            />
-            {/* Error Modal */}
-            <Portal>
-              <Modal
-                visible={errorModalVisible}
-                onDismiss={() => setErrorModalVisible(false)}
-                contentContainerStyle={styles.modalContent}
-              >
-                <Text>{errorMessage}</Text>
-              </Modal>
-            </Portal>
+          <View style={styles.buttonContainer}>
+            <Button
+              style={{ marginRight: 5 }}
+              mode="elevated"
+              onPress={() => console.log("# Hashtag")}
+              disabled={!formEnabled}
+            >
+              # Hashtag
+            </Button>
+            <Button
+              mode="elevated"
+              disabled={!formEnabled}
+              onPress={() => console.log("@ Mention")}
+            >
+              @ Mention
+            </Button>
           </View>
-        )}
-
-        {/* Spacer to push Create button to the bottom */}
-        <View style={styles.spacer} />
-        {/* Create Button */}
-        <View style={styles.createButtonContainer}>
-          <Button
-            mode="contained"
-            onPress={handleCreatePress}
-            style={styles.createButton}
-          >
-            {isLoading ? (
-              <>
-                <ActivityIndicator animating={true} color="#ffffff" />
-                <Text>Creating Rushmore ...</Text>
-              </>
-            ) : (
-              "Create Rushmore"
-            )}
-          </Button>
         </View>
-      </View>
+        <List.Accordion
+          title="Version"
+          expanded={versionAccordionExpanded}
+          onPress={handleVersionAccordionPress}
+          right={(props) => (
+            <View style={styles.accordionRight}>
+              <Text style={styles.versionText}>{versionText}</Text>
+              <List.Icon
+                {...props}
+                icon={
+                  versionAccordionExpanded ? "chevron-down" : "chevron-right"
+                }
+              />
+            </View>
+          )}
+        >
+          <TextInput
+            label="Version"
+            value={versionText}
+            onChangeText={(text) => setVersionText(text)}
+            style={styles.textInput}
+            disabled={!formEnabled}
+          />
+        </List.Accordion>
+
+        <List.Accordion
+          title="Tag People"
+          expanded={tagAccordionExpanded}
+          onPress={handleTagAccordionPress}
+          right={(props) => (
+            <List.Icon
+              {...props}
+              icon={tagAccordionExpanded ? "chevron-down" : "chevron-right"}
+            />
+          )}
+        >
+          <TextInput
+            label="Tag"
+            value={tagInput}
+            onChangeText={(text) => setTagInput(text)}
+            style={styles.textInput}
+            disabled={!formEnabled}
+          />
+        </List.Accordion>
+
+        <List.Accordion
+          title="Visibility"
+          expanded={visibilityAccordionExpanded}
+          onPress={toggleVisibilityAccordion}
+          right={(props) => (
+            <View style={styles.accordionRight}>
+              <Text style={styles.versionText}>{userRushmoreVisibility}</Text>
+              <List.Icon
+                {...props}
+                icon={
+                  visibilityAccordionExpanded ? "chevron-down" : "chevron-right"
+                }
+              />
+            </View>
+          )}
+        >
+          <TouchableOpacity onPress={handleVisibilityToggle}>
+            <List.Item
+              title={userRushmoreVisibility}
+              disabled={!formEnabled}
+              style={styles.listItem}
+              right={() => (
+                <IconButton
+                  icon={
+                    userRushmoreVisibility === RushmoreVisibilityEnums.PUBLIC
+                      ? "eye"
+                      : "eye-off"
+                  }
+                />
+              )}
+            />
+          </TouchableOpacity>
+        </List.Accordion>
+
+        <List.Accordion
+          title="Rushmore Type"
+          expanded={rushmoreTypeAccordionExpanded}
+          onPress={toggleRushmoreTypeAccordion}
+          right={(props) => (
+            <View style={styles.accordionRight}>
+              <Text style={styles.versionText}>{rushmoreType}</Text>
+              <List.Icon
+                {...props}
+                icon={
+                  rushmoreTypeAccordionExpanded
+                    ? "chevron-down"
+                    : "chevron-right"
+                }
+              />
+            </View>
+          )}
+        >
+          <TouchableOpacity onPress={handleRushmoreTypeToggle}>
+            <List.Item
+              title={rushmoreType}
+              disabled={!formEnabled}
+              style={styles.listItem}
+              right={() => (
+                <IconButton
+                  icon={
+                    rushmoreType === RushmoreType.Favorite ? "heart" : "trophy"
+                  }
+                />
+              )}
+            />
+          </TouchableOpacity>
+        </List.Accordion>
+
+        <List.Accordion
+          title="Game Type"
+          expanded={gameTypeAccordionExpanded}
+          onPress={toggleGameTypeAccordion}
+          right={(props) => (
+            <View style={styles.accordionRight}>
+              <Text style={styles.versionText}>{gameType}</Text>
+              <List.Icon
+                {...props}
+                icon={
+                  gameTypeAccordionExpanded ? "chevron-down" : "chevron-right"
+                }
+              />
+            </View>
+          )}
+        >
+          <TouchableOpacity onPress={handleGameTypeToggle}>
+            <List.Item
+              title={gameType}
+              disabled={!formEnabled}
+              style={styles.listItem}
+              right={() => (
+                <IconButton
+                  icon={
+                    gameType === RushmoreGameTypeEnums.GAME
+                      ? "gamepad-variant"
+                      : "earth"
+                  }
+                />
+              )}
+            />
+          </TouchableOpacity>
+        </List.Accordion>
+        <LoadingButton
+          onPress={handlePublishPress}
+          isLoading={isLoading}
+          loadingText="Publishing..."
+          buttonText="Publish"
+          style={{ marginLeft: 5 }}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -190,38 +337,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  contentContainer: {
-    flex: 1,
+  scrollViewContent: {
     padding: 16,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  inputContainer: {
     marginBottom: 16,
   },
-  settingsText: {
-    alignSelf: "center",
-    flex: 1,
+  textInput: {
+    marginBottom: 16,
   },
-  segmentedButtons: {
-    flex: 2,
-    justifyContent: "flex-end",
+  buttonContainer: {
+    flexDirection: "row",
   },
-  spacer: {
-    flex: 1,
+  accordionRight: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  createButtonContainer: {
-    marginTop: 16, // Optional margin from the spacer
+  versionText: {
+    marginRight: 8,
+    color: "gray",
   },
-  createButton: {
-    width: "100%",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    marginHorizontal: 20,
-    borderRadius: 8,
-    elevation: 4,
+  listItem: {
+    paddingLeft: 16,
   },
 });
+
+export default RushmoreSettingsScreen;

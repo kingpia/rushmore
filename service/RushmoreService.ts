@@ -385,9 +385,7 @@ export class RushmoreService<T> {
         }
         `,
       });
-      console.log(
-        "OUTPUT:" + JSON.stringify(response.data.data.myInProgressUserRushmores)
-      );
+
       return response.data.data.myInProgressUserRushmores;
     } catch (error) {
       console.error("Error fetching in-progress Rushmore list:", error);
@@ -437,7 +435,6 @@ export class RushmoreService<T> {
         }
       `,
       });
-      console.log("OUTPUT:" + JSON.stringify(response.data));
 
       return response.data.data.myCompletedUserRushmores;
     } catch (error) {
@@ -565,7 +562,7 @@ export class RushmoreService<T> {
     console.log("editUserRushmoreItems:", JSON.stringify(userRushmore));
     try {
       const response: AxiosResponse<{
-        data: { editUserRushmoreItems: UserRushmore };
+        data: { editUserRushmore: UserRushmore };
         errors?: GraphQLError[];
       }> = await api.post(`${this.baseURL}/graphql`, {
         query: `
@@ -619,13 +616,14 @@ export class RushmoreService<T> {
 
       console.log(
         "Edited user Rushmore and got response:",
-        JSON.stringify(response.data.data.editUserRushmoreItems)
+        JSON.stringify(response.data.data.editUserRushmore)
       );
+
       // No errors, return the user data
-      return response.data.data.editUserRushmoreItems;
+      return response.data.data.editUserRushmore;
     } catch (error) {
       // Handle network errors or unexpected errors
-      console.error("Error updating user name:", error);
+      console.error("Error updating user Rushmore", error);
       throw error;
     }
   }

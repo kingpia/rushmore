@@ -1,12 +1,10 @@
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { Text } from "react-native-paper";
-
+import { Text, Card, Avatar } from "react-native-paper";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { parse, format } from "date-fns";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import { UserRushmore } from "../model/UserRushmore";
-
-import { format, parse } from "date-fns";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 interface MyCompletedRushmoreCardProps {
   userRushmoreDTO: UserRushmoreDTO;
@@ -28,11 +26,9 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
     firstCompletedDt,
     bookmarkCount,
     likeCount,
+    version,
+    rushmore,
   } = userRushmoreDTO.userRushmore;
-
-  console.log("Inside UserRushmoreListComponent");
-  console.log("CompletedDt:" + completedDt);
-  //console.log("bookmark count is:" + bookmarkCount);
   const { userRushmoreGameSession } = userRushmoreDTO;
 
   const { title } = userRushmoreDTO.userRushmore.rushmore;
@@ -43,12 +39,10 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
     new Date()
   );
 
-  //This is the published date
   const formattedCompletedDt = format(
     new Date(parsedCompletedDt),
     "MMM d yyyy"
   );
-  console.log("Inside Formatted Completed Dt set:" + formattedCompletedDt);
 
   let formattedFirstCompletedDt = "N/A";
 
@@ -57,9 +51,6 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
       firstCompletedDt,
       "EEE MMM dd HH:mm:ss 'GMT' yyyy",
       new Date()
-    );
-    console.log(
-      "Inside Formatted First Completed Dt set:" + parsedFirstCompletedDt
     );
 
     formattedFirstCompletedDt = format(
@@ -75,104 +66,147 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
 
   return (
     <TouchableOpacity onPress={() => onPress(userRushmoreDTO.userRushmore)}>
-      <View style={styles.container}>
-        <View style={styles.title_row}>
-          <Text variant="titleMedium" style={styles.text}>
-            {rushmoreType} {title}
-            <Text style={styles.bullet}> • </Text>
-            <Text variant="bodySmall">{formattedCompletedDt}</Text>
-          </Text>
-        </View>
-
-        <View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-            }}
-          >
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons name="heart" size={17} />
-              <Text variant="titleSmall"> {likeCount}</Text>
+      <Card style={styles.card}>
+        <Card.Content>
+          <View style={styles.header}>
+            <View style={styles.headerLeft}>
+              <Avatar.Image size={40} source={{ uri: rushmore.imageUrl }} />
+              <View style={styles.headerText}>
+                <Text style={styles.rushmoreType}>{rushmoreType}</Text>
+              </View>
             </View>
-            <Text>|</Text>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons name="bookmark" size={17} />
-              <Text variant="titleSmall"> {bookmarkCount}</Text>
-            </View>
-            <Text>|</Text>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons name="check-circle" size={17} />
-              <Text variant="titleSmall"> {completedCount}</Text>
+            <View style={styles.headerRight}>
+              <Text style={styles.version}>Version: {version}</Text>
+              <Text style={styles.date}>{formattedCompletedDt}</Text>
             </View>
           </View>
-        </View>
-
-        <View style={{ flexDirection: "row" }}>
-          <View style={[styles.itemContainer]}>
-            <View style={[styles.itemContent, styles.border]}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <MaterialCommunityIcons name="crown" size={17} />
-                <Text variant="titleSmall">High Score</Text>
-                <Text variant="bodySmall">: {highScore}</Text>
-              </View>
-              <Text variant="bodySmall">
+          <Text style={styles.title}>{title}</Text>
+          <View style={styles.statsRow}>
+            <View style={styles.statsItem}>
+              <MaterialCommunityIcons name="heart" size={17} color="#e91e63" />
+              <Text style={styles.statsText}>{likeCount}</Text>
+            </View>
+            <View style={styles.statsItem}>
+              <MaterialCommunityIcons
+                name="bookmark"
+                size={17}
+                color="#ffc107"
+              />
+              <Text style={styles.statsText}>{bookmarkCount}</Text>
+            </View>
+            <View style={styles.statsItem}>
+              <MaterialCommunityIcons
+                name="check-circle"
+                size={17}
+                color="#4caf50"
+              />
+              <Text style={styles.statsText}>{completedCount}</Text>
+            </View>
+          </View>
+          <View style={styles.infoRow}>
+            <View style={styles.infoItem}>
+              <MaterialCommunityIcons name="crown" size={17} color="#ff9800" />
+              <Text style={styles.infoLabel}>High Score:</Text>
+              <Text style={styles.infoText}>{highScore}</Text>
+              <Text style={styles.infoText}>
                 @{highScoreUser ? highScoreUser.userName : "N/A"}
               </Text>
             </View>
-          </View>
-
-          <View style={[styles.itemContainer]}>
-            <View style={[styles.itemContent, styles.border]}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <MaterialCommunityIcons name="medal" size={17} />
-                <Text variant="titleSmall">First</Text>
-                <Text variant="bodySmall">: {formattedFirstCompletedDt}</Text>
-              </View>
-              <Text variant="bodySmall">
+            <View style={styles.infoItem}>
+              <MaterialCommunityIcons name="medal" size={17} color="#ff5722" />
+              <Text style={styles.infoLabel}>First:</Text>
+              <Text style={styles.infoText}>{formattedFirstCompletedDt}</Text>
+              <Text style={styles.infoText}>
                 @{firstCompletedUser ? firstCompletedUser.userName : "N/A"}
               </Text>
             </View>
           </View>
-        </View>
-      </View>
+        </Card.Content>
+      </Card>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginLeft: 15,
-    marginRight: 15,
+  card: {
+    margin: 10,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+    backgroundColor: "#fff",
   },
-  title_row: {
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  headerLeft: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 5,
   },
-  bullet: {
-    marginRight: 5,
-    fontSize: 20,
+  headerText: {
+    marginLeft: 10,
   },
-  text: {
-    flex: 1,
+  rushmoreType: {
+    fontSize: 14,
+    color: "#888",
   },
-  score: {
+  version: {
+    fontSize: 14,
+    color: "#555",
+  },
+  date: {
+    fontSize: 14,
+    color: "#888",
+  },
+  title: {
+    fontSize: 18,
     fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
   },
-  itemContainer: {
-    width: "50%", // Set to half of the container width to have equal space for both items
-    padding: 5,
+  statsRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 10,
   },
-  itemContent: {
+  statsItem: {
+    flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "gray",
-    padding: 3,
-    borderRadius: 5,
   },
-  border: {
-    borderColor: "gray",
+  statsText: {
+    fontSize: 14,
+    marginLeft: 5,
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  infoItem: {
+    flex: 1,
+    alignItems: "center",
+    padding: 10,
+    marginHorizontal: 5,
+    borderRadius: 8,
+    backgroundColor: "#f5f5f5",
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  infoLabel: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 2,
+  },
+  infoText: {
+    fontSize: 14,
+    color: "#555",
+  },
+  headerRight: {
+    alignItems: "flex-end",
   },
 });
 

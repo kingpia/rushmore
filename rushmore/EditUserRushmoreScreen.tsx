@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,19 +13,30 @@ import {
 import {
   ActivityIndicator,
   Appbar,
+  Avatar,
   Button,
   Dialog,
-  FAB,
   IconButton,
   List,
   Menu,
-  Modal,
   Portal,
   Text,
-  TextInput,
 } from "react-native-paper";
+import DraggableRushmoreItem from "../components/DraggableRushmoreItem"; // Import the new component
 
-import UserRushmoreSettingsColumn from "../components/UserRushmoreSettingsColumn";
+import { StackContainerScreenProps } from "../nav/params/AppStackParamList";
+import { RushmoreService } from "../service/RushmoreService";
+import { UserRushmore } from "../model/UserRushmore";
+import { UserRushmoreItem } from "../model/UserRushmoreItem";
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+} from "react-native-draggable-flatlist";
+import UserRushmoreStatsColumn from "../components/UserRushmoreStatsColumn";
+import EditUserRushmoreAppBar from "../components/EditUserRushmoreAppBar";
+
+type EditUserRushmoreScreenProps =
+  StackContainerScreenProps<"EditUserRushmoreScreen">;
 
 const rushmoreService = new RushmoreService(); // Create an instance of RushmoreService
 
@@ -36,24 +46,6 @@ if (
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-
-import { StackContainerScreenProps } from "../nav/params/AppStackParamList";
-import { RushmoreService } from "../service/RushmoreService";
-import {
-  RushmoreGameTypeEnums,
-  RushmoreType,
-  RushmoreVisibilityEnums,
-  UserRushmore,
-} from "../model/UserRushmore";
-import { UserRushmoreItem } from "../model/UserRushmoreItem";
-import DraggableFlatList, {
-  RenderItemParams,
-  ScaleDecorator,
-} from "react-native-draggable-flatlist";
-import UserRushmoreStatsColumn from "../components/UserRushmoreStatsColumn";
-
-type EditUserRushmoreScreenProps =
-  StackContainerScreenProps<"EditUserRushmoreScreen">;
 
 export const EditUserRushmoreScreen = ({
   route,
@@ -68,20 +60,15 @@ export const EditUserRushmoreScreen = ({
   const [isAddItemModalVisible, setIsAddItemModalVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const showDeleteDialog = () => setIsDeleteDialogVisible(true);
+  const showEditDialog = () => setIsEditDialogVisible(true);
+
   const hideDeleteDialog = () => setIsDeleteDialogVisible(false);
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
+  const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
+  const hideEditDialog = () => setIsEditDialogVisible(false);
+
   const [settingsAccordionExpanded, setSettingsAccordionExpanded] =
     React.useState(true);
-  const [isPublishing, setIsPublishing] = useState(false);
-
-  const [
-    isPublishUserRushmoreModalVisible,
-    setIsPublishUserRushmoreModalVisible,
-  ] = useState(false);
-
-  const showModal = () => setIsModalVisible(true);
-  const hideModal = () => setIsModalVisible(false);
-
   const showEditModal = () => setIsEditModalVisible(true);
   const hideEditModal = () => setIsEditModalVisible(false);
 
@@ -90,20 +77,17 @@ export const EditUserRushmoreScreen = ({
     setIsAddItemModalVisible(false);
   };
 
-  const [userRushmoreVisibility, setUserRushmoreVisibility] =
-    useState<RushmoreVisibilityEnums>(RushmoreVisibilityEnums.PUBLIC);
-  const [userRushmoreType, setUserRushmoreType] = useState<RushmoreType>(
-    RushmoreType.Favorite
-  );
-  const [userRushmoreGameType, setUserRushmoreGameType] =
-    useState<RushmoreGameTypeEnums>(RushmoreGameTypeEnums.GAME);
-
   // Inside ProfileHomeScreen component
   useFocusEffect(
     React.useCallback(() => {
       console.log("EdiUserRushmore Use Effect Focus Running...");
+
       const fetchUserRushmore = async () => {
         try {
+          /*
+           *TODO Bug here if coming back from settings screen.  It's using the old selected Item list even after we deleted things then hit publish.
+           */
+
           if (route.params.selectedItemUserRushmore) {
             console.log(
               "=====================SelectedItemsUserRushmore Found ======================="
@@ -112,18 +96,10 @@ export const EditUserRushmoreScreen = ({
             setUserRushmore(route.params.selectedItemUserRushmore);
 
             //Save the selected items in the rushmore. No need to wait since we have the object already.
-            rushmoreService.editUserRushmore(
+            await rushmoreService.editUserRushmore(
               route.params.selectedItemUserRushmore
             );
 
-            console.log(
-              "I set userrushmore with:" +
-                JSON.stringify(route.params.selectedItemUserRushmore)
-            );
-            console.log(
-              "UserRushmore in the useFocusEffect:" +
-                JSON.stringify(userRushmore)
-            );
             configureDraggables();
           } else if (route.params.userRushmore) {
             console.log(
@@ -138,9 +114,6 @@ export const EditUserRushmoreScreen = ({
               "User Rushomre data returned:" + JSON.stringify(userRushmoreData)
             );
             setUserRushmore(userRushmoreData);
-            setUserRushmoreVisibility(userRushmoreData.visibility);
-            setUserRushmoreType(userRushmoreData.rushmoreType);
-            setUserRushmoreGameType(userRushmoreData.gameType);
 
             setLoading(false);
           }
@@ -149,13 +122,6 @@ export const EditUserRushmoreScreen = ({
           setLoading(false);
         }
       };
-
-      console.log(
-        JSON.stringify(
-          "=====================Route Parameters::========" +
-            JSON.stringify(route.params)
-        )
-      );
 
       fetchUserRushmore();
     }, [route.params.userRushmore?.itemList])
@@ -215,74 +181,15 @@ export const EditUserRushmoreScreen = ({
     });
   };
 
-  const handleVisibilityToggle = () => {
-    setUserRushmoreVisibility((prevVisibility) => {
-      const newVisibility =
-        prevVisibility === RushmoreVisibilityEnums.PUBLIC
-          ? RushmoreVisibilityEnums.PRIVATE
-          : RushmoreVisibilityEnums.PUBLIC;
-
-      if (userRushmore) {
-        console.log("Setting the User Rushmore Visibility");
-        userRushmore.visibility = newVisibility;
-        console.log("UserRushmore: " + JSON.stringify(userRushmore));
-        // Call a function to save userRushmore or perform any other actions
-        // saveUserRushmore();
-      }
-
-      return newVisibility;
-    });
-  };
-
-  const handleGameTypeToggle = () => {
-    setUserRushmoreGameType((prevGameType) => {
-      const newGameType =
-        prevGameType === RushmoreGameTypeEnums.GAME
-          ? RushmoreGameTypeEnums.OPEN
-          : RushmoreGameTypeEnums.GAME;
-
-      if (userRushmore) {
-        console.log("Setting the User Rushmore Game Type");
-        userRushmore.gameType = newGameType;
-        console.log("UserRushmore: " + JSON.stringify(userRushmore));
-        // Call a function to save userRushmore or perform any other actions
-        // saveUserRushmore();
-      }
-
-      return newGameType;
-    });
-  };
-
-  const handleRushmoreTypeToggle = () => {
-    setUserRushmoreType((prevRushmoreType) => {
-      const newRushmoreType =
-        prevRushmoreType === RushmoreType.Favorite
-          ? RushmoreType.Best
-          : RushmoreType.Favorite;
-
-      if (userRushmore) {
-        console.log("Setting the User Rushmore Type");
-        userRushmore.rushmoreType = newRushmoreType;
-        console.log("UserRushmore: " + JSON.stringify(userRushmore));
-        // Call a function to save userRushmore or perform any other actions
-        // saveUserRushmore();
-      }
-
-      return newRushmoreType;
-    });
-  };
-
-  const toggleAccordion = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setSettingsAccordionExpanded(!settingsAccordionExpanded);
-  };
-
   const saveUserRushmore = async () => {
     console.log("Saving user rushmore:", userRushmore);
 
     if (userRushmore) {
       console.log("saving the user rushmore:" + JSON.stringify(userRushmore));
-      await rushmoreService.editUserRushmore(userRushmore);
+      let savedRushmore: UserRushmore = await rushmoreService.editUserRushmore(
+        userRushmore
+      );
+      setUserRushmore(savedRushmore);
     }
     //When we save, update the rushmore, do not go back go home
   };
@@ -296,6 +203,11 @@ export const EditUserRushmoreScreen = ({
     showDeleteDialog(); // Show the confirmation dialog
   };
 
+  const handleEditPress = () => {
+    closeMenu();
+    showEditDialog(); // Show the confirmation dialog
+  };
+
   const handleMenuPress = () => {
     setMenuVisible(true);
   };
@@ -306,30 +218,13 @@ export const EditUserRushmoreScreen = ({
     isActive,
   }: RenderItemParams<UserRushmoreItem>) => {
     return (
-      <ScaleDecorator>
-        <TouchableOpacity
-          activeOpacity={1}
-          onLongPress={drag}
-          disabled={isActive}
-          style={[
-            styles.draggableItem,
-            { backgroundColor: isActive ? "#14f3ff" : "#ffffff" },
-          ]}
-        >
-          <View style={styles.itemContainer}>
-            <Text style={styles.rankText}>{item.rank}</Text>
-            <Text style={styles.itemText}>{item.item}</Text>
-            {isEditMode && (
-              <IconButton
-                icon="close-circle-outline"
-                size={24}
-                onPress={() => handleDeletePress(item)}
-                style={styles.iconButton}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
-      </ScaleDecorator>
+      <DraggableRushmoreItem
+        item={item}
+        drag={drag}
+        isActive={isActive}
+        isEditMode={isEditMode}
+        handleDeletePress={handleDeletePress}
+      />
     );
   };
 
@@ -414,75 +309,26 @@ export const EditUserRushmoreScreen = ({
 
       setUserRushmore(updatedUserRushmore);
     }
-
-    console.log("DragEnd:" + JSON.stringify(updatedItems));
   };
 
-  const toggleEditMode = () => {
-    if (isEditMode) {
-      console.log("Saving changes and exiting edit mode");
-      saveUserRushmore();
-      setIsEditMode(false);
-    } else {
-      console.log("Entering edit mode");
-      setIsEditMode(true);
-    }
-  };
-
-  const canEdit = () => {
-    if (userRushmore?.completedDt) {
-      const completedDate = new Date(userRushmore.completedDt);
-      console.log("Completed date:", completedDate);
-      const currentDate = new Date();
-      console.log("Current date:", currentDate);
-      const daysRemaining = Math.floor(
-        (currentDate.getTime() - completedDate.getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
-      console.log("Days remaining:", daysRemaining);
-      if (daysRemaining < 30) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const handleAddItem = () => {
-    // Check if the text input is not empty
-    if (addItemText.trim() !== "") {
-      // Create a new UserRushmoreItem with the entered text
-      const newItem: UserRushmoreItem = {
-        item: addItemText.trim(),
-        rank: draggableData.length + 1, // Set rank as the next available position
-      };
-
-      // Update the state with the new draggable data
-      setDraggableData((prevData) => [...prevData, newItem]);
-
-      // Clear the text input
-      setAddItemText("");
-    }
-
-    // Close the modal
-    hideAddItemModal();
-  };
-
-  const publishUserRushmore = async () => {
-    console.log("PublishUserRushmore");
-    // Add logic to publish user rushmore
+  const navigateToSettingsScreen = async () => {
+    console.log("navigateToSettingsScreen");
+    await saveUserRushmore();
 
     if (userRushmore) {
-      console.log("Calling publish userRushmore");
-      let response: UserRushmore = await rushmoreService.publishUserRushmore(
-        userRushmore
-      );
-      console.log("Done alling publish userRushmore");
-      setIsPublishUserRushmoreModalVisible(false); // Close the modal after publishing
+      console.log("The params are:" + JSON.stringify(route.params));
 
-      console.log("Setting UserRushmore:" + JSON.stringify(response));
-      setUserRushmore(response);
-      setIsEditMode(false);
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: "RushmoreSettingsScreen",
+            params: { userRushmore: userRushmore },
+          },
+        ],
+      });
+    } else {
+      console.log("userRushmore or itemList is undefined");
     }
   };
 
@@ -502,6 +348,18 @@ export const EditUserRushmoreScreen = ({
     }
   };
 
+  const confirmEditUserRushmore = async () => {
+    console.log("Confirm Edit");
+
+    //TODO: Need to create a new UserRushmore with the Current Rushmore Items. Don't mess with the old one yet though
+    //Leave it with LATEST until this one is published.
+
+    //When you save the rushmore, the completedD should be null, which should set everythign into edit mod
+    //Should we have an edit mode if we are drivinve everything off completdDt???
+    setIsEditMode(true);
+    hideEditDialog();
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {loading ? (
@@ -509,107 +367,26 @@ export const EditUserRushmoreScreen = ({
       ) : (
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
-            <Appbar.Header statusBarHeight={0}>
-              <Appbar.Content
-                title={`${userRushmore?.rushmoreType || ""} ${
-                  userRushmore?.rushmore?.title || ""
-                }`.trim()}
-              />
-              <Menu
-                visible={menuVisible}
-                onDismiss={closeMenu}
-                anchor={
-                  <IconButton icon="dots-vertical" onPress={handleMenuPress} />
-                }
-              >
-                <Menu.Item
-                  onPress={handleDeleteUserRushmorePress}
-                  title="Delete Rushmore"
-                />
-              </Menu>
-            </Appbar.Header>
-            <List.Accordion
-              title="Rushmore Settings"
-              expanded={settingsAccordionExpanded}
-              onPress={toggleAccordion}
-              left={(props) => <List.Icon {...props} icon="cog" />}
-            >
-              <TouchableOpacity
-                onPress={handleVisibilityToggle}
-                disabled={!isEditMode}
-              >
-                <List.Item
-                  title="Visibility"
-                  description={userRushmoreVisibility}
-                  titleStyle={styles.listItemTitle}
-                  descriptionStyle={styles.listItemDescription}
-                  style={styles.listItem}
-                  left={() => (
-                    <IconButton
-                      icon={
-                        userRushmoreVisibility ===
-                        RushmoreVisibilityEnums.PUBLIC
-                          ? "eye"
-                          : "eye-off"
-                      }
-                      disabled={!isEditMode}
-                    />
-                  )}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleRushmoreTypeToggle}
-                disabled={!isEditMode}
-              >
-                <List.Item
-                  title="Rushmore Type"
-                  description={userRushmoreType}
-                  titleStyle={styles.listItemTitle}
-                  descriptionStyle={styles.listItemDescription}
-                  style={styles.listItem}
-                  left={() => (
-                    <IconButton
-                      icon={
-                        userRushmoreType === RushmoreType.Favorite
-                          ? "heart"
-                          : "trophy"
-                      }
-                      disabled={!isEditMode}
-                    />
-                  )}
-                />
-              </TouchableOpacity>
-              {userRushmore?.visibility != RushmoreVisibilityEnums.PRIVATE && (
-                <TouchableOpacity
-                  onPress={handleGameTypeToggle}
-                  disabled={!isEditMode}
-                >
-                  <List.Item
-                    title="Game Type"
-                    description={userRushmoreGameType}
-                    titleStyle={styles.listItemTitle}
-                    descriptionStyle={styles.listItemDescription}
-                    style={styles.listItem}
-                    left={() => (
-                      <IconButton
-                        icon={
-                          userRushmoreGameType === RushmoreGameTypeEnums.GAME
-                            ? "gamepad-variant"
-                            : "earth"
-                        }
-                        disabled={!isEditMode}
-                      />
-                    )}
-                  />
-                </TouchableOpacity>
-              )}
-            </List.Accordion>
+            <EditUserRushmoreAppBar
+              version={userRushmore?.version || ""}
+              userRushmore={userRushmore || undefined} // Ensure userRushmore is not null
+              menuVisible={menuVisible}
+              closeMenu={closeMenu}
+              handleMenuPress={handleMenuPress}
+              handleDeleteUserRushmorePress={handleDeleteUserRushmorePress}
+              handleEditPress={handleEditPress}
+              isEditMode={isEditMode}
+            />
 
             {loading ? (
               <ActivityIndicator style={styles.loadingIndicator} />
             ) : userRushmore ? (
               <View style={styles.listContainer}>
-                {isEditMode ? (
+                {draggableData.length === 0 ? (
+                  <Text style={styles.emptyMessage}>
+                    Click + button below to add items
+                  </Text>
+                ) : isEditMode ? (
                   <DraggableFlatList
                     data={draggableData}
                     renderItem={renderUserRushmoreItem}
@@ -628,6 +405,17 @@ export const EditUserRushmoreScreen = ({
               </View>
             ) : (
               <Text>No Rushmore data available</Text>
+            )}
+
+            {userRushmore?.completedDt && !isEditMode && (
+              <View style={styles.statsColumn}>
+                <UserRushmoreStatsColumn
+                  likeCount={0}
+                  totalCompleted={0}
+                  highScoreUser={undefined}
+                  firstToCompleteUser={undefined}
+                />
+              </View>
             )}
           </View>
 
@@ -650,7 +438,7 @@ export const EditUserRushmoreScreen = ({
             >
               {userRushmore?.completedDt === null && isEditMode && (
                 <Button
-                  onPress={() => setIsPublishUserRushmoreModalVisible(true)}
+                  onPress={() => navigateToSettingsScreen()}
                   disabled={
                     !userRushmore ||
                     !userRushmore.itemList ||
@@ -662,70 +450,22 @@ export const EditUserRushmoreScreen = ({
                 </Button>
               )}
             </View>
-            <TouchableOpacity
-              onPress={() => (canEdit() ? toggleEditMode() : showEditModal())}
-            >
-              <IconButton icon={isEditMode ? "floppy" : "pencil"} size={30} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.fab}>
-            <FAB
-              visible={isEditMode}
-              icon="plus"
-              onPress={navigateToAddItemsScreen}
-              style={styles.fab}
-            />
+            {isEditMode && (
+              <TouchableOpacity onPress={navigateToAddItemsScreen}>
+                <IconButton icon="plus" />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       )}
-
-      <Portal>
-        <Modal
-          visible={isPublishUserRushmoreModalVisible}
-          onDismiss={() => setIsPublishUserRushmoreModalVisible(false)}
-          contentContainerStyle={{
-            backgroundColor: "white",
-            padding: 20,
-            marginHorizontal: 20,
-            borderRadius: 10,
-          }}
-        >
-          <View style={styles.titleContainer}>
-            <Text style={styles.titleText}>
-              {userRushmore?.rushmoreType} {userRushmore?.rushmore?.title}
-            </Text>
-          </View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.label}>Visibility:</Text>
-            <Text style={styles.detail}>{userRushmore?.visibility}</Text>
-          </View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.label}>Type:</Text>
-            <Text style={styles.detail}>{userRushmore?.gameType}</Text>
-          </View>
-          {isPublishing ? (
-            <ActivityIndicator style={{ marginVertical: 10 }} />
-          ) : (
-            <Button
-              mode="contained"
-              onPress={publishUserRushmore}
-              style={{ marginVertical: 10 }}
-            >
-              Publish
-            </Button>
-          )}
-          <Button onPress={() => setIsPublishUserRushmoreModalVisible(false)}>
-            Cancel
-          </Button>
-        </Modal>
-      </Portal>
 
       <Portal>
         <Dialog visible={isDeleteDialogVisible} onDismiss={hideDeleteDialog}>
           <Dialog.Title>Confirm Delete</Dialog.Title>
           <Dialog.Content>
             <Text>
-              Are you sure? Consider editing, as an edit increments the version.
+              Are you sure about that? Consider editing, edits increment the
+              version.
               {"\n\n"}
               With edit, you can still have visibility to previous versions.
               {"\n\n"}
@@ -738,35 +478,31 @@ export const EditUserRushmoreScreen = ({
           </Dialog.Actions>
         </Dialog>
       </Portal>
+
+      <Portal>
+        <Dialog visible={isEditDialogVisible} onDismiss={hideDeleteDialog}>
+          <Dialog.Title>Confirm Edit</Dialog.Title>
+          <Dialog.Content>
+            <Text>
+              Editing a Rushmore will allow the current version to remain active
+              until the new version is published.
+              {"\n\n"}
+              Once the new version is published, the old version is viewable,
+              but cannot be modified.
+              {"\n\n"}
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={hideEditDialog}>Cancel</Button>
+            <Button onPress={confirmEditUserRushmore}>Edit</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  modalText: {
-    marginBottom: 10,
-  },
-  draggableItem: {
-    paddingHorizontal: 50,
-    borderRadius: 10,
-    margin: 2,
-  },
-
-  fab: {
-    position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 20,
-  },
-  listItem: {
-    paddingVertical: 0, // Adjust the vertical padding as needed
-  },
-  listItemTitle: {
-    fontSize: 14, // Adjust the font size as needed
-  },
-  listItemDescription: {
-    fontSize: 12, // Adjust the font size as needed
-  },
   loadingIndicator: {
     flex: 1,
     justifyContent: "center",
@@ -778,38 +514,18 @@ const styles = StyleSheet.create({
   listContentContainer: {
     padding: 16,
   },
-  itemContainer: {
-    flexDirection: "row",
+  statsColumn: {
+    position: "absolute",
+    right: 20,
     alignItems: "center",
+    bottom: 30,
   },
-  itemText: {
-    flex: 1, // Let the item text take up remaining space
-    // Add any styles needed for item text
-  },
-  rankText: {
-    // Add any styles needed for rank text
-    marginRight: 15,
-  },
-  iconButton: {
-    // Add any styles needed for the icon button
-  },
-  titleContainer: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  titleText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  detailContainer: {
-    flexDirection: "row",
-    marginBottom: 10,
-  },
-  label: {
-    fontWeight: "bold",
-    marginRight: 5,
-  },
-  detail: {
-    flex: 1,
+  emptyMessage: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
+    color: "#888",
   },
 });
+
+export default EditUserRushmoreScreen;

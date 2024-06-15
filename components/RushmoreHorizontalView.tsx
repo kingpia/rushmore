@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 
 interface RushmoreHorizontalViewProps {
@@ -17,22 +17,29 @@ export const RushmoreHorizontalView: React.FC<RushmoreHorizontalViewProps> = ({
 }) => {
   const getCategoryWithCount = (category: string): string => {
     const count = countByCategory(category);
-    return `${category} ${count}`;
+    return `${category} (${count})`;
   };
 
   return (
-    <ScrollView horizontal style={styles.scrollContainer}>
+    <ScrollView
+      horizontal
+      style={styles.scrollContainer}
+      showsHorizontalScrollIndicator={false}
+    >
       {categories.map((category, index) => (
         <TouchableOpacity
           key={index}
           onPress={() => onPressCategory(category)}
-          style={styles.categoryButton}
+          style={[
+            styles.categoryButton,
+            category === selectedCategory && styles.selectedCategoryButton,
+          ]}
         >
           <Text
-            style={{
-              fontWeight: category === selectedCategory ? "bold" : "normal",
-              fontSize: 15,
-            }}
+            style={[
+              styles.categoryText,
+              category === selectedCategory && styles.selectedCategoryText,
+            ]}
           >
             {getCategoryWithCount(category)}
           </Text>
@@ -44,12 +51,26 @@ export const RushmoreHorizontalView: React.FC<RushmoreHorizontalViewProps> = ({
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "gray",
     paddingVertical: 10,
+    paddingHorizontal: 5,
+    backgroundColor: "#f8f8f8",
   },
   categoryButton: {
     paddingHorizontal: 15,
+    paddingVertical: 8,
+    marginHorizontal: 5,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 20,
+  },
+  selectedCategoryButton: {
+    backgroundColor: "#00796b",
+  },
+  categoryText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  selectedCategoryText: {
+    fontWeight: "bold",
+    color: "#fff",
   },
 });

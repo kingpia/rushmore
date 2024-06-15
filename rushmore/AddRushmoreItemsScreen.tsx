@@ -187,7 +187,6 @@ export const AddRushmoreItemsScreen = ({
   };
 
   const goBackToEditRushmoreScreen = () => {
-    console.log("Save the items for the rushmore before going back.");
     if (userRushmore) {
       let rank = 1; // Initialize rank to 1
 

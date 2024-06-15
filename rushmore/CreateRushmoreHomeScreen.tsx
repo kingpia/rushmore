@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Animated, SafeAreaView } from "react-native";
+import { View, StyleSheet, Animated, FlatList } from "react-native";
+import { Divider } from "react-native-paper";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { RushmoreCard } from "../components/RushmoreCard";
 import { RushmoreService } from "../service/RushmoreService";
@@ -8,8 +9,15 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { CreateUserRushmoreDetailResponseDTO } from "../model/CreateUserRushmoreDetailResponseDTO";
 import { Rushmore } from "../model/Rushmore";
-import { Divider } from "react-native-paper";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
+import {
+  RushmoreGameTypeEnums,
+  RushmoreType,
+  RushmoreVisibilityEnums,
+  UserRushmore,
+} from "../model/UserRushmore";
+import { CreateUserRushmoreRequestDTO } from "../model/CreateUserRushmoreRequestDTO";
+import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 
 type CreateRushmoreHomeScreenProps = {
   navigation: NativeStackNavigationProp<
@@ -80,36 +88,90 @@ export const CreateRushmoreHomeScreen: React.FC<
     (item) => selectedCategory === "All" || item.category === selectedCategory
   );
 
-  const navigateToRushmoreSettingsScreen = (rushmore: Rushmore) => {
-    navigation.navigate("RushmoreSettingsScreen", {
-      rushmore,
-    });
+  const navigateToEditUserRushmoreScreen = async (rushmore: Rushmore) => {
+    const rushmoreService = new RushmoreService<UserRushmore>();
+
+    const createUserRushmoreRequest: CreateUserRushmoreRequestDTO = {
+      rid: rushmore.rid,
+      visibility: RushmoreVisibilityEnums.PUBLIC,
+      gameType: RushmoreGameTypeEnums.OPEN,
+      rushmoreType: RushmoreType.Favorite,
+    };
+
+    try {
+      let useRushmoreResponse: UserRushmoreDTO =
+        await rushmoreService.createUserRushmore(createUserRushmoreRequest);
+
+      console.log(
+        "Returned created user rushmore:" + JSON.stringify(useRushmoreResponse)
+      );
+      console.log(
+        "userRushmore created. JSON:" +
+          JSON.stringify(useRushmoreResponse.userRushmore)
+      );
+
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: "EditUserRushmoreScreen",
+            params: {
+              userRushmore: useRushmoreResponse.userRushmore,
+              selectedItemUserRushmore: undefined,
+            },
+          },
+        ],
+      });
+    } catch (error: any) {
+      console.error("Error Creating Rushmore. DISPLAY MODAL", error);
+    }
   };
 
   return (
-    <SafeAreaView>
-      <RushmoreHorizontalView
-        selectedCategory={selectedCategory}
-        onPressCategory={handleCategoryPress}
-        countByCategory={countByCategory}
-        categories={categories}
-      />
+    <View style={styles.container}>
+      <View>
+        <RushmoreHorizontalView
+          selectedCategory={selectedCategory}
+          onPressCategory={handleCategoryPress}
+          countByCategory={countByCategory}
+          categories={categories}
+        />
+      </View>
       <Animated.FlatList
         data={filteredRushmoreData}
         keyExtractor={(item) => item.rid.toString()}
         style={{ opacity: fadeAnim }}
         renderItem={({ item, index }) => (
           <>
-            <RushmoreCard
-              rushmore={item}
-              onPress={() => navigateToRushmoreSettingsScreen(item)}
-            />
-            {index !== filteredRushmoreData.length - 1 && (
-              <Divider style={{ backgroundColor: "teal" }} />
-            )}
+            <View style={styles.cardContainer}>
+              <RushmoreCard
+                rushmore={item}
+                onPress={() => navigateToEditUserRushmoreScreen(item)}
+              />
+            </View>
           </>
         )}
       />
-    </SafeAreaView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 10,
+  },
+  cardContainer: {
+    marginVertical: 5,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+});
+
+export default CreateRushmoreHomeScreen;

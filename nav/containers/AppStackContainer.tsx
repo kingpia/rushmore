@@ -160,9 +160,7 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
         <AppStackNavigator.Screen
           name="RushmoreSettingsScreen"
           component={RushmoreSettingsScreen}
-          options={({ route }) => ({
-            headerTitle: `${route.params?.rushmore.title}`,
-          })}
+          options={({ route }) => ({})}
         />
 
         <AppStackNavigator.Screen
