@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { CreateUserRushmoreDetailResponseDTO } from "../model/CreateUserRushmoreDetailResponseDTO";
-import { CreateUserRushmoreRequestDTO } from "../model/CreateuserRushmoreRequestDTO";
+import { CreateUserRushmoreRequestDTO } from "../model/CreateUserRushmoreRequestDTO";
 import { LetterSelectionResponse } from "../model/LetterSelectionResponse";
 import { UserRushmore } from "../model/UserRushmore";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
@@ -13,6 +13,7 @@ import {
   yourCompletedRushmoreListURL,
 } from "../sampleDataConfig";
 import api from "./api";
+import { UserRushmoreInitialCreateDTO } from "../model/UserRushmoreInitialCreateDTO";
 
 interface GraphQLError {
   message: string;
@@ -461,7 +462,11 @@ export class RushmoreService<T> {
             }
             userRushmoreList {
               urId
-              completedDt
+              completedDt,
+              rushmoreType
+              rushmore{
+                rid
+              }
             }
           }
         }
@@ -478,8 +483,9 @@ export class RushmoreService<T> {
 
   async createUserRushmore(
     createUserRushmoreRequest: CreateUserRushmoreRequestDTO
-  ): Promise<any> {
+  ): Promise<UserRushmoreInitialCreateDTO> {
     try {
+      console.log("CreateUserRushmore");
       const response: AxiosResponse<{
         data: { createUserRushmore: any };
         errors?: GraphQLError[];
@@ -487,7 +493,7 @@ export class RushmoreService<T> {
         query: `
             mutation {
               createUserRushmore(
-                request: {rid: "${createUserRushmoreRequest.rid}", visibility: "${createUserRushmoreRequest.visibility}", gameType: "${createUserRushmoreRequest.gameType}", rushmoreType: "${createUserRushmoreRequest.rushmoreType}"}
+                request: {rid: "${createUserRushmoreRequest.rid}", visibility: "${createUserRushmoreRequest.visibility}", gameType: "${createUserRushmoreRequest.gameType}"}
               ) {
                 userRushmore {
                   gameType
@@ -501,6 +507,8 @@ export class RushmoreService<T> {
                   createdDt
                   updatedDt
                 }
+                favoriteComplete
+                bestComplete
               }
             }
           `,

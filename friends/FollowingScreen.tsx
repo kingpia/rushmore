@@ -5,9 +5,9 @@ import {
   Animated,
   TouchableOpacity,
   View,
-  Text,
+  FlatList,
 } from "react-native";
-import { ActivityIndicator, Searchbar } from "react-native-paper";
+import { ActivityIndicator, Searchbar, Text } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
 import { UserService } from "../service/UserService";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -40,22 +40,15 @@ export const FollowingScreen = ({
 
   const fetchData = async () => {
     setLoading(true);
-    console.log("UserFocus from Other Screen:", userFocus);
 
     try {
       const userData: SocialUser | undefined = route.params?.params?.user;
-      console.log("THE UID is :" + userData?.uid ?? "");
 
       let uid: string = "";
       if (userData?.uid) {
-        console.log("userData UID:" + userData?.uid);
         uid = userData?.uid;
       } else if (userFocus) {
-        console.log("Using UserFocus:" + userFocus);
-
         uid = userFocus || "";
-      } else {
-        console.log("Everything is null, fetch for current user");
       }
 
       const followingUsers = await userService.getFollowingUserList(uid);
@@ -82,14 +75,8 @@ export const FollowingScreen = ({
   }, [fadeAnim]);
 
   const navigateToUserProfileScreen = async (user: SocialUser) => {
-    console.log("navigateToUserProfileScreen");
     let uid = await SecureStore.getItemAsync("uid");
-    console.log("Navigating to UID:" + uid);
     if (uid === user.uid) {
-      console.log(
-        "You need to navigate to your Profile Home. PUSH IT to stack"
-      );
-
       navigation.navigate("ProfileHomeScreen");
     } else {
       navigation.navigate("UserProfileScreen", {
@@ -115,12 +102,12 @@ export const FollowingScreen = ({
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <Searchbar
         placeholder="Search"
         onChangeText={onChangeSearch}
         value={searchQuery}
-        style={{ margin: 5 }}
+        style={styles.searchbar}
       />
 
       {loading ? (
@@ -155,6 +142,14 @@ export const FollowingScreen = ({
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 10,
+  },
+  searchbar: {
+    marginBottom: 16,
+    borderRadius: 12,
+  },
   loadingIndicator: {
     flex: 1,
     justifyContent: "center",
@@ -173,3 +168,5 @@ const styles = StyleSheet.create({
     color: "#888",
   },
 });
+
+export default FollowingScreen;

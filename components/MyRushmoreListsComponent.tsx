@@ -97,14 +97,7 @@ export const MyRushmoreListsComponent: React.FC<
     }
   };
 
-  const navigateToMyCompletedRushmore = (userRushmore: UserRushmoreDTO) => {
-    navigation.navigate("EditUserRushmoreScreen", {
-      userRushmore: userRushmore.userRushmore,
-      selectedItemUserRushmore: undefined,
-    });
-  };
-
-  const navigateToMyInProgressRushmore = (userRushmore: UserRushmoreDTO) => {
+  const navigateToUserRushmore = (userRushmore: UserRushmoreDTO) => {
     navigation.navigate("EditUserRushmoreScreen", {
       userRushmore: userRushmore.userRushmore,
       selectedItemUserRushmore: undefined,
@@ -113,6 +106,17 @@ export const MyRushmoreListsComponent: React.FC<
 
   const handleCategoryPress = (category: string) => {
     setSelectedCategory(category);
+  };
+
+  const groupBy = <T, K extends keyof any>(
+    array: T[],
+    key: (item: T) => K
+  ): Record<K, T[]> => {
+    return array.reduce((result, currentValue) => {
+      const groupKey = key(currentValue);
+      (result[groupKey] = result[groupKey] || []).push(currentValue);
+      return result;
+    }, {} as Record<K, T[]>);
   };
 
   const renderInProgressRushmoreList = () => {
@@ -127,6 +131,11 @@ export const MyRushmoreListsComponent: React.FC<
         </Text>
       );
     }
+    const groupedData = groupBy(
+      myInProgressRushmoreList,
+      (item) => item.userRushmore.rushmore.rid
+    );
+    const groupedArray = Object.values(groupedData);
 
     return (
       <Animated.View>
@@ -136,7 +145,7 @@ export const MyRushmoreListsComponent: React.FC<
           renderItem={({ item }) => (
             <MyInProgressRushmoreCard
               myInProgressRushmore={item}
-              onPress={() => navigateToMyInProgressRushmore(item)}
+              onPress={() => navigateToUserRushmore(item)}
             />
           )}
         />
@@ -169,7 +178,7 @@ export const MyRushmoreListsComponent: React.FC<
           renderItem={({ item }) => (
             <MyCompletedRushmoreCard
               userRushmoreDTO={item}
-              onPress={() => navigateToMyCompletedRushmore(item)}
+              onPress={() => navigateToUserRushmore(item)}
             />
           )}
         />

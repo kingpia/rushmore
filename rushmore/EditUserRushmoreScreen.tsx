@@ -12,8 +12,6 @@ import {
 } from "react-native";
 import {
   ActivityIndicator,
-  Appbar,
-  Avatar,
   Button,
   Dialog,
   IconButton,
@@ -23,7 +21,6 @@ import {
   Text,
 } from "react-native-paper";
 import DraggableRushmoreItem from "../components/DraggableRushmoreItem"; // Import the new component
-
 import { StackContainerScreenProps } from "../nav/params/AppStackParamList";
 import { RushmoreService } from "../service/RushmoreService";
 import { UserRushmore } from "../model/UserRushmore";
@@ -34,6 +31,8 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import UserRushmoreStatsColumn from "../components/UserRushmoreStatsColumn";
 import EditUserRushmoreAppBar from "../components/EditUserRushmoreAppBar";
+import EditUserRushmoreScreenBottom from "../components/EditUserRushmoreScreenBottom";
+import NonDraggableRushmoreItem from "../components/screens/NonDraggableRushmoreItem";
 
 type EditUserRushmoreScreenProps =
   StackContainerScreenProps<"EditUserRushmoreScreen">;
@@ -55,7 +54,6 @@ export const EditUserRushmoreScreen = ({
   const [loading, setLoading] = useState(true);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [draggableData, setDraggableData] = useState<UserRushmoreItem[]>([]);
-  const [isEditMode, setIsEditMode] = useState(false);
   const [addItemText, setAddItemText] = useState("");
   const [isAddItemModalVisible, setIsAddItemModalVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -164,7 +162,6 @@ export const EditUserRushmoreScreen = ({
       console.log("Item list is null");
       setDraggableData([]);
     }
-    setIsEditMode(!userRushmore?.completedDt);
   };
 
   const handleExitPress = async () => {
@@ -222,7 +219,7 @@ export const EditUserRushmoreScreen = ({
         item={item}
         drag={drag}
         isActive={isActive}
-        isEditMode={isEditMode}
+        isEditMode={!userRushmore?.completedDt}
         handleDeletePress={handleDeletePress}
       />
     );
@@ -230,30 +227,10 @@ export const EditUserRushmoreScreen = ({
 
   const renderNonDraggableItem = ({ item }: { item: UserRushmoreItem }) => {
     return (
-      <List.Item
-        titleStyle={{ flexDirection: "row", justifyContent: "space-between" }} // Align title and description horizontally
-        title={
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={{ marginLeft: 5, marginRight: 15 }}>{item.rank}</Text>
-
-            <Text>{item.item}</Text>
-          </View>
-        }
-        right={(props) =>
-          isEditMode && (
-            <IconButton
-              {...props}
-              icon="delete"
-              onPress={() => handleDeletePress(item)}
-            />
-          )
-        }
-        style={{
-          borderBottomWidth: StyleSheet.hairlineWidth,
-          borderColor: "#ccc",
-        }}
+      <NonDraggableRushmoreItem
+        item={item}
+        isEditMode={!userRushmore?.completedDt}
+        handleDeletePress={handleDeletePress}
       />
     );
   };
@@ -356,7 +333,6 @@ export const EditUserRushmoreScreen = ({
 
     //When you save the rushmore, the completedD should be null, which should set everythign into edit mod
     //Should we have an edit mode if we are drivinve everything off completdDt???
-    setIsEditMode(true);
     hideEditDialog();
   };
 
@@ -375,7 +351,7 @@ export const EditUserRushmoreScreen = ({
               handleMenuPress={handleMenuPress}
               handleDeleteUserRushmorePress={handleDeleteUserRushmorePress}
               handleEditPress={handleEditPress}
-              isEditMode={isEditMode}
+              isEditMode={!userRushmore?.completedDt}
             />
 
             {loading ? (
@@ -386,7 +362,7 @@ export const EditUserRushmoreScreen = ({
                   <Text style={styles.emptyMessage}>
                     Click + button below to add items
                   </Text>
-                ) : isEditMode ? (
+                ) : !userRushmore?.completedDt ? (
                   <DraggableFlatList
                     data={draggableData}
                     renderItem={renderUserRushmoreItem}
@@ -407,7 +383,7 @@ export const EditUserRushmoreScreen = ({
               <Text>No Rushmore data available</Text>
             )}
 
-            {userRushmore?.completedDt && !isEditMode && (
+            {userRushmore?.completedDt && (
               <View style={styles.statsColumn}>
                 <UserRushmoreStatsColumn
                   likeCount={0}
@@ -419,43 +395,13 @@ export const EditUserRushmoreScreen = ({
             )}
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <TouchableOpacity onPress={handleExitPress}>
-              <IconButton icon="exit-to-app" size={30} />
-            </TouchableOpacity>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              {userRushmore?.completedDt === null && isEditMode && (
-                <Button
-                  onPress={() => navigateToSettingsScreen()}
-                  disabled={
-                    !userRushmore ||
-                    !userRushmore.itemList ||
-                    userRushmore.itemList.length === 0 ||
-                    !isEditMode
-                  }
-                >
-                  Publish
-                </Button>
-              )}
-            </View>
-            {isEditMode && (
-              <TouchableOpacity onPress={navigateToAddItemsScreen}>
-                <IconButton icon="plus" />
-              </TouchableOpacity>
-            )}
-          </View>
+          <EditUserRushmoreScreenBottom
+            handleExitPress={handleExitPress}
+            navigateToSettingsScreen={navigateToSettingsScreen}
+            navigateToAddItemsScreen={navigateToAddItemsScreen}
+            userRushmore={userRushmore}
+            isEditMode={!userRushmore?.completedDt}
+          />
         </View>
       )}
 

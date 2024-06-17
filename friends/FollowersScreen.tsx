@@ -109,7 +109,7 @@ export const FollowersScreen = ({
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, margin: 10 }}>
       <Searchbar
         placeholder="Search"
         onChangeText={onChangeSearch}

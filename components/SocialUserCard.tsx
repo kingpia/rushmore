@@ -82,6 +82,7 @@ const SocialUserCard: React.FC<SocialUserCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     margin: 2,
+    shadowOffset: { width: 0, height: 2 },
   },
   content: {
     flexDirection: "row",
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 14,
   },
   button: {
     width: 120,

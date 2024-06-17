@@ -4,6 +4,7 @@ import { RushmoreTabContainerParamList } from "../params/RushmoreTabContainerPar
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { UserRushmore } from "../../model/UserRushmore";
 import { Rushmore } from "../../model/Rushmore";
+import { UserRushmoreInitialCreateDTO } from "../../model/UserRushmoreInitialCreateDTO";
 
 export type AppStackParamList = {
   AuthStackContainer: NavigatorScreenParams<AuthStackParamList>;
@@ -14,6 +15,9 @@ export type AppStackParamList = {
   EditUserRushmoreScreen: {
     userRushmore: UserRushmore | undefined;
     selectedItemUserRushmore: UserRushmore | undefined;
+  };
+  UserRushmoreTypeScreen: {
+    userRushmoreInitialCreate: UserRushmoreInitialCreateDTO;
   };
   AddRushmoreItemsScreen: {
     userRushmore: UserRushmore;

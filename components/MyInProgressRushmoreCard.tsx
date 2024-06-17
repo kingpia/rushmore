@@ -51,22 +51,20 @@ export const MyInProgressRushmoreCard: React.FC<
       <Card style={styles.card}>
         <Card.Content>
           <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <Avatar.Image size={40} source={{ uri: rushmore.imageUrl }} />
-              <View style={styles.headerText}>
-                <Text style={styles.rushmoreType}>
-                  {myInProgressRushmore.userRushmore.rushmoreType}
-                </Text>
-              </View>
+            <Avatar.Image size={40} source={{ uri: rushmore.imageUrl }} />
+            <View style={styles.headerText}>
+              <Text style={styles.rushmoreType}>
+                {myInProgressRushmore.userRushmore.rushmoreType}
+              </Text>
+              <Text style={styles.title}>
+                {myInProgressRushmore.userRushmore.rushmore.title}
+              </Text>
             </View>
             <View style={styles.headerRight}>
               <Text style={styles.version}>Version: {version}</Text>
               <Text style={styles.date}>{formattedCreatedDt}</Text>
             </View>
           </View>
-          <Text style={styles.title}>
-            {myInProgressRushmore.userRushmore.rushmore.title}
-          </Text>
           <View style={styles.iconRow}>
             <View style={styles.iconContainer}>
               {visibilityIcon}
@@ -85,14 +83,8 @@ export const MyInProgressRushmoreCard: React.FC<
 
 const styles = StyleSheet.create({
   card: {
-    margin: 10,
-    borderRadius: 10,
-    shadowColor: "#000",
+    margin: 7,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-    backgroundColor: "#fff",
   },
   header: {
     flexDirection: "row",
@@ -100,25 +92,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-  headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   headerText: {
     marginLeft: 10,
-  },
-  headerRight: {
-    alignItems: "flex-end",
+    flex: 1,
   },
   rushmoreType: {
     fontSize: 14,
     color: "#888",
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 5,
+    marginTop: 5,
+  },
+  headerRight: {
+    alignItems: "flex-end",
   },
   version: {
     fontSize: 14,

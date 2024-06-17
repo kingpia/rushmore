@@ -23,6 +23,7 @@ import { ChangeEmailScreen } from "../../profile/ChangeEmailScreen";
 import ChangeEmailCodeValidationScreen from "../../profile/ChangeEmailCodeValidationScreen";
 import { IconButton } from "react-native-paper";
 import { View, StyleSheet, SafeAreaView } from "react-native";
+import { UserRushmoreTypeScreen } from "../../rushmore/UserRushmoreTypeScreen";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
@@ -61,6 +62,14 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
         <AppStackNavigator.Screen
           name="EditUserRushmoreScreen"
           component={EditUserRushmoreScreen}
+          options={{
+            gestureEnabled: false,
+          }}
+        />
+
+        <AppStackNavigator.Screen
+          name="UserRushmoreTypeScreen"
+          component={UserRushmoreTypeScreen}
           options={{
             gestureEnabled: false,
           }}

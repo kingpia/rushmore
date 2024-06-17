@@ -96,14 +96,6 @@ export const RushmoreSettingsScreen = ({
     );
   };
 
-  const handleRushmoreTypeToggle = () => {
-    setRushmoreType((prevType) =>
-      prevType === RushmoreType.Favorite
-        ? RushmoreType.Best
-        : RushmoreType.Favorite
-    );
-  };
-
   const handleGameTypeToggle = () => {
     setGameType((prevType) =>
       prevType === RushmoreGameTypeEnums.GAME
@@ -247,40 +239,6 @@ export const RushmoreSettingsScreen = ({
                     userRushmoreVisibility === RushmoreVisibilityEnums.PUBLIC
                       ? "eye"
                       : "eye-off"
-                  }
-                />
-              )}
-            />
-          </TouchableOpacity>
-        </List.Accordion>
-
-        <List.Accordion
-          title="Rushmore Type"
-          expanded={rushmoreTypeAccordionExpanded}
-          onPress={toggleRushmoreTypeAccordion}
-          right={(props) => (
-            <View style={styles.accordionRight}>
-              <Text style={styles.versionText}>{rushmoreType}</Text>
-              <List.Icon
-                {...props}
-                icon={
-                  rushmoreTypeAccordionExpanded
-                    ? "chevron-down"
-                    : "chevron-right"
-                }
-              />
-            </View>
-          )}
-        >
-          <TouchableOpacity onPress={handleRushmoreTypeToggle}>
-            <List.Item
-              title={rushmoreType}
-              disabled={!formEnabled}
-              style={styles.listItem}
-              right={() => (
-                <IconButton
-                  icon={
-                    rushmoreType === RushmoreType.Favorite ? "heart" : "trophy"
                   }
                 />
               )}

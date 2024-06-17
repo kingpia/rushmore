@@ -18,6 +18,7 @@ import {
 } from "../model/UserRushmore";
 import { CreateUserRushmoreRequestDTO } from "../model/CreateUserRushmoreRequestDTO";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
+import { UserRushmoreInitialCreateDTO } from "../model/UserRushmoreInitialCreateDTO";
 
 type CreateRushmoreHomeScreenProps = {
   navigation: NativeStackNavigationProp<
@@ -31,6 +32,7 @@ export const CreateRushmoreHomeScreen: React.FC<
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [rushmoreList, setRushmoreList] = useState<Rushmore[]>([]);
+  const [userRushmoreList, setUserRushmoreList] = useState<UserRushmore[]>([]);
   const [fadeAnim] = useState(new Animated.Value(0));
 
   const handleCategoryPress = (category: string) => {
@@ -44,10 +46,18 @@ export const CreateRushmoreHomeScreen: React.FC<
           new RushmoreService<CreateUserRushmoreDetailResponseDTO>();
         try {
           const response = await rushmoreService.getRushmores();
-          setRushmoreList(response.rushmoreList);
+
+          console.log(
+            "USER Rushmore List:" + JSON.stringify(response.userRushmoreList)
+          );
+          console.log("Rushmore List:" + JSON.stringify(response.rushmoreList));
+
+          const { rushmoreList, userRushmoreList } = response;
+          setRushmoreList(rushmoreList);
+          setUserRushmoreList(userRushmoreList);
 
           const categoriesSet = new Set<string>();
-          response.rushmoreList.forEach((rushmore) => {
+          rushmoreList.forEach((rushmore) => {
             categoriesSet.add(rushmore.category);
           });
 
@@ -84,9 +94,27 @@ export const CreateRushmoreHomeScreen: React.FC<
     ).length;
   };
 
-  const filteredRushmoreData = rushmoreList.filter(
-    (item) => selectedCategory === "All" || item.category === selectedCategory
-  );
+  const filteredRushmoreData = rushmoreList
+    .map((rushmore) => {
+      const userRushmores = userRushmoreList.filter(
+        (userRushmore) => userRushmore.rushmore.rid === rushmore.rid
+      );
+
+      const hasFavorite = userRushmores.some(
+        (userRushmore) => userRushmore.rushmoreType === RushmoreType.Favorite
+      );
+      const hasBest = userRushmores.some(
+        (userRushmore) => userRushmore.rushmoreType === RushmoreType.Best
+      );
+
+      return {
+        ...rushmore,
+        isDisabled: hasFavorite && hasBest,
+      };
+    })
+    .filter(
+      (item) => selectedCategory === "All" || item.category === selectedCategory
+    );
 
   const navigateToEditUserRushmoreScreen = async (rushmore: Rushmore) => {
     const rushmoreService = new RushmoreService<UserRushmore>();
@@ -95,34 +123,30 @@ export const CreateRushmoreHomeScreen: React.FC<
       rid: rushmore.rid,
       visibility: RushmoreVisibilityEnums.PUBLIC,
       gameType: RushmoreGameTypeEnums.OPEN,
-      rushmoreType: RushmoreType.Favorite,
     };
 
     try {
-      let useRushmoreResponse: UserRushmoreDTO =
+      let userRushmoreInitialCreate: UserRushmoreInitialCreateDTO =
         await rushmoreService.createUserRushmore(createUserRushmoreRequest);
 
       console.log(
-        "Returned created user rushmore:" + JSON.stringify(useRushmoreResponse)
-      );
-      console.log(
-        "userRushmore created. JSON:" +
-          JSON.stringify(useRushmoreResponse.userRushmore)
+        "Returned created user rushmore:" +
+          JSON.stringify(userRushmoreInitialCreate)
       );
 
       navigation.reset({
         index: 0,
         routes: [
           {
-            name: "EditUserRushmoreScreen",
+            name: "UserRushmoreTypeScreen",
             params: {
-              userRushmore: useRushmoreResponse.userRushmore,
-              selectedItemUserRushmore: undefined,
+              userRushmoreInitialCreate: userRushmoreInitialCreate,
             },
           },
         ],
       });
     } catch (error: any) {
+      //TODO Display if already completed
       console.error("Error Creating Rushmore. DISPLAY MODAL", error);
     }
   };
@@ -142,14 +166,14 @@ export const CreateRushmoreHomeScreen: React.FC<
         keyExtractor={(item) => item.rid.toString()}
         style={{ opacity: fadeAnim }}
         renderItem={({ item, index }) => (
-          <>
-            <View style={styles.cardContainer}>
-              <RushmoreCard
-                rushmore={item}
-                onPress={() => navigateToEditUserRushmoreScreen(item)}
-              />
-            </View>
-          </>
+          <View>
+            <RushmoreCard
+              rushmore={item}
+              onPress={() => navigateToEditUserRushmoreScreen(item)}
+              disabled={item.isDisabled}
+              style={item.isDisabled ? styles.disabledCard : undefined}
+            />
+          </View>
         )}
       />
     </View>
@@ -161,16 +185,9 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
   },
-  cardContainer: {
-    marginVertical: 5,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+  disabledCard: {
+    opacity: 0.5,
+    backgroundColor: "#e0e0e0", // Light gray background to indicate disabled state
   },
 });
 
