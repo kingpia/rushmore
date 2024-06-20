@@ -17,6 +17,7 @@ import {
   IconButton,
   List,
   Menu,
+  Modal,
   Portal,
   Text,
 } from "react-native-paper";
@@ -109,7 +110,8 @@ export const EditUserRushmoreScreen = ({
               route.params?.userRushmore.urId
             );
             console.log(
-              "User Rushomre data returned:" + JSON.stringify(userRushmoreData)
+              "User Rushomre data returned:" +
+                JSON.stringify(userRushmoreData, null, 2)
             );
             setUserRushmore(userRushmoreData);
 
@@ -168,8 +170,12 @@ export const EditUserRushmoreScreen = ({
     console.log("Saving user rushmore:", userRushmore);
 
     if (userRushmore) {
-      console.log("saving the user rushmore:" + JSON.stringify(userRushmore));
-      await rushmoreService.editUserRushmore(userRushmore);
+      if (userRushmore.completedDt) {
+        console.log("do nothing, we don't need to save here");
+      } else {
+        console.log("saving the user rushmore:" + JSON.stringify(userRushmore));
+        await rushmoreService.editUserRushmore(userRushmore);
+      }
     }
 
     navigation.reset({
@@ -202,6 +208,8 @@ export const EditUserRushmoreScreen = ({
 
   const handleEditPress = () => {
     closeMenu();
+    //New UserRushmore should be Created.
+    //Use the returned UserRushmore to set the userRushmore object, this would have a null completedDt
     showEditDialog(); // Show the confirmation dialog
   };
 
@@ -328,12 +336,76 @@ export const EditUserRushmoreScreen = ({
   const confirmEditUserRushmore = async () => {
     console.log("Confirm Edit");
 
-    //TODO: Need to create a new UserRushmore with the Current Rushmore Items. Don't mess with the old one yet though
-    //Leave it with LATEST until this one is published.
+    try {
+      if (userRushmore) {
+        console.log("Calling increment user rushmoreEEEEEEEEE");
+        hideEditDialog();
 
-    //When you save the rushmore, the completedD should be null, which should set everythign into edit mod
-    //Should we have an edit mode if we are drivinve everything off completdDt???
-    hideEditDialog();
+        let incrementedUserRushmore =
+          await rushmoreService.incrementAndEditUserRushmore(userRushmore);
+
+        console.log(
+          "Got back edited user rushmore:" +
+            JSON.stringify(incrementedUserRushmore, null, 2)
+        );
+
+        // Ensure completedDt is null after incrementing
+        // incrementedUserRushmore.completedDt = null;
+        console.log("Setting user Rushmore");
+        setUserRushmore(incrementedUserRushmore);
+      } else {
+        console.log("UserRushmore is null");
+      }
+
+      console.log("hiding dialog");
+    } catch (error) {
+      console.error("Error in confirmEditUserRushmore:", error);
+      showModal(error.message); // Display the error message in a modal
+    }
+  };
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const showModal = (message: string) => {
+    // Implement your modal display logic here
+    // This is a placeholder example
+    setModalVisible(true);
+    setModalMessage(message);
+  };
+
+  const navigateToUserRushmoreLeaderboard = () => {
+    console.log("navigateToUserRushmoreLeaderboard");
+    if (userRushmore) {
+      navigation.navigate("UserRushmoreLeaderboard", {
+        userRushmore: userRushmore,
+      });
+    }
+  };
+  const navigateToUserRushmoreLikeListScreen = () => {
+    console.log("navigateToUserRushmoreLikeListScreen");
+    if (userRushmore) {
+      navigation.navigate("UserRushmoreLikeListScreen", {
+        userRushmore: userRushmore,
+      });
+    }
+  };
+
+  const navigateToUserRushmoreVersionScreen = () => {
+    console.log("navigateToUserRushmoreVersionScreen");
+
+    if (userRushmore) {
+      navigation.navigate("UserRushmoreVersionScreen", {
+        userRushmore: userRushmore,
+      });
+    }
+  };
+
+  const navigateToUserRushmoreCompletedListScreen = () => {
+    console.log("navigateToUserRushmoreCompltedListScreen");
+    if (userRushmore) {
+      navigation.navigate("UserRushmoreCompletedListScreen", {
+        userRushmore: userRushmore,
+      });
+    }
   };
 
   return (
@@ -344,7 +416,7 @@ export const EditUserRushmoreScreen = ({
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
             <EditUserRushmoreAppBar
-              version={userRushmore?.version || ""}
+              displayVersion={userRushmore?.displayVersion || ""}
               userRushmore={userRushmore || undefined} // Ensure userRushmore is not null
               menuVisible={menuVisible}
               closeMenu={closeMenu}
@@ -390,6 +462,19 @@ export const EditUserRushmoreScreen = ({
                   totalCompleted={0}
                   highScoreUser={undefined}
                   firstToCompleteUser={undefined}
+                  displayVersion={userRushmore?.displayVersion || ""}
+                  handleNavigateToUserRushmoreLeaderboard={
+                    navigateToUserRushmoreLeaderboard
+                  }
+                  handleNavigateToUserRushmoreLikeListScreen={
+                    navigateToUserRushmoreLikeListScreen
+                  }
+                  handleNavigateToUserRushmoreVersionScreen={
+                    navigateToUserRushmoreVersionScreen
+                  }
+                  handleNavigateToUserRushmoreCompletedListScreen={
+                    navigateToUserRushmoreCompletedListScreen
+                  }
                 />
               </View>
             )}
@@ -397,6 +482,7 @@ export const EditUserRushmoreScreen = ({
 
           <EditUserRushmoreScreenBottom
             handleExitPress={handleExitPress}
+            handleEditPress={handleEditPress}
             navigateToSettingsScreen={navigateToSettingsScreen}
             navigateToAddItemsScreen={navigateToAddItemsScreen}
             userRushmore={userRushmore}
@@ -441,6 +527,18 @@ export const EditUserRushmoreScreen = ({
           <Dialog.Actions>
             <Button onPress={hideEditDialog}>Cancel</Button>
             <Button onPress={confirmEditUserRushmore}>Edit</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
+      <Portal>
+        <Dialog visible={modalVisible} onDismiss={hideDeleteDialog}>
+          <Dialog.Title>Draft Exists</Dialog.Title>
+          <Dialog.Content>
+            <Text>{modalMessage}</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setModalVisible(false)}>Close</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

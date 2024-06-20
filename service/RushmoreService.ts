@@ -14,6 +14,7 @@ import {
 } from "../sampleDataConfig";
 import api from "./api";
 import { UserRushmoreInitialCreateDTO } from "../model/UserRushmoreInitialCreateDTO";
+import { PaginatedSocialUserResponse } from "../model/PaginatedSocialUserResponse";
 
 interface GraphQLError {
   message: string;
@@ -94,6 +95,7 @@ export class RushmoreService<T> {
             updatedBy
             updatedDt
             urId
+            displayVersion
             version
             visibility
             itemList {
@@ -138,6 +140,7 @@ export class RushmoreService<T> {
               gameType
               urId
               version
+              displayVersion
               visibility
               firstCompletedDt
               firstCompletedUid
@@ -423,6 +426,7 @@ export class RushmoreService<T> {
               bookmarkCount
               urId
               version
+              displayVersion
               visibility
               firstCompletedDt
               firstCompletedUid
@@ -636,8 +640,85 @@ export class RushmoreService<T> {
     }
   }
 
+  async incrementAndEditUserRushmore(
+    userRushmore: UserRushmore
+  ): Promise<UserRushmore> {
+    console.log("incrementAndEditUserRushmore:", JSON.stringify(userRushmore));
+    try {
+      const response: AxiosResponse<{
+        data: { incrementAndEditUserRushmore: UserRushmore };
+        errors?: GraphQLError[];
+      }> = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+          mutation($request: EditUserRushmoreRequestDTO!) {
+            incrementAndEditUserRushmore(request: $request) {
+              urId
+              uid
+              rushmore {
+                icon
+                price
+                rid
+                title
+              }
+              ownerUser {
+                nickName
+                uid
+                userName
+              }
+              visibility
+              gameType
+              rushmoreType
+              createdDt
+              completedDt
+              version
+              itemList {
+                item
+                rank
+              }
+            }
+          }
+        `,
+        variables: {
+          request: {
+            urId: userRushmore.urId,
+            itemList: userRushmore.itemList.map((item) => ({
+              item: item.item,
+              rank: item.rank,
+            })),
+            visibility: userRushmore.visibility,
+            rushmoreType: userRushmore.rushmoreType,
+            gameType: userRushmore.gameType,
+            displayVersion: userRushmore.displayVersion,
+          },
+        },
+      });
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        const errorMessage = response.data.errors[0].message;
+        console.error("GraphQL error:", errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      console.log(
+        "Incremented Rushmore and got response:",
+        JSON.stringify(response.data.data.incrementAndEditUserRushmore)
+      );
+
+      // No errors, return the user data
+      return response.data.data.incrementAndEditUserRushmore;
+    } catch (error) {
+      // Handle network errors or unexpected errors
+      console.error("Error updating user Rushmore", error);
+      throw error;
+    }
+  }
+
   async publishUserRushmore(userRushmore: UserRushmore): Promise<UserRushmore> {
     try {
+      console.log(
+        "Publish User Rushmore:" + JSON.stringify(userRushmore, null, 2)
+      );
       const response: AxiosResponse<{
         data: { publishUserRushmore: UserRushmore };
         errors?: GraphQLError[];
@@ -679,6 +760,7 @@ export class RushmoreService<T> {
             })),
             visibility: userRushmore.visibility,
             rushmoreType: userRushmore.rushmoreType,
+            displayVersion: userRushmore.displayVersion,
             gameType: userRushmore.gameType,
           },
         },
@@ -725,6 +807,110 @@ export class RushmoreService<T> {
       return response.data.data.getRushmoreItemBySearchString;
     } catch (error) {
       console.error("Error fetching completed Rushmore list:", error);
+      throw error;
+    }
+  }
+
+  async getUserRushmoreVersionList(urId: string): Promise<UserRushmoreDTO[]> {
+    console.log("getUserRushmoreVersionList");
+
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query GetUserRushmoreVersionList($urId: String!) {
+          getUserRushmoreVersionList(urId: $urId) {
+            userRushmore {
+              completedDt
+              highScore
+              highScoreUid
+              highScoreUser {
+                nickName
+                uid
+                userName
+              }
+              likeCount
+              rushmore {
+                category
+                icon
+                rid
+                title
+              }
+              rushmoreType
+              completedCount
+              bookmarkCount
+              urId
+              version
+              displayVersion
+              visibility
+              firstCompletedDt
+              firstCompletedUid
+              firstCompletedUser {
+                nickName
+                uid
+                userName
+              }
+            }
+          }
+        }
+      `,
+        variables: {
+          urId,
+        },
+      });
+
+      if (response.data.errors) {
+        throw new Error(response.data.errors[0].message);
+      }
+
+      return response.data.data.getUserRushmoreVersionList;
+    } catch (error) {
+      console.error("Error fetching user rushmore version list:", error);
+      throw error;
+    }
+  }
+
+  async getUserRushmoreLikeList(
+    urId: string,
+    limit: number,
+    createdDt: string | null
+  ): Promise<PaginatedSocialUserResponse> {
+    console.log("getUserRushmoreLikeList");
+
+    let query = `
+      query {
+        getUserRushmoreLikeList(urId: "${urId}", limit: ${limit}`;
+
+    if (createdDt) {
+      query += `, createdDt: "${createdDt}"`;
+    }
+
+    query += `) {
+          results {
+            uid
+            userName
+            nickName
+            profileImagePath
+            followingCount
+            followersCount
+            userRushmoreCount
+            socialRelationship {
+              isFollowing
+              isFollowed
+            }
+          }
+          createdDt
+        }
+      }`;
+
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query,
+      });
+      console.log("OUTPUT:" + JSON.stringify(response.data.data));
+
+      return response.data.data.getUserRushmoreLikeList;
+    } catch (error) {
+      console.error("Error fetching getUserRushmoreLikeList:", error);
       throw error;
     }
   }

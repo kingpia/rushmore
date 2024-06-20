@@ -24,6 +24,10 @@ import ChangeEmailCodeValidationScreen from "../../profile/ChangeEmailCodeValida
 import { IconButton } from "react-native-paper";
 import { View, StyleSheet, SafeAreaView } from "react-native";
 import { UserRushmoreTypeScreen } from "../../rushmore/UserRushmoreTypeScreen";
+import UserRushmoreVersionScreen from "../../rushmore/UserRushmoreVersionScreen";
+import UserRushmoreCompletedListScreen from "../../rushmore/UserRushmoreCompletedListScreen";
+import UserRushmoreLikeListScreen from "../../rushmore/UserRushmoreLikeListScreen";
+import UserRushmoreLeaderboard from "../../rushmore/UserRushmoreLeaderboard";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
@@ -65,6 +69,23 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
           options={{
             gestureEnabled: false,
           }}
+        />
+        <AppStackNavigator.Screen
+          name="UserRushmoreVersionScreen"
+          component={UserRushmoreVersionScreen}
+        />
+        <AppStackNavigator.Screen
+          name="UserRushmoreCompletedListScreen"
+          component={UserRushmoreCompletedListScreen}
+        />
+        <AppStackNavigator.Screen
+          name="UserRushmoreLikeListScreen"
+          component={UserRushmoreLikeListScreen}
+        />
+
+        <AppStackNavigator.Screen
+          name="UserRushmoreLeaderboard"
+          component={UserRushmoreLeaderboard}
         />
 
         <AppStackNavigator.Screen

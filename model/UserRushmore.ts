@@ -5,7 +5,7 @@ import { RushmoreVisibilityEnums } from "./RushmoreVisibilityEnums";
 import { UserRushmoreItem } from "./UserRushmoreItem";
 
 export interface UserRushmore {
-  urId: number; //user rushmore id
+  urId: string; //user rushmore id
   uid: string;
   rushmore: Rushmore;
   ownerUser: SocialUser;
@@ -23,6 +23,7 @@ export interface UserRushmore {
   firstCompletedUser: User;
   firstCompletedDt: string;
   version: string;
+  displayVersion: string;
   itemList: UserRushmoreItem[]; //List of items.
   itemCount: number;
 }

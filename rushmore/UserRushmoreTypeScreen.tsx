@@ -97,7 +97,7 @@ export const UserRushmoreTypeScreen = ({
   return (
     <SafeAreaView style={styles.container}>
       <EditUserRushmoreAppBar
-        version="1.0"
+        version=""
         userRushmore={userRushmore || undefined}
         menuVisible={menuVisible}
         closeMenu={closeMenu}

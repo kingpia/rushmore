@@ -29,6 +29,8 @@ type CreateRushmoreHomeScreenProps = {
 export const CreateRushmoreHomeScreen: React.FC<
   CreateRushmoreHomeScreenProps
 > = ({ navigation }: CreateRushmoreHomeScreenProps) => {
+  const rushmoreService = new RushmoreService<UserRushmore>();
+
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [rushmoreList, setRushmoreList] = useState<Rushmore[]>([]);
@@ -117,8 +119,6 @@ export const CreateRushmoreHomeScreen: React.FC<
     );
 
   const navigateToEditUserRushmoreScreen = async (rushmore: Rushmore) => {
-    const rushmoreService = new RushmoreService<UserRushmore>();
-
     const createUserRushmoreRequest: CreateUserRushmoreRequestDTO = {
       rid: rushmore.rid,
       visibility: RushmoreVisibilityEnums.PUBLIC,

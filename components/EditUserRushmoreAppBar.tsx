@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Appbar, Avatar, IconButton, Menu, Text } from "react-native-paper";
 
 type Props = {
-  version: string;
+  displayVersion: string;
   userRushmore?: {
     rushmoreType?: string;
     rushmore?: {
@@ -19,7 +19,7 @@ type Props = {
 };
 
 const EditUserRushmoreAppBar: React.FC<Props> = ({
-  version,
+  displayVersion,
   userRushmore,
   menuVisible,
   closeMenu,
@@ -31,7 +31,7 @@ const EditUserRushmoreAppBar: React.FC<Props> = ({
   return (
     <Appbar.Header statusBarHeight={0} style={styles.header}>
       <View style={styles.leftContainer}>
-        <Text style={styles.versionText}>{version}</Text>
+        <Text style={styles.versionText}>{displayVersion}</Text>
         <Avatar.Icon size={40} icon="account" style={styles.avatar} />
       </View>
       <Appbar.Content

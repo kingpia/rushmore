@@ -16,6 +16,18 @@ export type AppStackParamList = {
     userRushmore: UserRushmore | undefined;
     selectedItemUserRushmore: UserRushmore | undefined;
   };
+  UserRushmoreVersionScreen: {
+    userRushmore: UserRushmore | undefined;
+  };
+  UserRushmoreLikeListScreen: {
+    userRushmore: UserRushmore | undefined;
+  };
+  UserRushmoreCompletedListScreen: {
+    userRushmore: UserRushmore | undefined;
+  };
+  UserRushmoreLeaderboard: {
+    userRushmore: UserRushmore | undefined;
+  };
   UserRushmoreTypeScreen: {
     userRushmoreInitialCreate: UserRushmoreInitialCreateDTO;
   };

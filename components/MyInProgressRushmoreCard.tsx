@@ -60,10 +60,7 @@ export const MyInProgressRushmoreCard: React.FC<
                 {myInProgressRushmore.userRushmore.rushmore.title}
               </Text>
             </View>
-            <View style={styles.headerRight}>
-              <Text style={styles.version}>Version: {version}</Text>
-              <Text style={styles.date}>{formattedCreatedDt}</Text>
-            </View>
+            <Text style={styles.date}>{formattedCreatedDt}</Text>
           </View>
           <View style={styles.iconRow}>
             <View style={styles.iconContainer}>
@@ -105,13 +102,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginTop: 5,
-  },
-  headerRight: {
-    alignItems: "flex-end",
-  },
-  version: {
-    fontSize: 14,
-    color: "#555",
   },
   date: {
     fontSize: 14,

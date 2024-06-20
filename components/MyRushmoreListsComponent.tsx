@@ -131,16 +131,19 @@ export const MyRushmoreListsComponent: React.FC<
         </Text>
       );
     }
+
     const groupedData = groupBy(
-      myInProgressRushmoreList,
+      filteredYourInProgressRushmoreData,
       (item) => item.userRushmore.rushmore.rid
     );
-    const groupedArray = Object.values(groupedData);
+    const groupedArray = Object.values(groupedData).flat();
+
+    console.log("groupedArray:", JSON.stringify(groupedArray, null, 2));
 
     return (
       <Animated.View>
         <FlatList
-          data={filteredYourInProgressRushmoreData}
+          data={groupedArray}
           keyExtractor={(item) => item.userRushmore.urId.toString()}
           renderItem={({ item }) => (
             <MyInProgressRushmoreCard
@@ -170,10 +173,18 @@ export const MyRushmoreListsComponent: React.FC<
       );
     }
 
+    const groupedData = groupBy(
+      filteredCompletedRushmoreData,
+      (item) => item.userRushmore.rushmore.rid
+    );
+    const groupedArray = Object.values(groupedData).flat();
+
+    console.log("groupedArray:", JSON.stringify(groupedArray, null, 2));
+
     return (
       <Animated.View>
         <FlatList
-          data={filteredCompletedRushmoreData}
+          data={groupedArray}
           keyExtractor={(item) => item.userRushmore.urId.toString()}
           renderItem={({ item }) => (
             <MyCompletedRushmoreCard
@@ -218,7 +229,7 @@ export const MyRushmoreListsComponent: React.FC<
           buttons={[
             {
               value: "inprogress",
-              label: "In-Progress",
+              label: "Drafts",
             },
             {
               value: "complete",

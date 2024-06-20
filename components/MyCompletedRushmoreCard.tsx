@@ -26,7 +26,7 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
     firstCompletedDt,
     bookmarkCount,
     likeCount,
-    version,
+    displayVersion,
     rushmore,
   } = userRushmoreDTO.userRushmore;
   const { userRushmoreGameSession } = userRushmoreDTO;
@@ -77,7 +77,7 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
               </View>
             </View>
             <View style={styles.headerRight}>
-              <Text style={styles.version}>Version: {version}</Text>
+              <Text style={styles.version}>Version: {displayVersion}</Text>
               <Text style={styles.date}>{formattedCompletedDt}</Text>
             </View>
           </View>

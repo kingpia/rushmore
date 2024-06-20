@@ -12,6 +12,11 @@ type UserRushmoreStatsColumnProps = {
   totalCompleted: number;
   highScoreUser: User | undefined;
   firstToCompleteUser: User | undefined;
+  displayVersion: string;
+  handleNavigateToUserRushmoreLeaderboard: () => void;
+  handleNavigateToUserRushmoreLikeListScreen: () => void;
+  handleNavigateToUserRushmoreVersionScreen: () => void;
+  handleNavigateToUserRushmoreCompletedListScreen: () => void;
 };
 
 const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
@@ -19,6 +24,11 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
   totalCompleted,
   highScoreUser,
   firstToCompleteUser,
+  displayVersion,
+  handleNavigateToUserRushmoreLeaderboard,
+  handleNavigateToUserRushmoreLikeListScreen,
+  handleNavigateToUserRushmoreVersionScreen,
+  handleNavigateToUserRushmoreCompletedListScreen,
 }) => {
   const truncateUsername = (username: string): string => {
     const maxLength = 10;
@@ -30,7 +40,7 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
   return (
     <View style={styles.container}>
       {/* Like Count */}
-      <TouchableOpacity onPress={() => console.log("Like count pressed")}>
+      <TouchableOpacity onPress={handleNavigateToUserRushmoreLikeListScreen}>
         <View style={styles.touchableArea}>
           <Icon name="heart" size={30} />
           <Text style={styles.countText}>{likeCount}</Text>
@@ -38,7 +48,9 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
       </TouchableOpacity>
 
       {/* Total Completed */}
-      <TouchableOpacity onPress={() => console.log("Total completed pressed")}>
+      <TouchableOpacity
+        onPress={handleNavigateToUserRushmoreCompletedListScreen}
+      >
         <View style={styles.touchableArea}>
           <Icon name="check" size={30} />
           <Text style={styles.countText}>{totalCompleted}</Text>
@@ -47,7 +59,7 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
 
       {/* High Score User */}
       <TouchableOpacity
-        onPress={() => console.log("High score user pressed")}
+        onPress={handleNavigateToUserRushmoreLeaderboard}
         disabled={!highScoreUser}
       >
         <View style={styles.touchableArea}>
@@ -70,10 +82,10 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
           </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => console.log("Version pressed")}>
+      <TouchableOpacity onPress={handleNavigateToUserRushmoreVersionScreen}>
         <View style={styles.touchableArea}>
           <Icon name="clipboard-list-outline" size={30} />
-          <Text style={styles.countText}>Latest</Text>
+          <Text style={styles.countText}>{displayVersion}</Text>
         </View>
       </TouchableOpacity>
     </View>

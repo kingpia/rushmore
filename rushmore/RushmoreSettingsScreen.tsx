@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -62,10 +62,10 @@ export const RushmoreSettingsScreen = ({
   const [gameType, setGameType] = useState(RushmoreGameTypeEnums.GAME);
 
   const [isLoading, setIsLoading] = useState(false); // Loading state for login process
+  const [versionError, setVersionError] = useState(""); // State for version input error
 
   const handleVersionAccordionPress = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
     setVersionAccordionExpanded(!versionAccordionExpanded);
   };
   const handleTagAccordionPress = () => {
@@ -79,12 +79,10 @@ export const RushmoreSettingsScreen = ({
 
   const toggleRushmoreTypeAccordion = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
     setRushmoreTypeAccordionExpanded(!rushmoreTypeAccordionExpanded);
   };
   const toggleGameTypeAccordion = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
     setGameTypeAccordionExpanded(!gameTypeAccordionExpanded);
   };
 
@@ -124,7 +122,8 @@ export const RushmoreSettingsScreen = ({
     setFormEnabled(false);
     setIsLoading(true);
 
-    // Add logic to publish user rushmore
+    // Add displayVersion to userRushmore object
+    userRushmore.displayVersion = versionText;
 
     if (userRushmore) {
       console.log("Calling publish userRushmore");
@@ -134,6 +133,23 @@ export const RushmoreSettingsScreen = ({
     }
   };
 
+  // Validate version text input
+  const validateVersionText = (text: string) => {
+    const isValid = /^[a-zA-Z0-9._]+$/.test(text);
+    setVersionError(
+      !isValid
+        ? "Versions can only contain letters, numbers, periods, and underscores."
+        : ""
+    );
+  };
+
+  // Handle change for version text input
+  const handleVersionTextChange = (text: string) => {
+    if (text.length <= 20) {
+      setVersionText(text);
+      validateVersionText(text);
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <Appbar.Header statusBarHeight={0}>
@@ -186,10 +202,13 @@ export const RushmoreSettingsScreen = ({
           <TextInput
             label="Version"
             value={versionText}
-            onChangeText={(text) => setVersionText(text)}
+            onChangeText={handleVersionTextChange}
             style={styles.textInput}
-            disabled={!formEnabled}
+            error={!!versionError}
           />
+          {!!versionError && (
+            <Text style={styles.errorText}>{versionError}</Text>
+          )}
         </List.Accordion>
 
         <List.Accordion
@@ -285,6 +304,7 @@ export const RushmoreSettingsScreen = ({
           loadingText="Publishing..."
           buttonText="Publish"
           style={{ marginLeft: 5 }}
+          disabled={!!versionError}
         />
       </ScrollView>
     </SafeAreaView>
@@ -317,6 +337,12 @@ const styles = StyleSheet.create({
   },
   listItem: {
     paddingLeft: 16,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: -12,
+    marginBottom: 12,
   },
 });
 
