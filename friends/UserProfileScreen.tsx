@@ -12,6 +12,7 @@ import { getSocialNetworkButtonText } from "../utils/SocialUtils";
 import { useUserFocus } from "../service/UserFocusContext";
 import { RushmoreService } from "../service/RushmoreService";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
+import PublishedUserRushmoreCard from "../components/PublishedUserRushmoreCard";
 
 type UserProfileScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -279,7 +280,7 @@ export const UserProfileScreen = ({
           style={{ opacity: fadeAnim }}
           keyExtractor={(item) => item.userRushmore.urId.toString()}
           renderItem={({ item }) => (
-            <UserRushmoreCard
+            <PublishedUserRushmoreCard
               userRushmoreDTO={item}
               onPress={() => navigateToRushmoreGameScreen(item.userRushmore)}
             />

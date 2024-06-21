@@ -7,7 +7,7 @@ import {
 } from "./UserRushmore";
 
 export interface CreateUserRushmoreRequestDTO {
-  rid: string;
+  rid: string | undefined;
   visibility: RushmoreVisibilityEnums;
   gameType: RushmoreGameTypeEnums;
 }

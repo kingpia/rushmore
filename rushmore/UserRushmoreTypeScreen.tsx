@@ -63,6 +63,7 @@ export const UserRushmoreTypeScreen = ({
 
   const navigateToEditUserRushmoreScreen = async () => {
     console.log("navigateToEditUserRushmoreScreen");
+
     if (userRushmore && selectedType) {
       console.log("Setting SelectedType on user rushmore:" + selectedType);
       setIsLoading(true);
@@ -97,7 +98,7 @@ export const UserRushmoreTypeScreen = ({
   return (
     <SafeAreaView style={styles.container}>
       <EditUserRushmoreAppBar
-        version=""
+        displayVersion=""
         userRushmore={userRushmore || undefined}
         menuVisible={menuVisible}
         closeMenu={closeMenu}

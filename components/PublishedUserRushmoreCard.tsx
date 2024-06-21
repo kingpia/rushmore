@@ -6,21 +6,18 @@ import { parse, format } from "date-fns";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import { UserRushmore } from "../model/UserRushmore";
 
-interface MyCompletedRushmoreCardProps {
+interface PublishedUserRushmoreCardProps {
   userRushmoreDTO: UserRushmoreDTO;
   onPress: (userRushmore: UserRushmore) => void;
-  styleLatest?: boolean; // Optional prop to style the latest version
 }
 
-const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
+const PublishedUserRushmoreCard: React.FC<PublishedUserRushmoreCardProps> = ({
   userRushmoreDTO,
   onPress,
-  styleLatest = false,
 }) => {
   const {
     rushmoreType,
     completedDt,
-    ownerUser,
     highScoreUser,
     highScore,
     firstCompletedUser,
@@ -66,16 +63,9 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
     score = userRushmoreGameSession.score;
   }
 
-  const isLatestVersion = userRushmoreDTO.userRushmore.version === "Latest";
-
   return (
     <TouchableOpacity onPress={() => onPress(userRushmoreDTO.userRushmore)}>
-      <Card
-        style={[
-          styles.card,
-          styleLatest && isLatestVersion && styles.latestCard,
-        ]}
-      >
+      <Card style={styles.card}>
         <Card.Content>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -140,10 +130,6 @@ const styles = StyleSheet.create({
   card: {
     margin: 7,
     shadowOffset: { width: 0, height: 2 },
-  },
-  latestCard: {
-    borderColor: "#4caf50",
-    borderWidth: 2,
   },
   header: {
     flexDirection: "row",
@@ -217,4 +203,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyCompletedRushmoreCard;
+export default PublishedUserRushmoreCard;

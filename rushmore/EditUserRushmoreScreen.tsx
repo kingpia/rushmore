@@ -458,7 +458,7 @@ export const EditUserRushmoreScreen = ({
             {userRushmore?.completedDt && (
               <View style={styles.statsColumn}>
                 <UserRushmoreStatsColumn
-                  likeCount={0}
+                  likeCount={userRushmore.likeCount}
                   totalCompleted={0}
                   highScoreUser={undefined}
                   firstToCompleteUser={undefined}

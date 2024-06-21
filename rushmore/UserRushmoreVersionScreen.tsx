@@ -104,6 +104,7 @@ export const UserRushmoreVersionScreen = ({
               <MyCompletedRushmoreCard
                 userRushmoreDTO={item}
                 onPress={() => navigateToUserRushmore(item)}
+                styleLatest={true}
               />
             )}
           />

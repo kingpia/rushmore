@@ -14,7 +14,11 @@ import {
 } from "../sampleDataConfig";
 import api from "./api";
 import { UserRushmoreInitialCreateDTO } from "../model/UserRushmoreInitialCreateDTO";
-import { PaginatedSocialUserResponse } from "../model/PaginatedSocialUserResponse";
+import {
+  PaginatedSocialUserResponse,
+  UserLikeResponseDTO,
+} from "../model/UserLikeResponseDTO";
+import { UserLike } from "../model/UserLike";
 
 interface GraphQLError {
   message: string;
@@ -870,47 +874,57 @@ export class RushmoreService<T> {
   }
 
   async getUserRushmoreLikeList(
-    urId: string,
-    limit: number,
-    createdDt: string | null
-  ): Promise<PaginatedSocialUserResponse> {
-    console.log("getUserRushmoreLikeList");
-
-    let query = `
-      query {
-        getUserRushmoreLikeList(urId: "${urId}", limit: ${limit}`;
-
-    if (createdDt) {
-      query += `, createdDt: "${createdDt}"`;
-    }
-
-    query += `) {
-          results {
-            uid
-            userName
-            nickName
-            profileImagePath
-            followingCount
-            followersCount
-            userRushmoreCount
-            socialRelationship {
-              isFollowing
-              isFollowed
-            }
-          }
-          createdDt
-        }
-      }`;
+    userLike: UserLike,
+    limit: number
+  ): Promise<UserLikeResponseDTO[]> {
+    console.log(
+      "getUserRushmoreLikeList with Data:" + JSON.stringify(userLike, null, 2)
+    );
 
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
-        query,
+        query: `
+        query GetUserRushmoreLikeList($userLikeInput: UserLikeInput!, $limit: Int!) {
+          getUserRushmoreLikeList(userLikeInput: $userLikeInput, limit: $limit) {
+            socialUserResponseDTO {
+              followersCount
+              following
+              followingCount
+              nickName
+              profileImagePath
+              socialRelationship {
+               isFollowed
+               isFollowing
+              }
+              uid
+              userRushmoreCount
+              userName
+            }
+            userLike {
+              urId
+              uid
+              createdDt
+            }
+          }
+        }
+      `,
+        variables: {
+          userLikeInput: {
+            urId: userLike.urId,
+            uid: userLike.uid,
+            createdDt: userLike.createdDt,
+          },
+          limit,
+        },
       });
-      console.log("OUTPUT:" + JSON.stringify(response.data.data));
+
+      if (response.data.errors) {
+        throw new Error(response.data.errors[0].message);
+      }
 
       return response.data.data.getUserRushmoreLikeList;
     } catch (error) {
-      console.error("Error fetching getUserRushmoreLikeList:", error);
+      console.error("Error fetching user rushmore like list:", error);
       throw error;
     }
   }

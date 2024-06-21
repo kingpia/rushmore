@@ -45,7 +45,7 @@ export class UserService<T> {
       const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
-          userRushmoresByUid(uid: "54888418-f001-70ba-0e9b-2d7445855466") {
+          userRushmoresByUid(uid: "${uid}") {
             userRushmore {
               completedCount
               firstCompletedDt

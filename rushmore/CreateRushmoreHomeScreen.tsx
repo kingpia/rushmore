@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Animated, FlatList } from "react-native";
-import { Divider } from "react-native-paper";
+import { View, StyleSheet, Animated } from "react-native";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { RushmoreCard } from "../components/RushmoreCard";
 import { RushmoreService } from "../service/RushmoreService";
