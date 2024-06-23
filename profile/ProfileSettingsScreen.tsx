@@ -4,6 +4,7 @@ import { List, Divider } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import * as SecureStore from "expo-secure-store";
+import { useUserFocus } from "../service/UserFocusContext";
 
 type ProfileSettingsScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -12,6 +13,8 @@ type ProfileSettingsScreenProps = {
 const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   navigation,
 }) => {
+  const { userFocus, setUserFocus } = useUserFocus(); // Destructure setUserFocus here
+
   const handleAccountPress = () => {
     navigation.push("AccountScreen"); // Navigate to AccountScreen
   };
@@ -27,6 +30,9 @@ const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     await SecureStore.deleteItemAsync("accessToken");
     await SecureStore.deleteItemAsync("refreshToken");
     await SecureStore.deleteItemAsync("uid");
+
+    // Clear the userFocus
+    setUserFocus(null);
 
     navigation.reset({
       index: 0,

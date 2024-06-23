@@ -28,6 +28,7 @@ import UserRushmoreVersionScreen from "../../rushmore/UserRushmoreVersionScreen"
 import UserRushmoreCompletedListScreen from "../../rushmore/UserRushmoreCompletedListScreen";
 import UserRushmoreLikeListScreen from "../../rushmore/UserRushmoreLikeListScreen";
 import UserRushmoreLeaderboard from "../../rushmore/UserRushmoreLeaderboard";
+import UserRushmoreScreen from "../../rushmore/UserRushmoreScreen";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
@@ -58,6 +59,14 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
         <AppStackNavigator.Screen
           name="RushmoreGameScreen"
           component={RushmoreGameScreen}
+          options={{
+            gestureEnabled: false,
+            headerShown: false, // You can also hide the header here
+          }}
+        />
+        <AppStackNavigator.Screen
+          name="UserRushmoreScreen"
+          component={UserRushmoreScreen}
           options={{
             gestureEnabled: false,
             headerShown: false, // You can also hide the header here

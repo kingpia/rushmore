@@ -51,13 +51,11 @@ export const MyRushmoreListsComponent: React.FC<
 
     try {
       if (selectedValue === "inprogress") {
-        console.log("Value is in Progress");
         const myInProgressRushmoreData =
           await rushmoreService.getMyInProgressRushmoreList();
         setMyInProgressRushmoreList(myInProgressRushmoreData);
         updateCategories(myInProgressRushmoreData);
       } else if (selectedValue === "complete") {
-        console.log("Value is Complete");
         const myCompletedRushmoreData =
           await rushmoreService.getMyCompletedRushmoreList();
         setMyCompletedRushmoreList(myCompletedRushmoreData);
@@ -137,8 +135,6 @@ export const MyRushmoreListsComponent: React.FC<
       (item) => item.userRushmore.rushmore.rid
     );
     const groupedArray = Object.values(groupedData).flat();
-
-    console.log("groupedArray:", JSON.stringify(groupedArray, null, 2));
 
     return (
       <Animated.View>

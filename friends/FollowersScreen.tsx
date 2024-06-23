@@ -42,7 +42,7 @@ export const FollowersScreen = ({
     setLoading(true);
     try {
       const userData: SocialUser | undefined = route.params?.params?.user;
-      console.log("Route:" + JSON.stringify(route));
+      console.log("Route:" + JSON.stringify(userData, null, 2));
 
       let uid: string = "";
       if (userData?.uid) {
@@ -65,7 +65,7 @@ export const FollowersScreen = ({
   useFocusEffect(
     useCallback(() => {
       fetchData();
-    }, [])
+    }, [userFocus, route.params?.params?.user])
   );
 
   useEffect(() => {

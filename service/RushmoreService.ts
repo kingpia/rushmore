@@ -14,11 +14,10 @@ import {
 } from "../sampleDataConfig";
 import api from "./api";
 import { UserRushmoreInitialCreateDTO } from "../model/UserRushmoreInitialCreateDTO";
-import {
-  PaginatedSocialUserResponse,
-  UserLikeResponseDTO,
-} from "../model/UserLikeResponseDTO";
+import { UserLikeResponseDTO } from "../model/UserLikeResponseDTO";
 import { UserLike } from "../model/UserLike";
+import { UserRushmoreViewComplete } from "../model/UserRushmoreViewComplete";
+import { UserRushmoreViewCompleteResponseDTO } from "../model/UserRushmoreViewCompleteResponseDTO";
 
 interface GraphQLError {
   message: string;
@@ -54,7 +53,7 @@ export class RushmoreService<T> {
     }
   }
 
-  async getUserRushmore(urId: number): Promise<UserRushmore> {
+  async getUserRushmore(urId: string): Promise<UserRushmore> {
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
@@ -925,6 +924,63 @@ export class RushmoreService<T> {
       return response.data.data.getUserRushmoreLikeList;
     } catch (error) {
       console.error("Error fetching user rushmore like list:", error);
+      throw error;
+    }
+  }
+
+  async getUserRushmoreViewCompleteList(
+    userRushmoreViewComplete: UserRushmoreViewComplete,
+    limit: number
+  ): Promise<UserRushmoreViewCompleteResponseDTO[]> {
+    console.log(
+      "getUserRushmoreViewCompleteList with Data:" +
+        JSON.stringify(userRushmoreViewComplete, null, 2)
+    );
+
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query GetUserRushmoreViewCompleteList($userRushmoreViewCompleteInput: UserRushmoreViewCompleteInput!, $limit: Int!) {
+          getUserRushmoreViewCompleteList(userRushmoreViewCompleteInput: $userRushmoreViewCompleteInput, limit: $limit) {
+            socialUserResponseDTO {
+              followersCount
+              following
+              followingCount
+              nickName
+              profileImagePath
+              socialRelationship {
+               isFollowed
+               isFollowing
+              }
+              uid
+              userRushmoreCount
+              userName
+            }
+            userRushmoreViewComplete {
+              urId
+              uid
+              createdDt
+            }
+          }
+        }
+      `,
+        variables: {
+          userRushmoreViewCompleteInput: {
+            urId: userRushmoreViewComplete.urId,
+            uid: userRushmoreViewComplete.uid,
+            createdDt: userRushmoreViewComplete.createdDt,
+          },
+          limit,
+        },
+      });
+
+      if (response.data.errors) {
+        throw new Error(response.data.errors[0].message);
+      }
+
+      return response.data.data.getUserRushmoreViewCompleteList;
+    } catch (error) {
+      console.error("Error fetching user rushmore complete list:", error);
       throw error;
     }
   }

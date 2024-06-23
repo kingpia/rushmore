@@ -20,7 +20,7 @@ export interface UserRushmore {
   icon: string;
   highScoreUser: User;
   highScore: number;
-  firstCompletedUser: User;
+  firstCompletedUser: SocialUser;
   firstCompletedDt: string;
   version: string;
   displayVersion: string;

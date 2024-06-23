@@ -62,7 +62,7 @@ export const UserProfileScreen = ({
         /**
          * Set the focus so if we navigate to UserNetworkTabs, we have the context of which user we are querying for.
          */
-        console.log("Setting user focus to :" + user.uid);
+        console.log("User Profile Setting UserFocus to uid:" + user.uid);
         setUserFocus(user.uid);
 
         console.log("User Profile Data:" + JSON.stringify(user));
@@ -113,6 +113,13 @@ export const UserProfileScreen = ({
   const navigateToRushmoreGameScreen = (userRushmore: UserRushmore) => {
     console.log("Navigate to FollowingInProgressRushmore rushmore screen");
     navigation.navigate("RushmoreGameScreen", { urId: userRushmore.urId }); // PassurId
+  };
+
+  const navigateToUserRushmore = (userRushmore: UserRushmore) => {
+    console.log("Navigate to navigateToUserRushmore rushmore screen");
+    if (userRushmore) {
+      navigation.navigate("UserRushmoreScreen", { urId: userRushmore.urId });
+    }
   };
 
   const handleSocialAction = () => {
@@ -282,7 +289,7 @@ export const UserProfileScreen = ({
           renderItem={({ item }) => (
             <PublishedUserRushmoreCard
               userRushmoreDTO={item}
-              onPress={() => navigateToRushmoreGameScreen(item.userRushmore)}
+              onPress={() => navigateToUserRushmore(item.userRushmore)}
             />
           )}
           ItemSeparatorComponent={renderItemSeparator}

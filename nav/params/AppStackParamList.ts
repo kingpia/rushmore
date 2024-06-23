@@ -12,6 +12,9 @@ export type AppStackParamList = {
   RushmoreGameScreen: {
     urId: number;
   };
+  UserRushmoreScreen: {
+    urId: string;
+  };
   EditUserRushmoreScreen: {
     userRushmore: UserRushmore | undefined;
     selectedItemUserRushmore: UserRushmore | undefined;

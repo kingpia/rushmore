@@ -42,13 +42,18 @@ export const FollowingScreen = ({
     setLoading(true);
 
     try {
-      const userData: SocialUser | undefined = route.params?.params?.user;
+      const userData = route;
 
+      console.log("userDaat:" + JSON.stringify(userData, null, 2));
       let uid: string = "";
       if (userData?.uid) {
+        console.log("Got the UID:" + userData?.uid);
         uid = userData?.uid;
       } else if (userFocus) {
+        console.log("Got the user focus");
         uid = userFocus || "";
+      } else {
+        console.log("Noe user id or user focus");
       }
 
       const followingUsers = await userService.getFollowingUserList(uid);
@@ -63,7 +68,7 @@ export const FollowingScreen = ({
   useFocusEffect(
     useCallback(() => {
       fetchData();
-    }, [])
+    }, [userFocus, route.params?.params?.user])
   );
 
   useEffect(() => {

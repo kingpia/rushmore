@@ -177,11 +177,7 @@ export const EditUserRushmoreScreen = ({
         await rushmoreService.editUserRushmore(userRushmore);
       }
     }
-
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "RushmoreTabContainer" }],
-    });
+    navigation.goBack();
   };
 
   const saveUserRushmore = async () => {
@@ -408,6 +404,12 @@ export const EditUserRushmoreScreen = ({
     }
   };
 
+  const navigateToUserProfileScreen = (user: SocialUser | undefined) => {
+    if (user) {
+      navigation.navigate("UserProfileScreen", { user });
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {loading ? (
@@ -459,9 +461,9 @@ export const EditUserRushmoreScreen = ({
               <View style={styles.statsColumn}>
                 <UserRushmoreStatsColumn
                   likeCount={userRushmore.likeCount}
-                  totalCompleted={0}
+                  totalCompleted={userRushmore.completedCount}
                   highScoreUser={undefined}
-                  firstToCompleteUser={undefined}
+                  firstToCompleteUser={userRushmore.firstCompletedUser}
                   displayVersion={userRushmore?.displayVersion || ""}
                   handleNavigateToUserRushmoreLeaderboard={
                     navigateToUserRushmoreLeaderboard
@@ -475,6 +477,7 @@ export const EditUserRushmoreScreen = ({
                   handleNavigateToUserRushmoreCompletedListScreen={
                     navigateToUserRushmoreCompletedListScreen
                   }
+                  navigateToUserProfileScreen={navigateToUserProfileScreen}
                 />
               </View>
             )}

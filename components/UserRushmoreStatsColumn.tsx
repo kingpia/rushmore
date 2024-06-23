@@ -11,12 +11,13 @@ type UserRushmoreStatsColumnProps = {
   likeCount: number;
   totalCompleted: number;
   highScoreUser: User | undefined;
-  firstToCompleteUser: User | undefined;
+  firstToCompleteUser: SocialUser | undefined;
   displayVersion: string;
   handleNavigateToUserRushmoreLeaderboard: () => void;
   handleNavigateToUserRushmoreLikeListScreen: () => void;
   handleNavigateToUserRushmoreVersionScreen: () => void;
   handleNavigateToUserRushmoreCompletedListScreen: () => void;
+  navigateToUserProfileScreen: (user: SocialUser | undefined) => void;
 };
 
 const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
@@ -29,6 +30,7 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
   handleNavigateToUserRushmoreLikeListScreen,
   handleNavigateToUserRushmoreVersionScreen,
   handleNavigateToUserRushmoreCompletedListScreen,
+  navigateToUserProfileScreen,
 }) => {
   const truncateUsername = (username: string): string => {
     const maxLength = 10;
@@ -57,22 +59,9 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
         </View>
       </TouchableOpacity>
 
-      {/* High Score User */}
-      <TouchableOpacity
-        onPress={handleNavigateToUserRushmoreLeaderboard}
-        disabled={!highScoreUser}
-      >
-        <View style={styles.touchableArea}>
-          <Icon name="crown" size={30} />
-          <Text style={styles.usernameText}>
-            {truncateUsername(highScoreUser?.userName ?? "N/A")}
-          </Text>
-        </View>
-      </TouchableOpacity>
-
       {/* First to Complete User */}
       <TouchableOpacity
-        onPress={() => console.log("First to complete user pressed")}
+        onPress={() => navigateToUserProfileScreen(firstToCompleteUser)}
         disabled={!firstToCompleteUser}
       >
         <View style={styles.touchableArea}>

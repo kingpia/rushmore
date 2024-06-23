@@ -1,4 +1,10 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from "react";
 
 /**
  * This UserFocus context is used to manage which USER we are viewing when toggling between the UserNetworkTopTabNavigator
@@ -26,6 +32,13 @@ export const UserFocusProvider: React.FC<UserFocusProviderProps> = ({
   children,
 }) => {
   const [userFocus, setUserFocus] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log(
+      "=====>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>==============================================================User focus changed:",
+      userFocus
+    );
+  }, [userFocus]);
 
   return (
     <UserFocusContext.Provider value={{ userFocus, setUserFocus }}>

@@ -118,7 +118,7 @@ export const ProfileHomeScreen = ({
   const userService = new UserService<SocialUser>();
   const [menuVisible, setMenuVisible] = useState(false);
   console.log("ProfileHomeScreen");
-  const { userFocus, setUserFocus } = useUserFocus(); // Destructure setUserFocus here
+  const { setUserFocus } = useUserFocus(); // Destructure setUserFocus here
   const defaultImage = require("../assets/shylo.png");
 
   // Inside ProfileHomeScreen component
@@ -132,9 +132,9 @@ export const ProfileHomeScreen = ({
           console.log("UserData" + JSON.stringify(data));
           setUserData(data);
           /**
-           * Set the focus so if we navigate to UserNetworkTabs, we have the context of which user we are querying for.
+           * Null the user focus.
            */
-          setUserFocus(data.uid);
+          setUserFocus(null);
 
           setIsLoading(false);
         } catch (error) {

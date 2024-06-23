@@ -108,7 +108,7 @@ export const AuthLogInScreen = ({
     <SafeAreaView style={styles.container}>
       <View>
         <TextInput
-          label="Email or Username"
+          label="Email"
           value={emailOrUsername}
           onChangeText={(text) => setEmailOrUsername(text)}
           mode="outlined"
