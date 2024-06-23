@@ -1,17 +1,10 @@
 import { AxiosResponse } from "axios";
-import { ApiFetchEnums } from "../model/ApiFetchEnums";
 import { CreateUserRushmoreDetailResponseDTO } from "../model/CreateUserRushmoreDetailResponseDTO";
 import { CreateUserRushmoreRequestDTO } from "../model/CreateUserRushmoreRequestDTO";
 import { LetterSelectionResponse } from "../model/LetterSelectionResponse";
 import { UserRushmore } from "../model/UserRushmore";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import { RushmoreItem } from "../model/RushmoreItem";
-
-import { UserRushmoreGameSession } from "../model/UserRushmoreGameSession";
-import {
-  rushmoreListURL,
-  yourCompletedRushmoreListURL,
-} from "../sampleDataConfig";
 import api from "./api";
 import { UserRushmoreInitialCreateDTO } from "../model/UserRushmoreInitialCreateDTO";
 import { UserLikeResponseDTO } from "../model/UserLikeResponseDTO";

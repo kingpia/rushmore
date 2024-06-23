@@ -19,6 +19,7 @@ import { UserRushmoreItem } from "../model/UserRushmoreItem";
 import UserRushmoreScreenBottom from "../components/UserRushmoreScreenBottom";
 import { RushmoreItem } from "../model/RushmoreItem";
 import { VisibleUserRushmoreItem } from "../components/VisibleUserRushmoreItem";
+import UserRushmoreStatsColumn from "../components/UserRushmoreStatsColumn";
 
 const { width } = Dimensions.get("window");
 
@@ -87,9 +88,19 @@ export const UserRushmoreScreen = ({
     }, [route.params.urId])
   );
 
-  const userRushmoreComplete = () => {
+  const userRushmoreComplete = async () => {
     console.log("User Rushmore is complete!");
     // Additional logic for completion can be added here
+    if (userRushmore) {
+      try {
+        let completedRushmore = await rushmoreService.userRushmoreViewComplete(
+          userRushmore.urId
+        );
+        console.log("User Rushmore completion recorded:", completedRushmore);
+      } catch (error) {
+        console.error("Error completing user rushmore view:", error);
+      }
+    }
     setUserRushmoreCompleted(true);
   };
 
@@ -174,6 +185,48 @@ export const UserRushmoreScreen = ({
     );
   };
 
+  const navigateToUserRushmoreLeaderboard = () => {
+    console.log("navigateToUserRushmoreLeaderboard");
+    if (userRushmore) {
+      navigation.navigate("UserRushmoreLeaderboard", {
+        userRushmore: userRushmore,
+      });
+    }
+  };
+  const navigateToUserRushmoreLikeListScreen = () => {
+    console.log("navigateToUserRushmoreLikeListScreen");
+    if (userRushmore) {
+      navigation.navigate("UserRushmoreLikeListScreen", {
+        userRushmore: userRushmore,
+      });
+    }
+  };
+
+  const navigateToUserRushmoreVersionScreen = () => {
+    console.log("navigateToUserRushmoreVersionScreen");
+
+    if (userRushmore) {
+      navigation.navigate("UserRushmoreVersionScreen", {
+        userRushmore: userRushmore,
+      });
+    }
+  };
+
+  const navigateToUserRushmoreCompletedListScreen = () => {
+    console.log("navigateToUserRushmoreCompltedListScreen");
+    if (userRushmore) {
+      navigation.navigate("UserRushmoreCompletedListScreen", {
+        userRushmore: userRushmore,
+      });
+    }
+  };
+
+  const navigateToUserProfileScreen = (user: SocialUser | undefined) => {
+    if (user) {
+      navigation.navigate("UserProfileScreen", { user });
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <UserRushmoreAppBar
@@ -209,6 +262,31 @@ export const UserRushmoreScreen = ({
             keyExtractor={(item) => item.item}
             contentContainerStyle={styles.listContentContainer}
           />
+
+          {userRushmore && (
+            <View style={styles.statsColumn}>
+              <UserRushmoreStatsColumn
+                likeCount={userRushmore.likeCount}
+                totalCompleted={userRushmore.completedCount}
+                highScoreUser={undefined}
+                firstToCompleteUser={userRushmore.firstCompletedUser}
+                displayVersion={userRushmore.displayVersion || ""}
+                handleNavigateToUserRushmoreLeaderboard={
+                  navigateToUserRushmoreLeaderboard
+                }
+                handleNavigateToUserRushmoreLikeListScreen={
+                  navigateToUserRushmoreLikeListScreen
+                }
+                handleNavigateToUserRushmoreVersionScreen={
+                  navigateToUserRushmoreVersionScreen
+                }
+                handleNavigateToUserRushmoreCompletedListScreen={
+                  navigateToUserRushmoreCompletedListScreen
+                }
+                navigateToUserProfileScreen={navigateToUserProfileScreen}
+              />
+            </View>
+          )}
         </View>
       )}
       <UserRushmoreScreenBottom handleExitPress={handleExitPress} />
@@ -296,6 +374,12 @@ const styles = StyleSheet.create({
 
   deleteButton: {
     marginLeft: 10,
+  },
+  statsColumn: {
+    position: "absolute",
+    right: 20,
+    alignItems: "center",
+    bottom: 30,
   },
 });
 
