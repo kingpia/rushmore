@@ -62,6 +62,7 @@ const PublishedUserRushmoreCard: React.FC<PublishedUserRushmoreCardProps> = ({
   if (userRushmoreGameSession) {
     score = userRushmoreGameSession.score;
   }
+  console.log("VERSION:" + displayVersion);
 
   return (
     <TouchableOpacity onPress={() => onPress(userRushmoreDTO.userRushmore)}>

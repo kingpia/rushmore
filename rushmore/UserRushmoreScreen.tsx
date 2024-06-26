@@ -20,6 +20,8 @@ import UserRushmoreScreenBottom from "../components/UserRushmoreScreenBottom";
 import { RushmoreItem } from "../model/RushmoreItem";
 import { VisibleUserRushmoreItem } from "../components/VisibleUserRushmoreItem";
 import UserRushmoreStatsColumn from "../components/UserRushmoreStatsColumn";
+import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
+import { UserRushmoreGameSession } from "../model/UserRushmoreGameSession";
 
 const { width } = Dimensions.get("window");
 
@@ -34,13 +36,17 @@ export const UserRushmoreScreen = ({
   navigation,
 }: UserRushmoreScreenProps) => {
   const [userRushmore, setUserRushmore] = useState<UserRushmore | null>(null);
+  const [userRushmoreGameSession, setUserRushmoreGameSession] =
+    useState<UserRushmoreGameSession | null>(null);
   const [reverseOrderUserRushmoreItems, setReverseOrderUserRushmoreItems] =
     useState<UserRushmoreItem[]>([]);
   const [orderedUserRushmoreItems, setOrderedUserRushmoreItems] = useState<
     VisibleUserRushmoreItem[]
   >([]);
+  const [liked, setLiked] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(0);
+
   const [loading, setLoading] = useState(true);
-  const [userRushmoreCompleted, setUserRushmoreCompleted] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -51,19 +57,22 @@ export const UserRushmoreScreen = ({
           if (route.params.urId) {
             console.log("UseRushmoreScreen urId:" + route.params.urId);
 
-            let userRushmore = await rushmoreService.getUserRushmore(
+            let userRushmoreDTO = await rushmoreService.getUserRushmore(
               route.params.urId
             );
+
+            //TODO: DID THE USER COMPLETE THIS USER RUSHMORE? IF SO MARK COMPLETE.
             console.log(
-              "Returned rushmore:" + JSON.stringify(userRushmore, null, 2)
+              "Returned rushmore:" + JSON.stringify(userRushmoreDTO, null, 2)
             );
 
             const reverseOrder: UserRushmoreItem[] =
-              userRushmore?.itemList?.slice().sort((a, b) => b.rank - a.rank) ||
-              [];
+              userRushmoreDTO.userRushmore?.itemList
+                ?.slice()
+                .sort((a, b) => b.rank - a.rank) || [];
 
             const sortedItems: VisibleUserRushmoreItem[] =
-              userRushmore?.itemList
+              userRushmoreDTO.userRushmore?.itemList
                 ?.slice()
                 .sort((a, b) => a.rank - b.rank)
                 .map((item) => ({ ...item, visible: false })) || [];
@@ -74,9 +83,25 @@ export const UserRushmoreScreen = ({
               item: "Swipe to start",
             } as UserRushmoreItem);
 
+            if (userRushmoreDTO.userRushmoreGameSession) {
+              console.log(
+                "I A use rushmore game session, lets mark it and show the stats"
+              );
+              console.log(
+                "Game Session:" +
+                  JSON.stringify(userRushmoreGameSession, null, 2)
+              );
+              setUserRushmoreGameSession(
+                userRushmoreDTO.userRushmoreGameSession
+              );
+            }
+
             setReverseOrderUserRushmoreItems(reverseOrder);
             setOrderedUserRushmoreItems(sortedItems);
-            setUserRushmore(userRushmore);
+            setUserRushmore(userRushmoreDTO.userRushmore);
+            setUserRushmoreGameSession(userRushmoreDTO.userRushmoreGameSession);
+            setLiked(userRushmoreDTO.liked || false);
+            setLikeCount(userRushmoreDTO.userRushmore?.likeCount || 0);
           }
           setLoading(false);
         } catch (error) {
@@ -96,12 +121,18 @@ export const UserRushmoreScreen = ({
         let completedRushmore = await rushmoreService.userRushmoreViewComplete(
           userRushmore.urId
         );
-        console.log("User Rushmore completion recorded:", completedRushmore);
+        console.log(
+          "User Rushmore completion recorded:",
+          JSON.stringify(completedRushmore, null, 2)
+        );
+        if (completedRushmore.userRushmoreGameSession) {
+          console.log("Should always get here:");
+          setUserRushmoreGameSession(completedRushmore.userRushmoreGameSession);
+        }
       } catch (error) {
         console.error("Error completing user rushmore view:", error);
       }
     }
-    setUserRushmoreCompleted(true);
   };
 
   const handleSnapToItem = (index: number) => {
@@ -144,9 +175,7 @@ export const UserRushmoreScreen = ({
             <Text style={styles.rankText}>{item.rank}</Text>
           </View>
           <View style={styles.itemContent}>
-            {item.visible ? (
-              <Text style={styles.itemText}>{item.item}</Text>
-            ) : null}
+            <Text style={styles.itemText}>{item.item}</Text>
           </View>
         </View>
       </View>
@@ -193,15 +222,35 @@ export const UserRushmoreScreen = ({
       });
     }
   };
-  const navigateToUserRushmoreLikeListScreen = () => {
-    console.log("navigateToUserRushmoreLikeListScreen");
+  const handleLikeClick = async () => {
+    console.log("handleLikeClick");
     if (userRushmore) {
-      navigation.navigate("UserRushmoreLikeListScreen", {
-        userRushmore: userRushmore,
-      });
+      try {
+        if (liked) {
+          console.log("Call UnLike UserRushmore");
+          const response = await rushmoreService.unLikeUserRushmore(
+            userRushmore.urId
+          );
+          if (response) {
+            console.log("Got response for unlike");
+            setLikeCount((prevCount) => Math.max(prevCount - 1, 0)); // Ensure likeCount does not go below 0
+            setLiked(false);
+          }
+          console.log("It meissed response");
+        } else {
+          const response = await rushmoreService.likeUserRushmore(
+            userRushmore.urId
+          );
+          if (response) {
+            setLikeCount((prevCount) => prevCount + 1);
+            setLiked(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error liking/unliking user rushmore:", error);
+      }
     }
   };
-
   const navigateToUserRushmoreVersionScreen = () => {
     console.log("navigateToUserRushmoreVersionScreen");
 
@@ -232,6 +281,7 @@ export const UserRushmoreScreen = ({
       <UserRushmoreAppBar
         displayVersion={userRushmore?.displayVersion || ""}
         userRushmore={userRushmore ?? undefined}
+        userRushmoreGameSession={userRushmoreGameSession ?? undefined}
       />
       {loading ? (
         <ActivityIndicator
@@ -241,49 +291,48 @@ export const UserRushmoreScreen = ({
         />
       ) : (
         <View style={styles.contentContainer}>
-          <Carousel
-            width={width}
-            data={reverseOrderUserRushmoreItems}
-            loop={false}
-            renderItem={renderCarouselItem}
-            mode="vertical-stack"
-            modeConfig={{
-              snapDirection: "left",
-              stackInterval: 20,
-            }}
-            onSnapToItem={handleSnapToItem}
-            overscrollEnabled={true}
-            enabled={true}
-            scrollAnimationDuration={50}
-          />
+          {!userRushmoreGameSession?.completedDt && (
+            <Carousel
+              width={width}
+              data={reverseOrderUserRushmoreItems}
+              loop={false}
+              renderItem={renderCarouselItem}
+              mode="vertical-stack"
+              modeConfig={{
+                snapDirection: "left",
+                stackInterval: 20,
+              }}
+              onSnapToItem={handleSnapToItem}
+              overscrollEnabled={true}
+              enabled={true}
+              scrollAnimationDuration={50}
+            />
+          )}
           <FlatList
-            data={orderedUserRushmoreItems}
+            data={orderedUserRushmoreItems.map((item) =>
+              userRushmoreGameSession?.completedDt
+                ? { ...item, visible: true }
+                : item
+            )}
             renderItem={renderRankedItems}
             keyExtractor={(item) => item.item}
             contentContainerStyle={styles.listContentContainer}
           />
 
-          {userRushmore && (
+          {userRushmoreGameSession && userRushmoreGameSession.completedDt && (
             <View style={styles.statsColumn}>
               <UserRushmoreStatsColumn
-                likeCount={userRushmore.likeCount}
-                totalCompleted={userRushmore.completedCount}
+                likeCount={likeCount}
+                totalCompleted={userRushmore!.completedCount}
                 highScoreUser={undefined}
-                firstToCompleteUser={userRushmore.firstCompletedUser}
-                displayVersion={userRushmore.displayVersion || ""}
-                handleNavigateToUserRushmoreLeaderboard={
-                  navigateToUserRushmoreLeaderboard
-                }
-                handleNavigateToUserRushmoreLikeListScreen={
-                  navigateToUserRushmoreLikeListScreen
-                }
-                handleNavigateToUserRushmoreVersionScreen={
-                  navigateToUserRushmoreVersionScreen
-                }
-                handleNavigateToUserRushmoreCompletedListScreen={
-                  navigateToUserRushmoreCompletedListScreen
-                }
-                navigateToUserProfileScreen={navigateToUserProfileScreen}
+                firstToCompleteUser={userRushmore!.firstCompletedUser}
+                displayVersion={userRushmore!.displayVersion || ""}
+                handleLeaderboardClick={navigateToUserRushmoreLeaderboard}
+                handleLikeClick={handleLikeClick}
+                handleRushmoreVersionClick={navigateToUserRushmoreVersionScreen}
+                handleCompletedClick={navigateToUserRushmoreCompletedListScreen}
+                handleProfileClick={navigateToUserProfileScreen}
+                liked={liked}
               />
             </View>
           )}

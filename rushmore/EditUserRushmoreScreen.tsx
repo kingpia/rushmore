@@ -113,7 +113,7 @@ export const EditUserRushmoreScreen = ({
               "User Rushomre data returned:" +
                 JSON.stringify(userRushmoreData, null, 2)
             );
-            setUserRushmore(userRushmoreData);
+            setUserRushmore(userRushmoreData.userRushmore);
 
             setLoading(false);
           }
@@ -465,19 +465,16 @@ export const EditUserRushmoreScreen = ({
                   highScoreUser={undefined}
                   firstToCompleteUser={userRushmore.firstCompletedUser}
                   displayVersion={userRushmore?.displayVersion || ""}
-                  handleNavigateToUserRushmoreLeaderboard={
-                    navigateToUserRushmoreLeaderboard
-                  }
-                  handleNavigateToUserRushmoreLikeListScreen={
-                    navigateToUserRushmoreLikeListScreen
-                  }
-                  handleNavigateToUserRushmoreVersionScreen={
+                  handleLeaderboardClick={navigateToUserRushmoreLeaderboard}
+                  handleLikeClick={navigateToUserRushmoreLikeListScreen}
+                  handleRushmoreVersionClick={
                     navigateToUserRushmoreVersionScreen
                   }
-                  handleNavigateToUserRushmoreCompletedListScreen={
+                  handleCompletedClick={
                     navigateToUserRushmoreCompletedListScreen
                   }
-                  navigateToUserProfileScreen={navigateToUserProfileScreen}
+                  handleProfileClick={navigateToUserProfileScreen}
+                  liked={false}
                 />
               </View>
             )}

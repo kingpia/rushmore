@@ -73,12 +73,6 @@ export const UserRushmoreVersionScreen = ({
 
     // Navigate to EditUserRushmoreScreen with params
     navigation.navigate("EditUserRushmoreScreen", params);
-
-    // Reset navigation and send the same params
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "EditUserRushmoreScreen", params }],
-    });
   };
 
   return (

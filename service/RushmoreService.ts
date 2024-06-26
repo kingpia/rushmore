@@ -46,60 +46,76 @@ export class RushmoreService<T> {
     }
   }
 
-  async getUserRushmore(urId: string): Promise<UserRushmore> {
+  async getUserRushmore(urId: string): Promise<UserRushmoreDTO> {
     try {
       const response = await api.post(`${this.baseURL}/graphql`, {
         query: `
         query {
           getUserRushmore(urId: "${urId}") {
-            createdBy
-            completedCount
-            completedDt
-            createdDt
-            firstCompletedDt
-            firstCompletedUid
-            firstCompletedUser {
-              nickName
-              userName
-              uid
-            }
-            gameType
-            highScore
-            highScoreUid
-            highScoreUser {
-              nickName
-              userName
-              uid
-            }
-            itemCount
-            likeCount
-            ownerUser {
-              nickName
-              uid
-              userName
-            }
-            rushmore {
-              category
-              icon
+            userRushmore {
+              createdBy
               completedCount
-              title
-              price
-              rid
+              completedDt
+              createdDt
+              firstCompletedDt
+              firstCompletedUid
+              firstCompletedUser {
+                nickName
+                userName
+                uid
+              }
+              gameType
+              highScore
+              highScoreUid
+              highScoreUser {
+                nickName
+                userName
+                uid
+              }
+              itemCount
+              likeCount
+              ownerUser {
+                nickName
+                uid
+                userName
+              }
+              rushmore {
+                category
+                icon
+                completedCount
+                title
+                price
+                rid
+              }
+              rushmoreType
+              uid
+              updatedBy
+              updatedDt
+              urId
+              displayVersion
+              version
+              visibility
+              itemList {
+                item
+                rank
+              }
             }
-            rushmoreType
-            uid
-            updatedBy
-            updatedDt
-            urId
-            displayVersion
-            version
-            visibility
-            itemList {
-              item
-              rank
+            userRushmoreGameSession {
+              urgsId
+              userId
+              userRushmoreId
+              completedDt
+              score
+              letterSelection
+              letterSelectionComplete
+              createdDt
+              createdBy
+              updatedDt
+              updatedBy
             }
+            liked
           }
-      }
+        }
       `,
       });
       return response.data.data.getUserRushmore;
@@ -974,6 +990,155 @@ export class RushmoreService<T> {
       return response.data.data.getUserRushmoreViewCompleteList;
     } catch (error) {
       console.error("Error fetching user rushmore complete list:", error);
+      throw error;
+    }
+  }
+
+  async userRushmoreViewComplete(urId: string): Promise<UserRushmoreDTO> {
+    try {
+      console.log("userRushmoreViewComplete urId:" + urId);
+      const response: AxiosResponse<{
+        data: { userRushmoreViewComplete: any };
+        errors?: GraphQLError[];
+      }> = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+          mutation {
+            userRushmoreViewComplete(
+              urId: "${urId}"
+            ) {
+              userRushmore {
+                gameType
+                rushmore {
+                  rid
+                  title
+                }
+                urId
+                version
+                visibility
+                createdDt
+                updatedDt
+              }
+              userRushmoreGameSession {
+                urgsId
+                userId
+                userRushmoreId
+                completedDt
+                score
+                letterSelection
+                letterSelectionComplete
+                createdDt
+                createdBy
+                updatedDt
+                updatedBy
+              }
+            }
+          }
+        `,
+      });
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        let errorMessage = "";
+
+        response.data.errors.forEach((error: GraphQLError) => {
+          console.error("GraphQL error:", error.message);
+          errorMessage = error.message;
+        });
+
+        throw new Error(errorMessage);
+      }
+
+      return response.data.data.userRushmoreViewComplete;
+    } catch (error) {
+      console.error("Error updating userRushmoreViewComplete:", error);
+      throw error;
+    }
+  }
+
+  async likeUserRushmore(urId: string): Promise<UserLike> {
+    try {
+      console.log("likeUserRushmore urId:" + urId);
+      const response: AxiosResponse<{
+        data: { likeUserRushmore: UserLike };
+        errors?: GraphQLError[];
+      }> = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+          mutation {
+            likeUserRushmore(
+              urId: "${urId}"
+            ) {
+              uid
+              urId
+              createdDt
+            }
+          }
+        `,
+      });
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        let errorMessage = "";
+
+        response.data.errors.forEach((error: GraphQLError) => {
+          console.error("GraphQL error:", error.message);
+          errorMessage = error.message;
+        });
+
+        throw new Error(errorMessage);
+      }
+      console.log(
+        "LIKE response:" +
+          JSON.stringify(response.data.data.likeUserRushmore, null, 2)
+      );
+      return response.data.data.likeUserRushmore;
+    } catch (error) {
+      console.error("Error updating likeUserRushmore:", error);
+      throw error;
+    }
+  }
+
+  async unLikeUserRushmore(urId: string): Promise<UserLike> {
+    try {
+      console.log("unLikeUserRushmore urId:" + urId);
+      const response: AxiosResponse<{
+        data: { unLikeUserRushmore: UserLike };
+        errors?: GraphQLError[];
+      }> = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+          mutation {
+            unLikeUserRushmore(
+              urId: "${urId}"
+            ) {
+              uid
+              urId
+              createdDt
+            }
+          }
+        `,
+      });
+
+      console.log("Done fetching unlike");
+
+      if (response.data.errors) {
+        // Handle GraphQL errors
+        let errorMessage = "";
+
+        response.data.errors.forEach((error: GraphQLError) => {
+          console.error("GraphQL error:", error.message);
+          errorMessage = error.message;
+        });
+
+        throw new Error(errorMessage);
+      }
+
+      console.log(
+        "LIKE response:" +
+          JSON.stringify(response.data.data.unLikeUserRushmore, null, 2)
+      );
+
+      return response.data.data.unLikeUserRushmore;
+    } catch (error) {
+      console.error("Error updating unLikeUserRushmore:", error);
       throw error;
     }
   }

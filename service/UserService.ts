@@ -79,6 +79,7 @@ export class UserService<T> {
               urId
               completedDt
               version
+              displayVersion
             }
             userRushmoreGameSession {
               score

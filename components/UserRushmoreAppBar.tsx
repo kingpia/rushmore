@@ -10,11 +10,15 @@ type Props = {
       title?: string;
     };
   };
+  userRushmoreGameSession?: {
+    completedDt?: string;
+  };
 };
 
 const UserRushmoreAppBar: React.FC<Props> = ({
   displayVersion,
   userRushmore,
+  userRushmoreGameSession,
 }) => {
   return (
     <Appbar.Header statusBarHeight={0} style={styles.header}>
@@ -34,6 +38,11 @@ const UserRushmoreAppBar: React.FC<Props> = ({
           </View>
         }
       />
+      {userRushmoreGameSession?.completedDt && (
+        <Text style={styles.completedDtText}>
+          {userRushmoreGameSession.completedDt}
+        </Text>
+      )}
     </Appbar.Header>
   );
 };
@@ -64,6 +73,10 @@ const styles = StyleSheet.create({
   rushmoreTitle: {
     fontSize: 18,
     textAlign: "center",
+  },
+  completedDtText: {
+    fontSize: 14,
+    marginRight: 16,
   },
 });
 

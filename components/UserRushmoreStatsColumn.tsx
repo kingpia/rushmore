@@ -6,18 +6,18 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 type User = {
   userName: string;
 };
-
 type UserRushmoreStatsColumnProps = {
   likeCount: number;
   totalCompleted: number;
   highScoreUser: User | undefined;
   firstToCompleteUser: SocialUser | undefined;
   displayVersion: string;
-  handleNavigateToUserRushmoreLeaderboard: () => void;
-  handleNavigateToUserRushmoreLikeListScreen: () => void;
-  handleNavigateToUserRushmoreVersionScreen: () => void;
-  handleNavigateToUserRushmoreCompletedListScreen: () => void;
-  navigateToUserProfileScreen: (user: SocialUser | undefined) => void;
+  handleLeaderboardClick: () => void;
+  handleLikeClick: () => void;
+  handleRushmoreVersionClick: () => void;
+  handleCompletedClick: () => void;
+  handleProfileClick: (user: SocialUser | undefined) => void;
+  liked: boolean;
 };
 
 const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
@@ -26,11 +26,12 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
   highScoreUser,
   firstToCompleteUser,
   displayVersion,
-  handleNavigateToUserRushmoreLeaderboard,
-  handleNavigateToUserRushmoreLikeListScreen,
-  handleNavigateToUserRushmoreVersionScreen,
-  handleNavigateToUserRushmoreCompletedListScreen,
-  navigateToUserProfileScreen,
+  handleLeaderboardClick,
+  handleLikeClick,
+  handleRushmoreVersionClick,
+  handleCompletedClick,
+  handleProfileClick,
+  liked,
 }) => {
   const truncateUsername = (username: string): string => {
     const maxLength = 10;
@@ -41,18 +42,15 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Like Count */}
-      <TouchableOpacity onPress={handleNavigateToUserRushmoreLikeListScreen}>
+      <TouchableOpacity onPress={handleLikeClick}>
         <View style={styles.touchableArea}>
-          <Icon name="heart" size={30} />
+          <Icon name="heart" size={30} color={liked ? "red" : "black"} />
           <Text style={styles.countText}>{likeCount}</Text>
         </View>
       </TouchableOpacity>
 
       {/* Total Completed */}
-      <TouchableOpacity
-        onPress={handleNavigateToUserRushmoreCompletedListScreen}
-      >
+      <TouchableOpacity onPress={handleCompletedClick}>
         <View style={styles.touchableArea}>
           <Icon name="check" size={30} />
           <Text style={styles.countText}>{totalCompleted}</Text>
@@ -61,7 +59,7 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
 
       {/* First to Complete User */}
       <TouchableOpacity
-        onPress={() => navigateToUserProfileScreen(firstToCompleteUser)}
+        onPress={() => handleProfileClick(firstToCompleteUser)}
         disabled={!firstToCompleteUser}
       >
         <View style={styles.touchableArea}>
@@ -71,7 +69,7 @@ const UserRushmoreStatsColumn: React.FC<UserRushmoreStatsColumnProps> = ({
           </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleNavigateToUserRushmoreVersionScreen}>
+      <TouchableOpacity onPress={handleRushmoreVersionClick}>
         <View style={styles.touchableArea}>
           <Icon name="clipboard-list-outline" size={30} />
           <Text style={styles.countText}>{displayVersion}</Text>
