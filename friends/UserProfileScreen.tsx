@@ -71,7 +71,9 @@ export const UserProfileScreen = ({
         const userRushmoreList = await userService.userRushmoresByUid(
           route.params.user.uid
         );
-        console.log("useRushmoreListData:" + JSON.stringify(userRushmoreList));
+        console.log(
+          "useRushmoreListData:" + JSON.stringify(userRushmoreList, null, 2)
+        );
         setUserRushmoreData(userRushmoreList);
         setSocialButtonText(
           getSocialNetworkButtonText(user.socialRelationship)
