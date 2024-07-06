@@ -7,6 +7,7 @@ import { CreateRushmoreStackContainer } from "./CreateRushmoreStackContainer";
 import { SettingsStackContainer } from "./SettingsStackContainer";
 import { UserNetworkTopTabContainer } from "./UserNetworkTopTabContainer";
 import { SafeAreaView } from "react-native";
+import { MyUserNetworkTopTabContainer } from "./MyUserNetworkTopTabContainer";
 
 const Tab = createBottomTabNavigator<RushmoreTabContainerParamList>();
 
@@ -32,8 +33,8 @@ export const RushmoreTabContainer = () => {
         />
 
         <Tab.Screen
-          name="UserNetworkTopTabContainer"
-          component={UserNetworkTopTabContainer}
+          name="MyUserNetworkTopTabContainer"
+          component={MyUserNetworkTopTabContainer}
           options={{
             tabBarLabel: "Social",
             tabBarIcon: ({ color, size }) => {

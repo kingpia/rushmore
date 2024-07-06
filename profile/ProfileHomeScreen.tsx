@@ -157,14 +157,14 @@ export const ProfileHomeScreen = ({
     });
   };
 
-  const navigateToFollowingScreen = (user: SocialUser) => {
+  const navigateToMyFollowingScreen = (user: SocialUser) => {
     console.log("UserData Before Navigate:" + JSON.stringify(user));
-    navigation.push("UserNetworkTopTabContainer", {
-      screen: "FollowingScreen", // Navigate to the tab navigator
+    navigation.push("MyUserNetworkTopTabContainer", {
+      screen: "MyFollowingScreen", // Navigate to the tab navigator
       user: user,
       params: {
         // Pass parameters to the tab navigator
-        screen: "FollowingScreen", // Navigate to the FollowingScreen within the tab
+        screen: "MyFollowingScreen", // Navigate to the FollowingScreen within the tab
         params: {
           // Pass parameters to the FollowingScreen
           user: user,
@@ -173,13 +173,13 @@ export const ProfileHomeScreen = ({
     });
   };
 
-  const navigateToFollowersScreen = (user: SocialUser) => {
-    navigation.push("UserNetworkTopTabContainer", {
-      screen: "FollowersScreen",
+  const navigateToMyFollowersScreen = (user: SocialUser) => {
+    navigation.push("MyUserNetworkTopTabContainer", {
+      screen: "MyFollowersScreen",
       user: user,
       params: {
         // Pass parameters to the tab navigator
-        screen: "FollowersScreen", // Navigate to the FollowingScreen within the tab
+        screen: "MyFollowersScreen", // Navigate to the FollowingScreen within the tab
         params: {
           // Pass parameters to the FollowingScreen
           user: user,
@@ -187,13 +187,13 @@ export const ProfileHomeScreen = ({
       },
     });
   };
-  const navigateToFriendsScreen = (user: SocialUser) => {
-    navigation.push("UserNetworkTopTabContainer", {
-      screen: "FriendsScreen",
+  const navigateToMyFriendsScreen = (user: SocialUser) => {
+    navigation.push("MyUserNetworkTopTabContainer", {
+      screen: "MyFriendsScreen",
       user: user,
       params: {
         // Pass parameters to the tab navigator
-        screen: "FollowingScreen", // Navigate to the FollowingScreen within the tab
+        screen: "MyFollowingScreen", // Navigate to the FollowingScreen within the tab
         params: {
           // Pass parameters to the FollowingScreen
           user: user,
@@ -411,7 +411,9 @@ export const ProfileHomeScreen = ({
             >
               <Button
                 mode="text"
-                onPress={() => userData && navigateToFollowingScreen(userData)}
+                onPress={() =>
+                  userData && navigateToMyFollowingScreen(userData)
+                }
               >
                 Following
               </Button>
@@ -424,7 +426,9 @@ export const ProfileHomeScreen = ({
             >
               <Button
                 mode="text"
-                onPress={() => userData && navigateToFollowersScreen(userData)}
+                onPress={() =>
+                  userData && navigateToMyFollowersScreen(userData)
+                }
               >
                 Followers
               </Button>

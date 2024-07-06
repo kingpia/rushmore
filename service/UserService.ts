@@ -14,7 +14,8 @@ interface GraphQLError {
 }
 
 export class UserService<T> {
-  private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
+  //private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
+  private baseURL: string = "http://192.168.254.9:8080"; // Hardcoded base URL
 
   async getRushmoreItems(uid: string, toFetch: ApiFetchEnums): Promise<T[]> {
     try {
@@ -342,6 +343,35 @@ export class UserService<T> {
     }
   }
 
+  async getMyFollowersUserList(): Promise<SocialUser[]> {
+    console.log("getMyFollowersUserList");
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+         getMyFollowersUserList {
+          followersCount
+          followingCount
+          nickName
+          profileImagePath
+          socialRelationship {
+            isFollowed
+            isFollowing
+          }
+          uid
+          userName
+          userRushmoreCount
+        }
+      }
+      `,
+      });
+      return response.data.data.getMyFollowersUserList;
+    } catch (error) {
+      console.error("Error getMyFollowersUserList:", error);
+      throw error;
+    }
+  }
+
   async getFollowingUserList(uid: string): Promise<SocialUser[]> {
     console.log("getFollowinguserList:" + uid);
     try {
@@ -369,6 +399,37 @@ export class UserService<T> {
       return response.data.data.getFollowingUserList;
     } catch (error) {
       console.error("Error unfollowing user:", error);
+      throw error;
+    }
+  }
+
+  async getMyFollowingUserList(): Promise<SocialUser[]> {
+    console.log("getFollowinguserList");
+    try {
+      const response = await api.post(`${this.baseURL}/graphql`, {
+        query: `
+        query {
+          getMyFollowingUserList {
+            followersCount
+            following
+            followingCount
+            nickName
+            profileImagePath
+            socialRelationship {
+              isFollowed
+              isFollowing
+            }
+            uid
+            userName
+            userRushmoreCount
+        }
+      }
+      `,
+      });
+
+      return response.data.data.getMyFollowingUserList;
+    } catch (error) {
+      console.error("Error getMyFollowingUserList:", error);
       throw error;
     }
   }

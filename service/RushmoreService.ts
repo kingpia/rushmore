@@ -20,7 +20,8 @@ interface GraphQLError {
 }
 
 export class RushmoreService<T> {
-  private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
+  //private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
+  private baseURL: string = "http://192.168.254.9:8080"; // Hardcoded base URL
 
   // Inside RushmoreService class
   async letterSelection(

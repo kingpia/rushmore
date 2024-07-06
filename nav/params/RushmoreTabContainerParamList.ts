@@ -8,7 +8,7 @@ export type RushmoreTabContainerParamList = {
   HomeStackContainer: undefined;
   InboxHomeScreen: undefined;
   CreateRushmoreStackContainer: undefined;
-  UserNetworkTopTabContainer: undefined;
+  MyUserNetworkTopTabContainer: undefined;
   SettingsStackContainer: undefined;
 };
 

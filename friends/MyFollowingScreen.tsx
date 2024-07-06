@@ -16,7 +16,7 @@ import * as SecureStore from "expo-secure-store";
 import { SettingsStackParamList } from "../nav/params/SettingsStackParamList";
 import { useUserFocus } from "../service/UserFocusContext";
 
-type FollowingScreenProps = {
+type MyFollowingScreenProps = {
   navigation: NativeStackNavigationProp<
     AppStackParamList & SettingsStackParamList
   >;
@@ -25,10 +25,10 @@ type FollowingScreenProps = {
 
 const userService = new UserService();
 
-export const FollowingScreen = ({
+export const MyFollowingScreen = ({
   navigation,
   route,
-}: FollowingScreenProps) => {
+}: MyFollowingScreenProps) => {
   const [followingList, setFollowingList] = useState<SocialUser[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -41,21 +41,7 @@ export const FollowingScreen = ({
     setLoading(true);
 
     try {
-      const userData = route;
-
-      console.log("userDaat:" + JSON.stringify(userData, null, 2));
-      let uid: string = "";
-      if (userData?.uid) {
-        console.log("Got the UID:" + userData?.uid);
-        uid = userData?.uid;
-      } else if (userFocus) {
-        console.log("Got the user focus");
-        uid = userFocus || "";
-      } else {
-        console.log("Noe user id or user focus");
-      }
-
-      const followingUsers = await userService.getFollowingUserList(uid);
+      const followingUsers = await userService.getMyFollowingUserList();
       setFollowingList(followingUsers);
     } catch (error) {
       console.error("Error fetching following users:", error);
@@ -172,5 +158,3 @@ const styles = StyleSheet.create({
     color: "#888",
   },
 });
-
-export default FollowingScreen;

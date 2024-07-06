@@ -5,8 +5,9 @@ import {
   Animated,
   TouchableOpacity,
   View,
+  Text,
 } from "react-native";
-import { ActivityIndicator, Searchbar, Text } from "react-native-paper";
+import { ActivityIndicator, Searchbar } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
 import { UserService } from "../service/UserService";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -16,7 +17,7 @@ import * as SecureStore from "expo-secure-store";
 import { SettingsStackParamList } from "../nav/params/SettingsStackParamList";
 import { useUserFocus } from "../service/UserFocusContext";
 
-type FollowingScreenProps = {
+type MyFollowersScreenProps = {
   navigation: NativeStackNavigationProp<
     AppStackParamList & SettingsStackParamList
   >;
@@ -25,11 +26,11 @@ type FollowingScreenProps = {
 
 const userService = new UserService();
 
-export const FollowingScreen = ({
+export const MyFollowersScreen = ({
   navigation,
   route,
-}: FollowingScreenProps) => {
-  const [followingList, setFollowingList] = useState<SocialUser[]>([]);
+}: MyFollowersScreenProps) => {
+  const [followersList, setFollowersList] = useState<SocialUser[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
   const [fadeAnim] = useState(new Animated.Value(0));
@@ -39,26 +40,14 @@ export const FollowingScreen = ({
 
   const fetchData = async () => {
     setLoading(true);
-
     try {
-      const userData = route;
+      const userData: SocialUser | undefined = route.params?.params?.user;
+      console.log("Route:" + JSON.stringify(userData, null, 2));
 
-      console.log("userDaat:" + JSON.stringify(userData, null, 2));
-      let uid: string = "";
-      if (userData?.uid) {
-        console.log("Got the UID:" + userData?.uid);
-        uid = userData?.uid;
-      } else if (userFocus) {
-        console.log("Got the user focus");
-        uid = userFocus || "";
-      } else {
-        console.log("Noe user id or user focus");
-      }
-
-      const followingUsers = await userService.getFollowingUserList(uid);
-      setFollowingList(followingUsers);
+      const followersList = await userService.getMyFollowersUserList();
+      setFollowersList(followersList);
     } catch (error) {
-      console.error("Error fetching following users:", error);
+      console.error("Error fetching followers:", error);
     } finally {
       setLoading(false);
     }
@@ -79,8 +68,13 @@ export const FollowingScreen = ({
   }, [fadeAnim]);
 
   const navigateToUserProfileScreen = async (user: SocialUser) => {
+    console.log("navigateToUserProfileScreen");
     let uid = await SecureStore.getItemAsync("uid");
+    console.log("Navigating to UID:" + uid);
     if (uid === user.uid) {
+      console.log(
+        "You need to navigate to your Profile Home. PUSH IT to stack"
+      );
       navigation.navigate("ProfileHomeScreen");
     } else {
       navigation.navigate("UserProfileScreen", {
@@ -106,14 +100,13 @@ export const FollowingScreen = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1, margin: 10 }}>
       <Searchbar
         placeholder="Search"
         onChangeText={onChangeSearch}
         value={searchQuery}
-        style={styles.searchbar}
+        style={{ margin: 5 }}
       />
-
       {loading ? (
         <ActivityIndicator
           animating={true}
@@ -121,13 +114,13 @@ export const FollowingScreen = ({
           color="#0000ff"
           style={styles.loadingIndicator}
         />
-      ) : followingList.length === 0 ? (
+      ) : followersList.length === 0 ? (
         <View style={styles.messageContainer}>
-          <Text style={styles.emptyMessage}>Not following anyone</Text>
+          <Text style={styles.emptyMessage}>No followers</Text>
         </View>
       ) : (
         <Animated.FlatList
-          data={followingList}
+          data={followersList}
           keyExtractor={(item) => item.uid}
           style={[styles.flatList, { opacity: fadeAnim }]}
           renderItem={({ item }) => (
@@ -146,14 +139,6 @@ export const FollowingScreen = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: 10,
-  },
-  searchbar: {
-    marginBottom: 16,
-    borderRadius: 12,
-  },
   loadingIndicator: {
     flex: 1,
     justifyContent: "center",
@@ -172,5 +157,3 @@ const styles = StyleSheet.create({
     color: "#888",
   },
 });
-
-export default FollowingScreen;

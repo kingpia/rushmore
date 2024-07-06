@@ -42,6 +42,7 @@ export type AppStackParamList = {
   EditUsernameScreen: { userData: SocialUser };
   AddFriendScreen: undefined;
   UserNetworkTopTabContainer: { user: SocialUser };
+  MyUserNetworkTopTabContainer: { user: SocialUser };
   UserProfileScreen: { user: SocialUser };
   TermsAndPolicyScreen: undefined;
   ProfileSettingsScreen: undefined;

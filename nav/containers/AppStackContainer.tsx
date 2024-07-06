@@ -29,6 +29,7 @@ import UserRushmoreCompletedListScreen from "../../rushmore/UserRushmoreComplete
 import UserRushmoreLikeListScreen from "../../rushmore/UserRushmoreLikeListScreen";
 import UserRushmoreLeaderboard from "../../rushmore/UserRushmoreLeaderboard";
 import UserRushmoreScreen from "../../rushmore/UserRushmoreScreen";
+import { MyUserNetworkTopTabContainer } from "./MyUserNetworkTopTabContainer";
 
 const AppStackNavigator = createNativeStackNavigator<AppStackParamList>();
 
@@ -116,6 +117,25 @@ export const AppStackContainer: React.FC<AppStackContainerProps> = ({
         <AppStackNavigator.Screen
           name="UserNetworkTopTabContainer"
           component={UserNetworkTopTabContainer}
+          options={({ route, navigation }) => ({
+            headerShown: true,
+            title: route.params.user.nickName,
+            headerRight: () => (
+              <View style={styles.iconContainer}>
+                <IconButton
+                  icon="account-plus"
+                  size={24}
+                  iconColor="black"
+                  onPress={() => navigation.navigate("AddFriendScreen")}
+                />
+              </View>
+            ),
+          })}
+        />
+
+        <AppStackNavigator.Screen
+          name="MyUserNetworkTopTabContainer"
+          component={MyUserNetworkTopTabContainer}
           options={({ route, navigation }) => ({
             headerShown: true,
             title: route.params.user.nickName,
