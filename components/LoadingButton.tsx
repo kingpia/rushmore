@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Button, ActivityIndicator, Text } from "react-native-paper";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { globalStyles } from "../styles/globalStyles"; // Adjust the import path accordingly
 
 type LoadingButtonProps = {
@@ -27,7 +27,7 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
       mode="contained"
       onPress={onPress}
       disabled={disabled || isLoading}
-      style={[styles.button, style]}
+      style={[style]}
       contentStyle={{ flexDirection: "row-reverse" }}
       labelStyle={{ marginLeft: 5 }}
     >
@@ -46,11 +46,5 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
     </Button>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    marginTop: 16,
-  },
-});
 
 export default LoadingButton;

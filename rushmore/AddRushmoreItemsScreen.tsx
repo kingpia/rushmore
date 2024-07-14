@@ -62,8 +62,8 @@ export const AddRushmoreItemsScreen = ({
 
   const rushmoreService = new RushmoreService(); // Create an instance of RushmoreService
 
-  //WHen I first show up here, I want to do a big search only once when the component is rendered
-  //Then we can run useEffect only when searchText changes.
+  // When I first show up here, I want to do a big search only once when the component is rendered
+  // Then we can run useEffect only when searchText changes.
   useEffect(() => {
     setUserRushmore(route.params.userRushmore);
     // Populate checkedItems with items from userRushmore
@@ -81,6 +81,7 @@ export const AddRushmoreItemsScreen = ({
   useEffect(() => {
     if (searchText.trim() !== "") {
       const fetchItems = async () => {
+        setLoading(true);
         console.log("fetch a few items here.");
         if (userRushmore) {
           let searchStringResponse =
@@ -98,6 +99,7 @@ export const AddRushmoreItemsScreen = ({
           } else {
             console.log("No items found in the search response.");
           }
+          setLoading(false);
         }
       };
 
@@ -135,7 +137,7 @@ export const AddRushmoreItemsScreen = ({
         setOriginalRushmoreItems((prevItems) => [...prevItems, ...newItems]);
       }
 
-      console.log("newItems lenth:" + newItems.length);
+      console.log("newItems length:" + newItems.length);
       setSearchResults((prevItems) => [...prevItems, ...newItems]);
       setFrom((prevFrom) => prevFrom + 12); // Increase `from` by 12 for the next fetch
     } catch (error) {
@@ -162,7 +164,7 @@ export const AddRushmoreItemsScreen = ({
 
   const handleEndReached = () => {
     console.log("handleEndReached()");
-    //Do not fetch more when we are doing searching
+    // Do not fetch more when we are doing searching
     if (!loading && searchText === "") {
       if (!noMoreItems) {
         fetchRushmoreItems();
@@ -234,6 +236,10 @@ export const AddRushmoreItemsScreen = ({
         ) : null}
       </View>
 
+      {loading && searchText ? (
+        <ActivityIndicator animating={true} style={styles.activityIndicator} />
+      ) : null}
+
       <List.Accordion
         title="Selected Items"
         expanded={selectedAccordionExpanded}
@@ -270,14 +276,20 @@ export const AddRushmoreItemsScreen = ({
       </List.Accordion>
 
       <View style={styles.flatListContainer}>
-        <FlatList
-          data={searchResults}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.primary}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.1}
-          ListFooterComponent={loading ? <ActivityIndicator animating /> : null}
-        />
+        {searchResults.length === 0 && !loading ? (
+          <Text style={styles.noResultsText}>No results found</Text>
+        ) : (
+          <FlatList
+            data={searchResults}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.primary}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.1}
+            ListFooterComponent={
+              loading && !searchText ? <ActivityIndicator animating /> : null
+            }
+          />
+        )}
       </View>
       <Button onPress={goBackToEditRushmoreScreen}>Select Items</Button>
     </View>
@@ -325,6 +337,12 @@ const styles = StyleSheet.create({
   },
   listItemTitle: {
     marginLeft: 20, // Add your desired margin here
+  },
+  noResultsText: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
+    color: "#888",
   },
 });
 

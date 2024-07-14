@@ -13,6 +13,7 @@ import { UserRushmore } from "../model/UserRushmore";
 import { RushmoreService } from "../service/RushmoreService";
 import MyCompletedRushmoreCard from "../components/MyCompletedRushmoreCard";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
+import * as SecureStore from "expo-secure-store";
 
 type UserRushmoreVersionScreenProps =
   StackContainerScreenProps<"UserRushmoreVersionScreen">;
@@ -59,20 +60,37 @@ export const UserRushmoreVersionScreen = ({
     }, [route.params.userRushmore])
   );
 
-  const navigateToUserRushmore = (item: UserRushmoreDTO) => {
-    console.log(
-      "Navigating to user rushmore:" +
-        JSON.stringify(item.userRushmore, null, 2)
-    );
-    console.log("navigate to user rushmore");
+  const navigateToUserRushmore = async (item: UserRushmoreDTO) => {
+    try {
+      // Retrieve the stored UID
+      const storedUid = await SecureStore.getItemAsync("uid");
+      const userRushmoreUid = item.userRushmore.uid;
 
-    const params = {
-      userRushmore: item.userRushmore,
-      selectedItemUserRushmore: undefined,
-    };
+      console.log("Stored UID:", storedUid);
+      console.log("User Rushmore UID:", userRushmoreUid);
 
-    // Navigate to EditUserRushmoreScreen with params
-    navigation.navigate("EditUserRushmoreScreen", params);
+      // Check if the stored UID matches the userRushmore UID
+      if (storedUid === userRushmoreUid) {
+        // Navigate to EditUserRushmoreScreen
+        console.log(
+          "Navigating to EditUserRushmoreScreen:" +
+            JSON.stringify(item.userRushmore, null, 2)
+        );
+        const params = {
+          userRushmore: item.userRushmore,
+          selectedItemUserRushmore: undefined,
+        };
+        navigation.navigate("EditUserRushmoreScreen", params);
+      } else {
+        // Navigate to UserRushmoreScreen
+        console.log("Navigating to UserRushmoreScreen");
+        navigation.navigate("UserRushmoreScreen", {
+          urId: item.userRushmore.urId,
+        });
+      }
+    } catch (error) {
+      console.error("Error retrieving UID from SecureStore:", error);
+    }
   };
 
   return (

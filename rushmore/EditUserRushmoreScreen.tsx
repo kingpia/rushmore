@@ -3,7 +3,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import {
   SafeAreaView,
   StyleSheet,
-  TouchableOpacity,
   View,
   LayoutAnimation,
   UIManager,
@@ -14,10 +13,6 @@ import {
   ActivityIndicator,
   Button,
   Dialog,
-  IconButton,
-  List,
-  Menu,
-  Modal,
   Portal,
   Text,
 } from "react-native-paper";
@@ -58,6 +53,8 @@ export const EditUserRushmoreScreen = ({
   const [addItemText, setAddItemText] = useState("");
   const [isAddItemModalVisible, setIsAddItemModalVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Add isLoading state
+
   const showDeleteDialog = () => setIsDeleteDialogVisible(true);
   const showEditDialog = () => setIsEditDialogVisible(true);
 
@@ -124,7 +121,7 @@ export const EditUserRushmoreScreen = ({
       };
 
       fetchUserRushmore();
-    }, [route.params.userRushmore?.itemList])
+    }, [route.params.userRushmore, route.params.selectedItemUserRushmore])
   );
 
   const navigateToAddItemsScreen = () => {
@@ -177,7 +174,12 @@ export const EditUserRushmoreScreen = ({
         await rushmoreService.editUserRushmore(userRushmore);
       }
     }
-    navigation.goBack();
+    //goBack here isn't working. I put it here a while back andit solved some problems. but lets fix it
+    // Reset the navigation stack to ensure we go back to the CreateRushmoreHomeScreen
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "RushmoreTabContainer" }],
+    });
   };
 
   const saveUserRushmore = async () => {
@@ -294,11 +296,10 @@ export const EditUserRushmoreScreen = ({
 
   const navigateToSettingsScreen = async () => {
     console.log("navigateToSettingsScreen");
+    setIsLoading(true); // Set loading to true
     await saveUserRushmore();
 
     if (userRushmore) {
-      console.log("The params are:" + JSON.stringify(route.params));
-
       navigation.reset({
         index: 0,
         routes: [
@@ -311,6 +312,7 @@ export const EditUserRushmoreScreen = ({
     } else {
       console.log("userRushmore or itemList is undefined");
     }
+    setIsLoading(false); // Set loading to false after navigation
   };
 
   const confirmDeleteUserRushmore = async () => {
@@ -487,6 +489,7 @@ export const EditUserRushmoreScreen = ({
             navigateToAddItemsScreen={navigateToAddItemsScreen}
             userRushmore={userRushmore}
             isEditMode={!userRushmore?.completedDt}
+            isLoading={isLoading} // Pass isLoading state
           />
         </View>
       )}

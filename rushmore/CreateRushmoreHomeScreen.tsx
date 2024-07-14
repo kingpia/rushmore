@@ -8,28 +8,18 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { CreateUserRushmoreDetailResponseDTO } from "../model/CreateUserRushmoreDetailResponseDTO";
 import { Rushmore } from "../model/Rushmore";
-import { AppStackParamList } from "../nav/params/AppStackParamList";
-import {
-  RushmoreGameTypeEnums,
-  RushmoreType,
-  RushmoreVisibilityEnums,
-  UserRushmore,
-} from "../model/UserRushmore";
+import { RushmoreType, UserRushmore } from "../model/UserRushmore";
 import { CreateUserRushmoreRequestDTO } from "../model/CreateUserRushmoreRequestDTO";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import { UserRushmoreInitialCreateDTO } from "../model/UserRushmoreInitialCreateDTO";
 
 type CreateRushmoreHomeScreenProps = {
-  navigation: NativeStackNavigationProp<
-    CreateRushmoreStackParamList & AppStackParamList
-  >;
+  navigation: NativeStackNavigationProp<CreateRushmoreStackParamList>;
 };
 
 export const CreateRushmoreHomeScreen: React.FC<
   CreateRushmoreHomeScreenProps
 > = ({ navigation }: CreateRushmoreHomeScreenProps) => {
-  const rushmoreService = new RushmoreService<UserRushmore>();
-
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [rushmoreList, setRushmoreList] = useState<Rushmore[]>([]);
@@ -117,37 +107,11 @@ export const CreateRushmoreHomeScreen: React.FC<
       (item) => selectedCategory === "All" || item.category === selectedCategory
     );
 
-  const navigateToEditUserRushmoreScreen = async (rushmore: Rushmore) => {
-    const createUserRushmoreRequest: CreateUserRushmoreRequestDTO = {
-      rid: rushmore.rid,
-      visibility: RushmoreVisibilityEnums.PUBLIC,
-      gameType: RushmoreGameTypeEnums.OPEN,
-    };
-
-    try {
-      let userRushmoreInitialCreate: UserRushmoreInitialCreateDTO =
-        await rushmoreService.createUserRushmore(createUserRushmoreRequest);
-
-      console.log(
-        "Returned created user rushmore:" +
-          JSON.stringify(userRushmoreInitialCreate)
-      );
-
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: "UserRushmoreTypeScreen",
-            params: {
-              userRushmoreInitialCreate: userRushmoreInitialCreate,
-            },
-          },
-        ],
-      });
-    } catch (error: any) {
-      //TODO Display if already completed
-      console.error("Error Creating Rushmore. DISPLAY MODAL", error);
-    }
+  const navigateToRushmoreTypeScreen = async (rushmore: Rushmore) => {
+    navigation.push("UserRushmoreTypeScreen", {
+      userRushmoreList: userRushmoreList,
+      rushmore: rushmore,
+    });
   };
 
   return (
@@ -168,7 +132,7 @@ export const CreateRushmoreHomeScreen: React.FC<
           <View>
             <RushmoreCard
               rushmore={item}
-              onPress={() => navigateToEditUserRushmoreScreen(item)}
+              onPress={() => navigateToRushmoreTypeScreen(item)}
               disabled={item.isDisabled}
               style={item.isDisabled ? styles.disabledCard : undefined}
             />

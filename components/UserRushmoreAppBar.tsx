@@ -23,7 +23,6 @@ const UserRushmoreAppBar: React.FC<Props> = ({
   return (
     <Appbar.Header statusBarHeight={0} style={styles.header}>
       <View style={styles.leftContainer}>
-        <Text style={styles.versionText}>{displayVersion}</Text>
         <Avatar.Icon size={40} icon="account" style={styles.avatar} />
       </View>
       <Appbar.Content

@@ -63,6 +63,8 @@ export const RushmoreSettingsScreen = ({
 
   const [isLoading, setIsLoading] = useState(false); // Loading state for login process
   const [versionError, setVersionError] = useState(""); // State for version input error
+  const [showClearIcon, setShowClearIcon] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleVersionAccordionPress = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -143,13 +145,19 @@ export const RushmoreSettingsScreen = ({
     );
   };
 
-  // Handle change for version text input
   const handleVersionTextChange = (text: string) => {
     if (text.length <= 20) {
       setVersionText(text);
       validateVersionText(text);
+      setShowClearIcon(text.length > 0); // Show clear icon if text is not empty
     }
   };
+
+  const clearVersionText = () => {
+    setVersionText("");
+    setShowClearIcon(false); // Hide clear icon
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Appbar.Header statusBarHeight={0}>
@@ -199,13 +207,31 @@ export const RushmoreSettingsScreen = ({
             </View>
           )}
         >
-          <TextInput
-            label="Version"
-            value={versionText}
-            onChangeText={handleVersionTextChange}
-            style={styles.textInput}
-            error={!!versionError}
-          />
+          <View style={styles.versionInputContainer}>
+            <TextInput
+              label="Version"
+              value={versionText}
+              onChangeText={handleVersionTextChange}
+              style={styles.versionTextInput}
+              error={!!versionError}
+              onFocus={() => {
+                setIsFocused(true);
+                setShowClearIcon(versionText.length > 0);
+              }}
+              onBlur={() => {
+                setIsFocused(false);
+                setShowClearIcon(versionText.length > 0);
+              }}
+            />
+            {showClearIcon && (
+              <IconButton
+                icon="close"
+                size={20}
+                onPress={clearVersionText}
+                style={styles.clearIcon}
+              />
+            )}
+          </View>
           {!!versionError && (
             <Text style={styles.errorText}>{versionError}</Text>
           )}
@@ -324,6 +350,10 @@ const styles = StyleSheet.create({
   textInput: {
     marginBottom: 16,
   },
+  versionTextInput: {
+    marginBottom: 16,
+    width: "100%",
+  },
   buttonContainer: {
     flexDirection: "row",
   },
@@ -343,6 +373,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: -12,
     marginBottom: 12,
+  },
+  versionInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%", // Ensure container takes full width
+  },
+
+  clearIcon: {
+    position: "absolute",
+    right: 0,
   },
 });
 

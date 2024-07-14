@@ -2,13 +2,25 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaView, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, List, IconButton } from "react-native-paper";
 import { RushmoreService } from "../service/RushmoreService";
-import { StackContainerScreenProps } from "../nav/params/AppStackParamList";
-import { UserRushmore, RushmoreType } from "../model/UserRushmore";
+import {
+  UserRushmore,
+  RushmoreType,
+  RushmoreVisibilityEnums,
+  RushmoreGameTypeEnums,
+} from "../model/UserRushmore";
 import EditUserRushmoreAppBar from "../components/EditUserRushmoreAppBar";
 import LoadingButton from "../components/LoadingButton";
+import { CreateRushmoreStackParamList } from "../nav/params/CreateRushmoreStackParamList";
+import { CreateUserRushmoreRequestDTO } from "../model/CreateUserRushmoreRequestDTO";
+import { UserRushmoreInitialCreateDTO } from "../model/UserRushmoreInitialCreateDTO";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { AppStackParamList } from "../nav/params/AppStackParamList";
+import { Rushmore } from "../model/Rushmore";
 
-type UserRushmoreTypeScreenProps =
-  StackContainerScreenProps<"UserRushmoreTypeScreen">;
+type UserRushmoreTypeScreenProps = NativeStackScreenProps<
+  CreateRushmoreStackParamList & AppStackParamList,
+  "UserRushmoreTypeScreen"
+>;
 
 const rushmoreService = new RushmoreService();
 
@@ -16,7 +28,9 @@ export const UserRushmoreTypeScreen = ({
   route,
   navigation,
 }: UserRushmoreTypeScreenProps) => {
-  const [userRushmore, setUserRushmore] = useState<UserRushmore | null>(null);
+  const [rushmore, setRushmore] = useState<Rushmore>();
+  const [userRushmoreList, setUserRushmoreList] = useState<UserRushmore[]>([]);
+
   const [selectedType, setSelectedType] = useState<RushmoreType>(
     RushmoreType.Favorite
   );
@@ -25,60 +39,90 @@ export const UserRushmoreTypeScreen = ({
   const [isFavoriteComplete, setIsFavoriteComplete] = useState(false);
   const [isBestComplete, setIsBestComplete] = useState(false);
 
-  useEffect(() => {
-    console.log("Inside useEffect");
-    const fetchUserRushmore = async () => {
-      if (route.params?.userRushmoreInitialCreate) {
-        console.log("userRushmoreInitialCreate is set");
-        const userRushmoreData = await rushmoreService.getUserRushmore(
-          route.params?.userRushmoreInitialCreate.userRushmore.urId
-        );
-        setUserRushmore(userRushmoreData);
-        setSelectedType(userRushmoreData.rushmoreType as RushmoreType);
+  // Destructure route.params to get userRushmoreList and rushmore
+  const {
+    userRushmoreList: initialUserRushmoreList,
+    rushmore: initialRushmore,
+  } = route.params;
 
-        const { favoriteComplete, bestComplete } =
-          route.params.userRushmoreInitialCreate;
-        console.log("favoriteComplete:", favoriteComplete);
-        console.log("bestComplete:", bestComplete);
+  useEffect(() => {
+    if (
+      !rushmore &&
+      (!userRushmoreList.length || !initialUserRushmoreList.length)
+    ) {
+      console.log("Inside useEffect");
+      setUserRushmoreList(initialUserRushmoreList);
+      setRushmore(initialRushmore);
+      if (initialRushmore) {
+        const favoriteComplete = initialUserRushmoreList.some(
+          (userRushmore) =>
+            userRushmore.rushmore.rid === initialRushmore.rid &&
+            userRushmore.rushmoreType === RushmoreType.Favorite
+        );
+
+        const bestComplete = initialUserRushmoreList.some(
+          (userRushmore) =>
+            userRushmore.rushmore.rid === initialRushmore.rid &&
+            userRushmore.rushmoreType === RushmoreType.Best
+        );
+        console.log("FavoriteComplete:" + favoriteComplete);
+        console.log("BestComplete:" + bestComplete);
 
         setIsFavoriteComplete(favoriteComplete);
         setIsBestComplete(bestComplete);
       }
-    };
-    fetchUserRushmore();
-  }, [route.params?.userRushmoreInitialCreate]);
-
-  useEffect(() => {
-    console.log("Updated isFavoriteComplete:", isFavoriteComplete);
-    console.log("Updated isBestComplete:", isBestComplete);
-  }, [isFavoriteComplete, isBestComplete]);
+    }
+  }, [initialRushmore, initialUserRushmoreList, rushmore, userRushmoreList]);
 
   const updateRushmoreType = (newType: RushmoreType) => {
-    if (userRushmore) {
-      const updatedRushmore = { ...userRushmore, rushmoreType: newType };
-      setUserRushmore(updatedRushmore);
-      setSelectedType(newType);
+    console.log("updateRushmoreType");
+    if (newType === selectedType) {
+      console.log("Type already selected, no change needed");
+      return;
     }
+    console.log("Setting new selectedType");
+    setSelectedType(newType);
   };
 
   const navigateToEditUserRushmoreScreen = async () => {
     console.log("navigateToEditUserRushmoreScreen");
 
-    if (userRushmore && selectedType) {
-      console.log("Setting SelectedType on user rushmore:" + selectedType);
+    if (rushmore && selectedType) {
       setIsLoading(true);
-      userRushmore.rushmoreType = selectedType;
-      await rushmoreService.editUserRushmore(userRushmore);
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: "EditUserRushmoreScreen",
-            params: { userRushmore: userRushmore },
-          },
-        ],
-      });
-      setIsLoading(false);
+      const createUserRushmoreRequest: CreateUserRushmoreRequestDTO = {
+        rid: rushmore.rid,
+        visibility: RushmoreVisibilityEnums.PUBLIC,
+        gameType: RushmoreGameTypeEnums.OPEN,
+        type: selectedType,
+      };
+
+      console.log(
+        "The createUserRushmoreRequest:" +
+          JSON.stringify(createUserRushmoreRequest, null, 2)
+      );
+
+      try {
+        let userRushmoreInitialCreate: UserRushmoreInitialCreateDTO =
+          await rushmoreService.createUserRushmore(createUserRushmoreRequest);
+
+        console.log(
+          "Returned created user rushmore:" +
+            JSON.stringify(userRushmoreInitialCreate, null, 2)
+        );
+
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: "EditUserRushmoreScreen",
+              params: { userRushmore: userRushmoreInitialCreate.userRushmore },
+            },
+          ],
+        });
+      } catch (error: any) {
+        setIsLoading(false);
+        console.error("Error Creating Rushmore. DISPLAY MODAL", error);
+      }
     }
   };
 
@@ -97,16 +141,6 @@ export const UserRushmoreTypeScreen = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <EditUserRushmoreAppBar
-        displayVersion=""
-        userRushmore={userRushmore || undefined}
-        menuVisible={menuVisible}
-        closeMenu={closeMenu}
-        handleMenuPress={handleMenuPress}
-        handleDeleteUserRushmorePress={handleDeleteUserRushmorePress}
-        handleEditPress={handleEditPress}
-        isEditMode={true}
-      />
       <View style={styles.content}>
         <Text style={styles.title}>Select Rushmore Type</Text>
         <View style={styles.optionContainer}>

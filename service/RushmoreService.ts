@@ -510,7 +510,7 @@ export class RushmoreService<T> {
         query: `
             mutation {
               createUserRushmore(
-                request: {rid: "${createUserRushmoreRequest.rid}", visibility: "${createUserRushmoreRequest.visibility}", gameType: "${createUserRushmoreRequest.gameType}"}
+                request: {rid: "${createUserRushmoreRequest.rid}", visibility: "${createUserRushmoreRequest.visibility}", gameType: "${createUserRushmoreRequest.gameType}", type:"${createUserRushmoreRequest.type}"}
               ) {
                 userRushmore {
                   gameType
@@ -524,8 +524,6 @@ export class RushmoreService<T> {
                   createdDt
                   updatedDt
                 }
-                favoriteComplete
-                bestComplete
               }
             }
           `,
@@ -834,6 +832,7 @@ export class RushmoreService<T> {
           getUserRushmoreVersionList(urId: $urId) {
             userRushmore {
               completedDt
+              uid
               highScore
               highScoreUid
               highScoreUser {
@@ -877,7 +876,7 @@ export class RushmoreService<T> {
 
       return response.data.data.getUserRushmoreVersionList;
     } catch (error) {
-      console.error("Error fetching user rushmore version list:", error);
+      console.error("Error fetching getUserRushmoreVersionList:", error);
       throw error;
     }
   }

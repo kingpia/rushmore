@@ -36,7 +36,6 @@ export const UserRushmoreCompletedListScreen = ({
 
   const fetchUserRushmoreViewCompletes = async (reset: boolean = false) => {
     if (loading || noMoreItems) return;
-
     setLoading(true);
     try {
       if (userRushmore) {

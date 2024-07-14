@@ -11,7 +11,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { Ionicons } from "@expo/vector-icons";
 import { CognitoService } from "../service/CognitoService";
-import { globalStyles } from "../styles/globalStyles";
 import LoadingButton from "../components/LoadingButton";
 
 const validateEmail = (email: string) => {

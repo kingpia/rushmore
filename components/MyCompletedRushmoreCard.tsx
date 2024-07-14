@@ -1,10 +1,13 @@
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { Text, Card, Avatar } from "react-native-paper";
+import { Text, Card } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { parse, format } from "date-fns";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import { UserRushmore } from "../model/UserRushmore";
+import { Image } from "expo-image";
+
+const defaultImage = require("../assets/shylo.png");
 
 interface MyCompletedRushmoreCardProps {
   userRushmoreDTO: UserRushmoreDTO;
@@ -35,16 +38,20 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
 
   const { title } = userRushmoreDTO.userRushmore.rushmore;
 
-  const parsedCompletedDt = parse(
-    completedDt,
-    "EEE MMM dd HH:mm:ss 'GMT' yyyy",
-    new Date()
-  );
+  // Log all properties to check for null values
+  console.log("userRushmoreDTO:", userRushmoreDTO);
 
-  const formattedCompletedDt = format(
-    new Date(parsedCompletedDt),
-    "MMM d yyyy"
-  );
+  // Ensure rushmore properties are not null
+  const rushmoreImageUrl = rushmore?.imageUrl || defaultImage;
+  const rushmoreTitle = rushmore?.title || "N/A";
+
+  const parsedCompletedDt = completedDt
+    ? parse(completedDt, "EEE MMM dd HH:mm:ss 'GMT' yyyy", new Date())
+    : null;
+
+  const formattedCompletedDt = parsedCompletedDt
+    ? format(new Date(parsedCompletedDt), "MMM d yyyy")
+    : "N/A";
 
   let formattedFirstCompletedDt = "N/A";
 
@@ -79,21 +86,27 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
         <Card.Content>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
-              <Avatar.Image size={40} source={{ uri: rushmore.imageUrl }} />
+              <Image
+                style={styles.avatar}
+                source={rushmoreImageUrl}
+                placeholder={defaultImage}
+              />
               <View style={styles.headerText}>
                 <Text style={styles.rushmoreType}>{rushmoreType}</Text>
-                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.title}>{rushmoreTitle}</Text>
               </View>
             </View>
             <View style={styles.headerRight}>
-              <Text style={styles.version}>Version: {displayVersion}</Text>
+              <Text style={styles.version}>
+                Version: {displayVersion || "N/A"}
+              </Text>
               <Text style={styles.date}>{formattedCompletedDt}</Text>
             </View>
           </View>
           <View style={styles.statsRow}>
             <View style={styles.statsItem}>
               <MaterialCommunityIcons name="heart" size={17} color="#e91e63" />
-              <Text style={styles.statsText}>{likeCount}</Text>
+              <Text style={styles.statsText}>{likeCount ?? "N/A"}</Text>
             </View>
             <View style={styles.statsItem}>
               <MaterialCommunityIcons
@@ -101,7 +114,7 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
                 size={17}
                 color="#ffc107"
               />
-              <Text style={styles.statsText}>{bookmarkCount}</Text>
+              <Text style={styles.statsText}>{bookmarkCount ?? "N/A"}</Text>
             </View>
             <View style={styles.statsItem}>
               <MaterialCommunityIcons
@@ -109,14 +122,14 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
                 size={17}
                 color="#4caf50"
               />
-              <Text style={styles.statsText}>{completedCount}</Text>
+              <Text style={styles.statsText}>{completedCount ?? "N/A"}</Text>
             </View>
           </View>
           <View style={styles.infoRow}>
             <View style={styles.infoItem}>
               <MaterialCommunityIcons name="crown" size={17} color="#ff9800" />
               <Text style={styles.infoLabel}>High Score:</Text>
-              <Text style={styles.infoText}>{highScore}</Text>
+              <Text style={styles.infoText}>{highScore ?? "N/A"}</Text>
               <Text style={styles.infoText}>
                 @{highScoreUser ? highScoreUser.userName : "N/A"}
               </Text>
@@ -214,6 +227,11 @@ const styles = StyleSheet.create({
   },
   headerRight: {
     alignItems: "flex-end",
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 30,
   },
 });
 
