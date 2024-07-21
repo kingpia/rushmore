@@ -1,11 +1,12 @@
 import React from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
-import { Avatar, Card, Text } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { parse, format } from "date-fns";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import { RushmoreVisibilityEnums } from "../model/UserRushmore";
 import { RushmoreGameTypeEnums } from "../model/RushmoreGameTypeEnums";
+import { Image } from "expo-image";
 
 type MyInProgressRushmoreCardProps = {
   myInProgressRushmore: UserRushmoreDTO;
@@ -23,6 +24,7 @@ export const MyInProgressRushmoreCard: React.FC<
     new Date()
   );
   const formattedCreatedDt = format(parsedCreatedDt, "MMM d yyyy");
+  const defaultImage = require("../assets/shylo.png");
 
   let visibilityIcon;
   if (visibility === RushmoreVisibilityEnums.PUBLIC) {
@@ -51,7 +53,15 @@ export const MyInProgressRushmoreCard: React.FC<
       <Card style={styles.card}>
         <Card.Content>
           <View style={styles.header}>
-            <Avatar.Image size={40} source={{ uri: rushmore.imageUrl }} />
+            <View style={styles.avatarContainer}>
+              <Image
+                style={styles.avatar}
+                source={{ uri: rushmore.imageUrl }}
+                placeholder={defaultImage}
+                contentFit="contain"
+                transition={1000}
+              />
+            </View>
             <View style={styles.headerText}>
               <Text style={styles.rushmoreType}>
                 {myInProgressRushmore.userRushmore.rushmoreType}
@@ -88,6 +98,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
+  },
+  avatarContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  avatar: {
+    width: "100%",
+    height: "100%",
   },
   headerText: {
     marginLeft: 10,

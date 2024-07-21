@@ -90,6 +90,8 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
                 style={styles.avatar}
                 source={rushmoreImageUrl}
                 placeholder={defaultImage}
+                contentFit="contain"
+                transition={1000}
               />
               <View style={styles.headerText}>
                 <Text style={styles.rushmoreType}>{rushmoreType}</Text>
@@ -231,7 +233,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 50,
     height: 50,
-    borderRadius: 30,
+    borderRadius: 25,
   },
 });
 

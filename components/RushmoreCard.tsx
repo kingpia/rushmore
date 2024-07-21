@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { TouchableOpacity, View, StyleSheet, ViewStyle } from "react-native";
-import { Avatar, Card, Text } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { Rushmore } from "../model/Rushmore";
 import { formatCount } from "../utils/CountUtils";
 
@@ -27,11 +28,16 @@ export const RushmoreCard: React.FC<RushmoreCardProps> = ({
         <Card.Content>
           <View style={styles.titleRow}>
             <View style={styles.iconTitleContainer}>
-              <Avatar.Image
-                size={45}
-                source={rushmore?.icon ? { uri: rushmore.icon } : defaultImage}
-                style={styles.avatar}
-              />
+              <View style={styles.imageContainer}>
+                <Image
+                  source={
+                    rushmore?.icon ? { uri: rushmore.icon } : defaultImage
+                  }
+                  style={styles.image}
+                  contentFit="contain"
+                  transition={1000}
+                />
+              </View>
               <Text variant="titleMedium" style={styles.titleText}>
                 {rushmore.title}
               </Text>
@@ -72,9 +78,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  avatar: {
-    backgroundColor: "transparent",
+  imageContainer: {
+    width: 45,
+    height: 45,
+    borderRadius: 22.5, // half of the width and height to make it circular
+    overflow: "hidden",
     marginRight: 10,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
   },
   titleText: {
     fontWeight: "bold",

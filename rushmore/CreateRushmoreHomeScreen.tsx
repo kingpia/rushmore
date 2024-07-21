@@ -9,9 +9,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { CreateUserRushmoreDetailResponseDTO } from "../model/CreateUserRushmoreDetailResponseDTO";
 import { Rushmore } from "../model/Rushmore";
 import { RushmoreType, UserRushmore } from "../model/UserRushmore";
-import { CreateUserRushmoreRequestDTO } from "../model/CreateUserRushmoreRequestDTO";
-import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
-import { UserRushmoreInitialCreateDTO } from "../model/UserRushmoreInitialCreateDTO";
 
 type CreateRushmoreHomeScreenProps = {
   navigation: NativeStackNavigationProp<CreateRushmoreStackParamList>;

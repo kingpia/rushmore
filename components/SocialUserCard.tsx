@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { Avatar, Button, Card, IconButton, Text } from "react-native-paper";
+import { Button, Card, Text } from "react-native-paper";
 import { getSocialNetworkButtonText } from "../utils/SocialUtils";
+import { Image } from "expo-image";
 
 type SocialUserCardProps = {
   user: SocialUser;
@@ -18,14 +19,10 @@ const SocialUserCard: React.FC<SocialUserCardProps> = ({
   const [buttonText, setButtonText] = useState<string>("");
 
   useEffect(() => {
-    // Update button text based on the initial relationship status
-    //console.log("should be updating button tnext here:" + JSON.stringify(user));
-
     setButtonText(getSocialNetworkButtonText(user.socialRelationship));
   }, [user.socialRelationship]);
 
   const handleSocialAction = () => {
-    console.log("handlesocialAction");
     switch (buttonText) {
       case "Follow back":
         onPressFollow(user.uid);
@@ -54,7 +51,15 @@ const SocialUserCard: React.FC<SocialUserCardProps> = ({
   return (
     <Card style={styles.card}>
       <Card.Content style={styles.content}>
-        <Avatar.Image size={60} source={defaultImage} style={styles.avatar} />
+        <View style={styles.avatarContainer}>
+          <Image
+            style={styles.avatar}
+            source={user.profileImagePath || defaultImage}
+            placeholder={defaultImage}
+            contentFit="contain"
+            transition={1000}
+          />
+        </View>
 
         <View style={styles.userInfo}>
           <Text style={styles.userName}>{user.nickName}</Text>
@@ -70,7 +75,7 @@ const SocialUserCard: React.FC<SocialUserCardProps> = ({
           onPress={handleSocialAction}
           style={styles.button}
           labelStyle={styles.buttonLabel}
-          disabled={buttonText === "Its you"} // Disable the button when buttonText is "Its you"
+          disabled={buttonText === "Its You"}
         >
           {buttonText}
         </Button>
@@ -88,8 +93,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  avatar: {
+  avatarContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    overflow: "hidden",
     marginRight: 10,
+  },
+  avatar: {
+    width: "100%",
+    height: "100%",
   },
   userInfo: {
     flex: 1,
