@@ -6,6 +6,12 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
 import * as SecureStore from "expo-secure-store";
+import { jwtDecode } from "jwt-decode";
+import "core-js/stable/atob"; // <- polyfill here
+import axios, { AxiosError } from "axios";
+const { aws_user_pools_web_client_id } = amplifyconfig;
+import { cognitoAuthUrl } from "./config"; // Import the constant
+
 // App.js
 
 import { Amplify, Auth } from "aws-amplify";
@@ -13,6 +19,11 @@ import amplifyconfig from "./src/amplifyconfiguration.json";
 import { AppStackParamList } from "./nav/params/AppStackParamList";
 import { UserFocusProvider } from "./service/UserFocusContext";
 Amplify.configure(amplifyconfig);
+
+const headers = {
+  "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth",
+  "Content-Type": "application/x-amz-json-1.1",
+};
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -37,16 +48,33 @@ export default function App() {
           );
         } else {
           console.log("We have an access Token, lets check if it's expired");
-          //If expired get the refresh token
-          //If there is no refresh token, send to AuthStackContainer, leave things as default
-          //If there is a refresh token, check if expired
-          //If expired leave default and goto login
-          //If not expired, refresh everything and send them to the RushmoreTabContainer
-          setInitialRoute("RushmoreTabContainer"); // Change initial route if user is logged in
+
+          const decoded = jwtDecode(accessToken);
+          const accessTokenExpiration: number = decoded.exp || 0;
+          if (accessTokenExpiration * 1000 > new Date().getTime()) {
+            console.log(
+              "Access token expiration:" +
+                accessTokenExpiration +
+                " is Greater than new Date " +
+                new Date().getTime()
+            );
+            console.log("Access token is NOT Expired");
+            setInitialRoute("RushmoreTabContainer"); // Change initial route if user is logged in
+          } else {
+            console.log("The ACCESS TOKEN IS EXPIRTED. Do some work here.");
+            let newAccessToken = await refreshAccessToken();
+
+            if (newAccessToken) {
+              console.log("RefreshAccessToken Returned a new token");
+              setInitialRoute("RushmoreTabContainer"); // Change initial route if user is logged in
+            } else {
+              console.log("Refresh Access Token did NOT return a new token");
+
+              //Change this to goto the LogInScreen later.
+              setInitialRoute("RushmoreTabContainer"); // Change initial route if user is logged in
+            }
+          }
         }
-        // Artificially delay for two seconds to simulate a slow loading
-        // experience. Please remove this if you copy and paste the code!
-        //await new Promise((resolve) => setTimeout(resolve, 5000));
       } catch (e) {
         console.warn(e);
       } finally {
@@ -70,6 +98,50 @@ export default function App() {
       );
     }
   };
+
+  // Function to refresh access token
+  async function refreshAccessToken(): Promise<string> {
+    console.log("APP TSX: RefreshAccessToken()");
+    try {
+      // Retrieve refresh token from SecureStore
+      const refreshToken = await SecureStore.getItemAsync("refreshToken");
+      if (!refreshToken) {
+        console.log("Refresh token is empty.");
+        //This will NOT return a new token, a null response will return to login screen.
+        throw new Error("Refresh token not found.");
+      } else {
+        console.log("Refresh token:" + refreshToken);
+
+        console.log("Making call to Cognito to refresh access token...");
+
+        // Make a request to Cognito to refresh access token
+        const requestData = {
+          AuthFlow: "REFRESH_TOKEN",
+          ClientId: aws_user_pools_web_client_id,
+          AuthParameters: {
+            REFRESH_TOKEN: refreshToken,
+          },
+        };
+
+        const response = await axios.post(cognitoAuthUrl, requestData, {
+          headers,
+        });
+
+        console.log(
+          "New Access Token:",
+          response.data.AuthenticationResult.AccessToken
+        );
+        return response.data.AuthenticationResult.AccessToken;
+      }
+
+      // Return the newly refreshed access token
+    } catch (error) {
+      //TODO If this happens, do we log them out?  I think we should, but why is this happening?
+      // Handle token refresh failure
+      console.error("Error refreshing access token:", error);
+      throw error;
+    }
+  }
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {

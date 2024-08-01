@@ -4,6 +4,7 @@ import amplifyconfig from "../src/amplifyconfiguration.json";
 const { aws_user_pools_web_client_id } = amplifyconfig;
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob"; // <- polyfill here
+import { BASE_URL, COGNITO_AUTH_URL } from "../config"; // Import the constants
 
 interface GraphQLError {
   message: string;
@@ -13,17 +14,15 @@ interface GraphQLError {
 }
 // Create Axios instance
 const api = axios.create({
-  baseURL: "http://192.168.0.11:8080",
+  baseURL: BASE_URL,
   timeout: 10000,
 });
-const cognitoAuthUrl = "https://cognito-idp.us-east-1.amazonaws.com";
 
 const headers = {
   "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth",
   "Content-Type": "application/x-amz-json-1.1",
 };
 
-// Axios response interceptor
 // Axios response interceptor
 api.interceptors.response.use((response) => {
   if (response.data.errors) {
@@ -99,6 +98,8 @@ async function refreshAccessToken(): Promise<string> {
       throw new Error("Refresh token not found.");
     }
 
+    console.log("Refresh token:" + refreshToken);
+
     console.log("Making call to Cognito to refresh access token...");
 
     // Make a request to Cognito to refresh access token
@@ -110,7 +111,7 @@ async function refreshAccessToken(): Promise<string> {
       },
     };
 
-    const response = await axios.post(cognitoAuthUrl, requestData, {
+    const response = await axios.post(COGNITO_AUTH_URL, requestData, {
       headers,
     });
 
@@ -122,6 +123,7 @@ async function refreshAccessToken(): Promise<string> {
     // Return the newly refreshed access token
     return response.data.AuthenticationResult.AccessToken;
   } catch (error) {
+    //TODO If this happens, do we log them out?  I think we should, but why is this happening?
     // Handle token refresh failure
     console.error("Error refreshing access token:", error);
     throw error;

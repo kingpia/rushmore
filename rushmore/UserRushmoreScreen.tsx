@@ -61,7 +61,6 @@ export const UserRushmoreScreen = ({
               route.params.urId
             );
 
-            //TODO: DID THE USER COMPLETE THIS USER RUSHMORE? IF SO MARK COMPLETE.
             console.log(
               "Returned rushmore:" + JSON.stringify(userRushmoreDTO, null, 2)
             );
@@ -75,7 +74,11 @@ export const UserRushmoreScreen = ({
               userRushmoreDTO.userRushmore?.itemList
                 ?.slice()
                 .sort((a, b) => a.rank - b.rank)
-                .map((item) => ({ ...item, visible: false })) || [];
+                .map((item) => ({
+                  ...item,
+                  visible:
+                    !!userRushmoreDTO.userRushmoreGameSession?.completedDt,
+                })) || [];
 
             // Insert placeholder card at index 0
             reverseOrder.unshift({
@@ -115,7 +118,6 @@ export const UserRushmoreScreen = ({
 
   const userRushmoreComplete = async () => {
     console.log("User Rushmore is complete!");
-    // Additional logic for completion can be added here
     if (userRushmore) {
       try {
         let completedRushmore = await rushmoreService.userRushmoreViewComplete(
@@ -133,6 +135,20 @@ export const UserRushmoreScreen = ({
         console.error("Error completing user rushmore view:", error);
       }
     }
+  };
+
+  const handleExitPress = async () => {
+    console.log("Saving user rushmore:", userRushmore);
+
+    if (userRushmore) {
+      if (userRushmore.completedDt) {
+        console.log("do nothing, we don't need to save here");
+      } else {
+        console.log("saving the user rushmore:" + JSON.stringify(userRushmore));
+        await rushmoreService.editUserRushmore(userRushmore);
+      }
+    }
+    navigation.goBack();
   };
 
   const handleSnapToItem = (index: number) => {
@@ -153,20 +169,6 @@ export const UserRushmoreScreen = ({
     }
   };
 
-  const handleExitPress = async () => {
-    console.log("Saving user rushmore:", userRushmore);
-
-    if (userRushmore) {
-      if (userRushmore.completedDt) {
-        console.log("do nothing, we don't need to save here");
-      } else {
-        console.log("saving the user rushmore:" + JSON.stringify(userRushmore));
-        await rushmoreService.editUserRushmore(userRushmore);
-      }
-    }
-    navigation.goBack();
-  };
-
   const renderRankedItems = ({ item }: { item: VisibleUserRushmoreItem }) => {
     return (
       <View style={styles.nonDraggableItem}>
@@ -175,7 +177,7 @@ export const UserRushmoreScreen = ({
             <Text style={styles.rankText}>{item.rank}</Text>
           </View>
           <View style={styles.itemContent}>
-            <Text style={styles.itemText}>{item.item}</Text>
+            {item.visible && <Text style={styles.itemText}>{item.item}</Text>}
           </View>
         </View>
       </View>
@@ -222,6 +224,7 @@ export const UserRushmoreScreen = ({
       });
     }
   };
+
   const handleLikeClick = async () => {
     console.log("handleLikeClick");
     if (userRushmore) {
@@ -236,7 +239,7 @@ export const UserRushmoreScreen = ({
             setLikeCount((prevCount) => Math.max(prevCount - 1, 0)); // Ensure likeCount does not go below 0
             setLiked(false);
           }
-          console.log("It meissed response");
+          console.log("It missed response");
         } else {
           const response = await rushmoreService.likeUserRushmore(
             userRushmore.urId
@@ -251,6 +254,7 @@ export const UserRushmoreScreen = ({
       }
     }
   };
+
   const navigateToUserRushmoreVersionScreen = () => {
     console.log("navigateToUserRushmoreVersionScreen");
 
@@ -309,11 +313,7 @@ export const UserRushmoreScreen = ({
             />
           )}
           <FlatList
-            data={orderedUserRushmoreItems.map((item) =>
-              userRushmoreGameSession?.completedDt
-                ? { ...item, visible: true }
-                : item
-            )}
+            data={orderedUserRushmoreItems}
             renderItem={renderRankedItems}
             keyExtractor={(item) => item.item}
             contentContainerStyle={styles.listContentContainer}
