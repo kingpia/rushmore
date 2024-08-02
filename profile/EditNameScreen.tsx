@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  SafeAreaView,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import {
   Text,
   TextInput,
@@ -7,7 +13,7 @@ import {
   Modal,
   Portal,
   HelperText,
-} from "react-native-paper"; // Import necessary components
+} from "react-native-paper";
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
@@ -24,9 +30,10 @@ export const EditNameScreen = ({
   navigation,
 }: EditNickNameScreenProps) => {
   const userService = new UserService<SocialUser>();
-  const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false); // State to manage error modal visibility
-  const [errorMessage, setErrorMessage] = useState<string>(""); // State to store error message
+  const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [nickName, setNickName] = useState("");
+  const inputRef = useRef<TextInput>(null);
 
   const nickNameCharacterCount = nickName.length;
   const [searchText, setSearchText] = useState<string>(
@@ -44,27 +51,25 @@ export const EditNameScreen = ({
     string | null
   >(route.params?.userData.lastNickNameUpdatedDt || null);
 
-  console.log("LastNickNameUpdatedDt:" + lastNickNameUpdatedDt);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 500); // Delay in milliseconds
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
-    console.log("lastUpdatedDt useEffect");
     if (lastNickNameUpdatedDt) {
-      console.log("lastNickNameUpdatedDt" + lastNickNameUpdatedDt);
-
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       const lastUpdateDate = parseDate(lastNickNameUpdatedDt);
-      console.log(lastUpdateDate);
       if (lastUpdateDate.getTime() > thirtyDaysAgo.getTime()) {
-        console.log("updatedDt is very recent: " + lastUpdateDate);
         setHasRecentUpdateError(true);
         setHasRecentUpdateErrorMsg(`Last updated ${lastNickNameUpdatedDt}`);
-        console.log("Setting error because of recent update:");
       }
     }
   }, [lastNickNameUpdatedDt]);
 
-  // Function to parse date string into a Date object using date-fns
   const parseDate = (dateString: string) => {
     const parsedDate = parse(
       dateString,
@@ -77,22 +82,25 @@ export const EditNameScreen = ({
   const isValidNickName = (nickName: string) => {
     return /^[a-zA-Z0-9_. -]+$/.test(nickName);
   };
+
   const handleClearNickName = () => {
     setNickName("");
     setSearchText("");
   };
 
   const handleSave = async () => {
+    setLoading(true);
     try {
       let userData = await userService.updateNickName(nickName);
-      console.log("nickname updated successfully to :" + userData.nickName);
       navigation.navigate("EditProfileScreen", {
         user: userData,
       });
     } catch (error: any) {
       console.error("Error updating nickname:", error);
-      setErrorMessage(error.message); // Set error message
-      setErrorModalVisible(true); // Show error modal
+      setErrorMessage(error.message);
+      setErrorModalVisible(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,51 +109,47 @@ export const EditNameScreen = ({
     characterCount === 0 ||
     characterCount > 30 ||
     hasError ||
-    hasRecentUpdateError;
+    hasRecentUpdateError ||
+    loading;
 
   const handleSearchChange = (text: string) => {
     setSearchText(text);
     setNickName(text);
     if (text === "") {
-      console.log("setting has Error to falkse");
-
       setErrorMsg(undefined);
       setHasError(false);
     } else {
-      // Validate nickname format
       const validNickName = isValidNickName(text);
       if (!validNickName) {
-        setErrorMsg("Invalid Characters"); // Set inUse to true if nickname is invalid
+        setErrorMsg("Invalid Characters");
         setHasError(true);
       } else {
-        console.log("setting has Error to false");
         setHasError(false);
-        setErrorMsg(""); // Set inUse to true if nickname is invalid
+        setErrorMsg("");
       }
-      console.log("Setting error to true");
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Title */}
       <Text style={styles.title}>Edit Name</Text>
-
-      {/* Text Input */}
       <View style={styles.inputContainer}>
         <TextInput
+          ref={inputRef}
           label="Nickname"
           onChangeText={handleSearchChange}
           value={searchText}
           style={styles.input}
-          disabled={hasRecentUpdateError} // Set editable based on hasRecentUpdateError state
-          maxLength={20} // Add this line to limit input to 20 characters
+          disabled={hasRecentUpdateError || loading}
+          maxLength={20}
           right={
-            <TextInput.Icon
-              icon="close"
-              onPress={handleClearNickName}
-              color={nickName ? "black" : "transparent"}
-            />
+            searchText ? (
+              <TextInput.Icon
+                icon="close"
+                onPress={handleClearNickName}
+                color={searchText ? "black" : "transparent"}
+              />
+            ) : null
           }
         />
       </View>
@@ -155,34 +159,29 @@ export const EditNameScreen = ({
             {errorMsg}
           </HelperText>
         )}
-
         {!hasRecentUpdateError ? null : (
           <HelperText type="error" visible={hasRecentUpdateError}>
             {hasRecentUpdateErrorMsg}
           </HelperText>
         )}
-        {/* Character Counter */}
         <View style={styles.counterContainer}>
           <Text>{`${nickNameCharacterCount}/20`}</Text>
         </View>
       </View>
-
-      {/* Information Text */}
       <Text style={styles.infoText}>
         Your nickname can only be changed once every 10 days.
       </Text>
-
-      {/* Action Buttons */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          disabled={loading}
+        >
           <Text>Cancel</Text>
         </TouchableOpacity>
         <Button mode="contained" onPress={handleSave} disabled={isSaveDisabled}>
-          Save
+          {loading ? <ActivityIndicator color="#ffffff" /> : "Save"}
         </Button>
       </View>
-
-      {/* Error Modal */}
       <Portal>
         <Modal
           visible={errorModalVisible}

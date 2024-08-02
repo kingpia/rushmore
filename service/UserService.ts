@@ -5,6 +5,7 @@ import FormData from "form-data";
 import api from "./api";
 import { AxiosResponse } from "axios";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
+import { BASE_URL } from "../config"; // Import the constants
 
 interface GraphQLError {
   message: string;
@@ -14,9 +15,6 @@ interface GraphQLError {
 }
 
 export class UserService<T> {
-  //private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
-  private baseURL: string = "http://192.168.254.9:8080"; // Hardcoded base URL
-
   async getRushmoreItems(uid: string, toFetch: ApiFetchEnums): Promise<T[]> {
     try {
       let data: T[] = [];
@@ -43,7 +41,7 @@ export class UserService<T> {
   async userRushmoresByUid(uid: string): Promise<UserRushmoreDTO[]> {
     console.log("GetUserRushmoreList UID:" + uid);
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           userRushmoresByUid(uid: "${uid}") {
@@ -103,7 +101,7 @@ export class UserService<T> {
   async getUserByUserId(uid: string): Promise<SocialUser> {
     console.log("getuserByUserId");
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           socialUserByUid(uid: "${uid}") {
@@ -133,7 +131,7 @@ export class UserService<T> {
   async getMyUserProfile(): Promise<SocialUser> {
     console.log("getMyUserProfile");
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           getMyUserProfile {
@@ -165,7 +163,7 @@ export class UserService<T> {
   async removeProfileImage(): Promise<void> {
     console.log("RemoveProfileImage");
     try {
-      const response = await api.post(`${this.baseURL}/removeProfileImage`);
+      const response = await api.post(`${BASE_URL}/removeProfileImage`);
 
       if (response.status !== 200) {
         throw new Error("Failed to remove profile image");
@@ -208,7 +206,7 @@ export class UserService<T> {
 
   async getUsersByNickName(searchString: string): Promise<SocialUser[]> {
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           getUserByNickName(searchString: "${searchString}") {
@@ -237,7 +235,7 @@ export class UserService<T> {
 
   async getUsersByUserName(searchString: string): Promise<SocialUser[]> {
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           getUserByUserName(searchString: "${searchString}") {
@@ -260,7 +258,7 @@ export class UserService<T> {
 
   async followUser(followedUid: string): Promise<User> {
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
           mutation {
             followUser(followedUid: "${followedUid}") {
@@ -298,7 +296,7 @@ export class UserService<T> {
 
   async unfollowUser(unfollowedUid: string): Promise<User> {
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
          mutation {
           unFollowUser(unFollowedUid: "${unfollowedUid}") {
@@ -317,7 +315,7 @@ export class UserService<T> {
   async getFollowersUserList(uid: string): Promise<SocialUser[]> {
     console.log("getFollowersUserList:" + uid);
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
          getFollowersUserList(uid: "${uid}") {
@@ -346,7 +344,7 @@ export class UserService<T> {
   async getMyFollowersUserList(): Promise<SocialUser[]> {
     console.log("getMyFollowersUserList");
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
          getMyFollowersUserList {
@@ -375,7 +373,7 @@ export class UserService<T> {
   async getFollowingUserList(uid: string): Promise<SocialUser[]> {
     console.log("getFollowinguserList:" + uid);
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           getFollowingUserList(uid: "${uid}") {
@@ -406,7 +404,7 @@ export class UserService<T> {
   async getMyFollowingUserList(): Promise<SocialUser[]> {
     console.log("getFollowinguserList");
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           getMyFollowingUserList {
@@ -436,7 +434,7 @@ export class UserService<T> {
 
   async getSocialUserByUid(uid: string): Promise<SocialUser> {
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           socialUserByUid(uid: "${uid}") {
@@ -463,7 +461,7 @@ export class UserService<T> {
       const response: AxiosResponse<{
         data: { updateUserName: SocialUser };
         errors?: GraphQLError[];
-      }> = await api.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${BASE_URL}/graphql`, {
         query: `
             mutation {
               updateUserName(userName: "${userName}") {
@@ -506,7 +504,7 @@ export class UserService<T> {
       const response: AxiosResponse<{
         data: { updateUserNickName: SocialUser };
         errors?: GraphQLError[];
-      }> = await api.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${BASE_URL}/graphql`, {
         query: `
             mutation {
               updateUserNickName(nickName: "${nickName}") {
@@ -549,7 +547,7 @@ export class UserService<T> {
       const response: AxiosResponse<{
         data: { createUser: SocialUser };
         errors?: GraphQLError[];
-      }> = await api.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${BASE_URL}/graphql`, {
         query: `
             mutation {
               createUser {
@@ -590,7 +588,7 @@ export class UserService<T> {
   async getUserAccountInformation(): Promise<User> {
     console.log("getUserAccountInformation");
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           getUserAccountInformation {

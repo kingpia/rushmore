@@ -4,8 +4,8 @@ import {
   StyleSheet,
   FlatList,
   Keyboard,
-  ScrollView,
   TouchableOpacity,
+  Text,
 } from "react-native";
 import { Searchbar, Button, ActivityIndicator } from "react-native-paper"; // Import ActivityIndicator from react-native-paper
 import { UserService } from "../service/UserService";
@@ -116,32 +116,36 @@ export const AddFriendsScreen = ({ navigation }: AddFriendScreenProps) => {
         ) : null}
       </View>
 
-      {/* Display ActivityIndicator from react-native-paper when loading is true */}
       <ActivityIndicator
         animating={loading}
-        color="#0000ff" // Set your desired color
-        size="large" // Set the size of the indicator
-        hidesWhenStopped={true} // Hide the indicator when not animating
+        color="#0000ff"
+        size="large"
+        hidesWhenStopped={true}
         style={styles.activityIndicator}
       />
 
       <View style={styles.flatListContainer}>
-        {/* Render user cards */}
-        <FlatList
-          data={searchResults}
-          keyExtractor={(item) => item.uid}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => navigateToUserProfileScreen(item)}>
-              <SocialUserCard
-                user={item}
-                onPressFollow={followUser}
-                onUnfollow={unfollowUser}
-              />
-            </TouchableOpacity>
-          )}
-          keyboardShouldPersistTaps="handled" // Handle taps even when the keyboard is displayed
-          style={styles.flatList} // Add any additional styles if needed
-        />
+        {searchResults.length === 0 && !loading ? (
+          <Text style={styles.emptyMessage}>No users found</Text>
+        ) : (
+          <FlatList
+            data={searchResults}
+            keyExtractor={(item) => item.uid}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => navigateToUserProfileScreen(item)}
+              >
+                <SocialUserCard
+                  user={item}
+                  onPressFollow={followUser}
+                  onUnfollow={unfollowUser}
+                />
+              </TouchableOpacity>
+            )}
+            keyboardShouldPersistTaps="handled"
+            style={styles.flatList}
+          />
+        )}
       </View>
     </View>
   );
@@ -152,7 +156,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchbarContainer: {
-    flexDirection: "row", // Ensure Searchbar and Cancel button stay on the same row
+    flexDirection: "row",
     alignItems: "center",
     marginHorizontal: 16,
     marginVertical: 8,
@@ -167,13 +171,19 @@ const styles = StyleSheet.create({
   activityIndicator: {
     position: "absolute",
     alignSelf: "center",
-    top: "50%", // Place the indicator at the vertical center of the screen
+    top: "50%",
   },
   flatListContainer: {
     flex: 1,
   },
   flatList: {
-    flex: 1, // Ensure FlatList takes up remaining space
+    flex: 1,
+  },
+  emptyMessage: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
+    color: "#888",
   },
 });
 

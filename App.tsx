@@ -10,8 +10,7 @@ import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob"; // <- polyfill here
 import axios, { AxiosError } from "axios";
 const { aws_user_pools_web_client_id } = amplifyconfig;
-import { cognitoAuthUrl } from "./config"; // Import the constant
-
+import { COGNITO_AUTH_URL } from "./config"; // Import the constant
 // App.js
 
 import { Amplify, Auth } from "aws-amplify";
@@ -66,7 +65,6 @@ export default function App() {
 
             if (newAccessToken) {
               console.log("RefreshAccessToken Returned a new token");
-              setInitialRoute("RushmoreTabContainer"); // Change initial route if user is logged in
             } else {
               console.log("Refresh Access Token did NOT return a new token");
 
@@ -76,6 +74,8 @@ export default function App() {
           }
         }
       } catch (e) {
+        //Anything landing here will send user back to login because initial route is AuthStack and
+        //we didn't get to set the RushmoreTabContainer.
         console.warn(e);
       } finally {
         // Tell the application to render
@@ -123,7 +123,7 @@ export default function App() {
           },
         };
 
-        const response = await axios.post(cognitoAuthUrl, requestData, {
+        const response = await axios.post(COGNITO_AUTH_URL, requestData, {
           headers,
         });
 
@@ -139,6 +139,7 @@ export default function App() {
       //TODO If this happens, do we log them out?  I think we should, but why is this happening?
       // Handle token refresh failure
       console.error("Error refreshing access token:", error);
+      //Throwing this error will send them back to the login.
       throw error;
     }
   }

@@ -15,7 +15,6 @@ import {
   IconButton,
   Portal,
 } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { RouteProp } from "@react-navigation/native";
@@ -43,9 +42,16 @@ export const EditProfileScreen = ({
   const defaultImage = require("../assets/shylo.png");
 
   useEffect(() => {
-    console.log("SettingUserData:" + JSON.stringify(route.params?.user));
-    setUserData(route.params?.user);
-  }, []);
+    if (route.params?.user) {
+      console.log("SettingUserData:" + JSON.stringify(route.params.user));
+      setUserData(route.params.user);
+    } else {
+      console.error(
+        "For some reason route is not set, shouldn't happen, but maybe need to fetch infor here"
+      );
+    }
+  }, [route.params?.user]);
+
   const handleModalClose = () => {
     setIsModalVisible(false);
   };

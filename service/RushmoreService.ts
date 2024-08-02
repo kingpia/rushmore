@@ -11,6 +11,7 @@ import { UserLikeResponseDTO } from "../model/UserLikeResponseDTO";
 import { UserLike } from "../model/UserLike";
 import { UserRushmoreViewComplete } from "../model/UserRushmoreViewComplete";
 import { UserRushmoreViewCompleteResponseDTO } from "../model/UserRushmoreViewCompleteResponseDTO";
+import { BASE_URL } from "../config"; // Import the constants
 
 interface GraphQLError {
   message: string;
@@ -20,9 +21,6 @@ interface GraphQLError {
 }
 
 export class RushmoreService<T> {
-  //private baseURL: string = "http://192.168.0.11:8080"; // Hardcoded base URL
-  private baseURL: string = "http://192.168.254.9:8080"; // Hardcoded base URL
-
   // Inside RushmoreService class
   async letterSelection(
     urgsId: number,
@@ -49,7 +47,7 @@ export class RushmoreService<T> {
 
   async getUserRushmore(urId: string): Promise<UserRushmoreDTO> {
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           getUserRushmore(urId: "${urId}") {
@@ -128,7 +126,7 @@ export class RushmoreService<T> {
 
   async getMyInProgressUserRushmoreGameSessions(): Promise<UserRushmoreDTO[]> {
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           myInProgressUserRushmoreGameSessions {
@@ -189,7 +187,7 @@ export class RushmoreService<T> {
 
   async getMySolvedUserRushmoreGameSessions(): Promise<UserRushmoreDTO[]> {
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           mySolvedUserRushmoreGameSessions {
@@ -250,7 +248,7 @@ export class RushmoreService<T> {
   async getMyBookmarkedUserRushmores(): Promise<UserRushmoreDTO[]> {
     console.log("getMyBookmarkedUserRushmores");
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           myBookmarkedUserRushmores {
@@ -307,7 +305,7 @@ export class RushmoreService<T> {
 
   async getMyLikedUserRushmores(): Promise<UserRushmoreDTO[]> {
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           myLikedUserRushmores {
@@ -364,7 +362,7 @@ export class RushmoreService<T> {
   async getMyInProgressRushmoreList(): Promise<UserRushmoreDTO[]> {
     console.log("getMyInprogressRushmores");
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
             myInProgressUserRushmores {
@@ -414,7 +412,7 @@ export class RushmoreService<T> {
     console.log("getMyCompletedRushmoreList");
 
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           myCompletedUserRushmores {
@@ -465,7 +463,7 @@ export class RushmoreService<T> {
     console.log("getRushmores");
 
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           getRushmores {
@@ -506,7 +504,7 @@ export class RushmoreService<T> {
       const response: AxiosResponse<{
         data: { createUserRushmore: any };
         errors?: GraphQLError[];
-      }> = await api.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${BASE_URL}/graphql`, {
         query: `
             mutation {
               createUserRushmore(
@@ -563,7 +561,7 @@ export class RushmoreService<T> {
     console.log("getRushmoreItemInitialList");
 
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           getRushmoreItemInitialList(rid: "${rid}", size: ${size} from: ${from}) {
@@ -587,7 +585,7 @@ export class RushmoreService<T> {
       const response: AxiosResponse<{
         data: { editUserRushmore: UserRushmore };
         errors?: GraphQLError[];
-      }> = await api.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${BASE_URL}/graphql`, {
         query: `
           mutation($request: EditUserRushmoreRequestDTO!) {
             editUserRushmore(request: $request) {
@@ -659,7 +657,7 @@ export class RushmoreService<T> {
       const response: AxiosResponse<{
         data: { incrementAndEditUserRushmore: UserRushmore };
         errors?: GraphQLError[];
-      }> = await api.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${BASE_URL}/graphql`, {
         query: `
           mutation($request: EditUserRushmoreRequestDTO!) {
             incrementAndEditUserRushmore(request: $request) {
@@ -733,7 +731,7 @@ export class RushmoreService<T> {
       const response: AxiosResponse<{
         data: { publishUserRushmore: UserRushmore };
         errors?: GraphQLError[];
-      }> = await api.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${BASE_URL}/graphql`, {
         query: `
           mutation($request: EditUserRushmoreRequestDTO!) {
             publishUserRushmore(request: $request) {
@@ -804,7 +802,7 @@ export class RushmoreService<T> {
     console.log("getRushmoreItemBySearchString");
 
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query {
           getRushmoreItemBySearchString(rid: "${rid}", searchString:"${searchString}") {
@@ -826,7 +824,7 @@ export class RushmoreService<T> {
     console.log("getUserRushmoreVersionList");
 
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query GetUserRushmoreVersionList($urId: String!) {
           getUserRushmoreVersionList(urId: $urId) {
@@ -890,7 +888,7 @@ export class RushmoreService<T> {
     );
 
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query GetUserRushmoreLikeList($userLikeInput: UserLikeInput!, $limit: Int!) {
           getUserRushmoreLikeList(userLikeInput: $userLikeInput, limit: $limit) {
@@ -947,7 +945,7 @@ export class RushmoreService<T> {
     );
 
     try {
-      const response = await api.post(`${this.baseURL}/graphql`, {
+      const response = await api.post(`${BASE_URL}/graphql`, {
         query: `
         query GetUserRushmoreViewCompleteList($userRushmoreViewCompleteInput: UserRushmoreViewCompleteInput!, $limit: Int!) {
           getUserRushmoreViewCompleteList(userRushmoreViewCompleteInput: $userRushmoreViewCompleteInput, limit: $limit) {
@@ -1000,7 +998,7 @@ export class RushmoreService<T> {
       const response: AxiosResponse<{
         data: { userRushmoreViewComplete: any };
         errors?: GraphQLError[];
-      }> = await api.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${BASE_URL}/graphql`, {
         query: `
           mutation {
             userRushmoreViewComplete(
@@ -1061,7 +1059,7 @@ export class RushmoreService<T> {
       const response: AxiosResponse<{
         data: { likeUserRushmore: UserLike };
         errors?: GraphQLError[];
-      }> = await api.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${BASE_URL}/graphql`, {
         query: `
           mutation {
             likeUserRushmore(
@@ -1103,7 +1101,7 @@ export class RushmoreService<T> {
       const response: AxiosResponse<{
         data: { unLikeUserRushmore: UserLike };
         errors?: GraphQLError[];
-      }> = await api.post(`${this.baseURL}/graphql`, {
+      }> = await api.post(`${BASE_URL}/graphql`, {
         query: `
           mutation {
             unLikeUserRushmore(

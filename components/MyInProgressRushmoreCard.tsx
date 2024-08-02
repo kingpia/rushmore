@@ -16,11 +16,13 @@ type MyInProgressRushmoreCardProps = {
 export const MyInProgressRushmoreCard: React.FC<
   MyInProgressRushmoreCardProps
 > = ({ myInProgressRushmore, onPress }) => {
+  console.log("createdDt:", myInProgressRushmore.userRushmore.createdDt);
+
   const { visibility, gameType, rushmore, version } =
     myInProgressRushmore.userRushmore;
   const parsedCreatedDt = parse(
     myInProgressRushmore.userRushmore.createdDt,
-    "EEE MMM dd HH:mm:ss 'GMT' yyyy",
+    "EEE MMM dd HH:mm:ss 'UTC' yyyy",
     new Date()
   );
   const formattedCreatedDt = format(parsedCreatedDt, "MMM d yyyy");

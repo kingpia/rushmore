@@ -2,6 +2,7 @@
   "expo": {
     "name": "rushmore",
     "slug": "rushmore",
+    "owner": "ptoa",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,12 +17,16 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ptoa.rushmore"
+      "bundleIdentifier": "com.ptoa.rushmore",
+      "runtimeVersion": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "runtimeVersion": {
+        "policy": "appVersion"
       }
     },
     "web": {
@@ -29,6 +34,14 @@
     },
     "plugins": [
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ff115de1-aca2-4d4f-8198-5e752d1e219f"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ff115de1-aca2-4d4f-8198-5e752d1e219f"
+    }
   }
 }

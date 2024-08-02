@@ -25,6 +25,7 @@ import { AuthStackParamList } from "../nav/params/AuthStackParamList";
 import { Hub } from "aws-amplify";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
+import LoadingButton from "../components/LoadingButton";
 
 type AuthEmailSignUpScreenProps = {
   navigation: NativeStackNavigationProp<AuthStackParamList>;
@@ -473,8 +474,9 @@ export const AuthEmailSignUpScreen = ({
           </HelperText>
         )}
 
-        <Button
-          mode="contained"
+        <LoadingButton
+          onPress={handleNextButtonClick}
+          isLoading={isSigningIn}
           disabled={
             !(
               (validateEmail(emailText) &&
@@ -490,18 +492,10 @@ export const AuthEmailSignUpScreen = ({
               isFormDisabled
             )
           }
+          loadingText="Signing in..."
+          buttonText="Next"
           style={styles.button}
-          onPress={handleNextButtonClick}
-        >
-          {isSigningIn ? ( // Display "Signing in..." when signing in
-            <>
-              <ActivityIndicator animating={true} color="#ffffff" />
-              <Text>Signing in... </Text>
-            </>
-          ) : (
-            "Next"
-          )}
-        </Button>
+        />
       </View>
     </SafeAreaView>
   );

@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  SafeAreaView,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  TextInput as NativeTextInput,
+} from "react-native";
 import {
   Text,
   TextInput,
@@ -7,7 +14,7 @@ import {
   Modal,
   Portal,
   HelperText,
-} from "react-native-paper"; // Import necessary components
+} from "react-native-paper";
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
@@ -24,9 +31,10 @@ export const EditUsernameScreen = ({
   navigation,
 }: EditUsernameScreenProps) => {
   const userService = new UserService<SocialUser>();
-  const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false); // State to manage error modal visibility
-  const [errorMessage, setErrorMessage] = useState<string>(""); // State to store error message
+  const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [username, setUsername] = useState("");
+  const inputRef = useRef<NativeTextInput>(null);
 
   const usernameCharacterCount = username.length;
   const [searchText, setSearchText] = useState<string>(
@@ -44,95 +52,66 @@ export const EditUsernameScreen = ({
     string | null
   >(route.params?.userData.lastUserNameUpdatedDt || null);
 
-  console.log("LastUserNameUpdatedDt:" + lastUserNameUpdatedDt);
   useEffect(() => {
-    console.log("Use effect Running");
-    console.log("Username:" + route.params?.userData.userName);
-    console.log(
-      "Data to edit screen:" + JSON.stringify(route.params?.userData)
-    );
+    const timer = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 500); // Delay in milliseconds
+    return () => clearTimeout(timer);
+  }, []);
 
+  useEffect(() => {
     const fetchUsers = async () => {
-      //TODO we don't want to send shit character requests to the server.
       if (errorMsg === "Invalid Characters") {
-        console.log("Dont fetch here because of invalid characters");
+        console.log("Don't fetch here because of invalid characters");
       } else {
-        console.log("Inside FetchUsers useEffect");
-        setLoading(true); // Set loading to true when API call begins
         try {
           if (
             searchText.trim() !== "" &&
             searchText != route.params?.userData.userName
           ) {
-            console.log("Searching since text is present");
-            console.log("searching:" + searchText);
             const results: SocialUser[] = await userService.getUsersByUserName(
               searchText
             );
-            console.log("Results:" + JSON.stringify(results));
-            //console.log("Result size:" + results.length);
-
-            //TODO WE ARE HERE, RESULT WILL BE NULL IF NO USERS ARE FOUND
-            //TODO OTHERWISE there will be something in the result.
             if (results.length > 0) {
-              console.log("result is not null");
               setErrorMsg("Username is in use.");
               setHasError(true);
             } else {
-              console.log(
-                "Result is NULL, Username not found, setting error msg to undefined"
-              );
-
               if (!isValidUsername(searchText)) {
               } else {
-                console.log("setting has Error to falkse");
                 setErrorMsg(undefined);
                 setHasError(false);
               }
             }
             setSearchResults(results);
           } else {
-            console.log("Same as before we should remove the in use error");
             setErrorMsg(undefined);
-            console.log("setting has Error to falkse");
-
             setHasError(false);
-            setSearchResults([]); // Clear search results if search text is empty
+            setSearchResults([]);
           }
         } catch (error) {
           console.error("Error fetching users:", error);
         } finally {
-          setLoading(false); // Set loading to false when API call finishes
         }
       }
     };
-    console.log("before debounceTimer");
     const debounceTimer = setTimeout(fetchUsers, 400);
-
     return () => {
       clearTimeout(debounceTimer);
     };
   }, [searchText]);
 
   useEffect(() => {
-    console.log("lastUpdatedDt useEffect");
     if (lastUserNameUpdatedDt) {
-      console.log("lastUsernameUpdatedDt" + lastUserNameUpdatedDt);
-
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       const lastUpdateDate = parseDate(lastUserNameUpdatedDt);
-      console.log(lastUpdateDate);
       if (lastUpdateDate.getTime() > thirtyDaysAgo.getTime()) {
-        console.log("updatedDt is very recent: " + lastUpdateDate);
         setHasRecentUpdateError(true);
         setHasRecentUpdateErrorMsg(`Last updated ${lastUserNameUpdatedDt}`);
-        console.log("Setting error because of recent update:");
       }
     }
   }, [lastUserNameUpdatedDt]);
 
-  // Function to parse date string into a Date object using date-fns
   const parseDate = (dateString: string) => {
     const parsedDate = parse(
       dateString,
@@ -149,19 +128,22 @@ export const EditUsernameScreen = ({
   const handleClearUserName = () => {
     setUsername("");
     setSearchText("");
+    inputRef.current?.focus();
   };
 
   const handleSave = async () => {
+    setLoading(true);
     try {
       let userData = await userService.updateUserName(username);
-      console.log("Username updated successfully to :" + userData.userName);
       navigation.navigate("EditProfileScreen", {
         user: userData,
       });
     } catch (error: any) {
       console.error("Error updating username:", error);
-      setErrorMessage(error.message); // Set error message
-      setErrorModalVisible(true); // Show error modal
+      setErrorMessage(error.message);
+      setErrorModalVisible(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -170,51 +152,48 @@ export const EditUsernameScreen = ({
     characterCount === 0 ||
     characterCount > 30 ||
     hasError ||
-    hasRecentUpdateError;
+    hasRecentUpdateError ||
+    loading;
 
   const handleSearchChange = (text: string) => {
     setSearchText(text);
     setUsername(text);
     if (text === "") {
-      console.log("setting has Error to falkse");
-
       setErrorMsg(undefined);
       setHasError(false);
     } else {
-      // Validate username format
       const validUsername = isValidUsername(text);
       if (!validUsername) {
-        setErrorMsg("Invalid Characters"); // Set inUse to true if username is invalid
+        setErrorMsg("Invalid Characters");
+        setHasError(true);
       } else {
-        console.log("setting has Error to falkse");
-
         setHasError(false);
-        setErrorMsg(""); // Set inUse to true if username is invalid
+        setErrorMsg("");
       }
-      setHasError(true);
     }
+    inputRef.current?.focus();
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Title */}
       <Text style={styles.title}>Edit Username</Text>
-
-      {/* Text Input */}
       <View style={styles.inputContainer}>
         <TextInput
+          ref={inputRef}
           label="Username"
           onChangeText={handleSearchChange}
           value={searchText}
           style={styles.input}
-          disabled={hasRecentUpdateError} // Set editable based on hasRecentUpdateError state
-          maxLength={20} // Add this line to limit input to 20 characters
+          disabled={hasRecentUpdateError || loading}
+          maxLength={20}
           right={
-            <TextInput.Icon
-              icon="close"
-              onPress={handleClearUserName}
-              color={username ? "black" : "transparent"}
-            />
+            searchText ? (
+              <TextInput.Icon
+                icon="close"
+                onPress={handleClearUserName}
+                color={searchText ? "black" : "transparent"}
+              />
+            ) : null
           }
         />
       </View>
@@ -224,34 +203,29 @@ export const EditUsernameScreen = ({
             {errorMsg}
           </HelperText>
         )}
-
         {!hasRecentUpdateError ? null : (
           <HelperText type="error" visible={hasRecentUpdateError}>
             {hasRecentUpdateErrorMsg}
           </HelperText>
         )}
-        {/* Character Counter */}
         <View style={styles.counterContainer}>
           <Text>{`${usernameCharacterCount}/20`}</Text>
         </View>
       </View>
-
-      {/* Information Text */}
       <Text style={styles.infoText}>
         Your username can only be changed once every 30 days.
       </Text>
-
-      {/* Action Buttons */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          disabled={loading}
+        >
           <Text>Cancel</Text>
         </TouchableOpacity>
         <Button mode="contained" onPress={handleSave} disabled={isSaveDisabled}>
-          Save
+          {loading ? <ActivityIndicator color="#ffffff" /> : "Save"}
         </Button>
       </View>
-
-      {/* Error Modal */}
       <Portal>
         <Modal
           visible={errorModalVisible}

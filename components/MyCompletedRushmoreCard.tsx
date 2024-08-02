@@ -46,7 +46,7 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
   const rushmoreTitle = rushmore?.title || "N/A";
 
   const parsedCompletedDt = completedDt
-    ? parse(completedDt, "EEE MMM dd HH:mm:ss 'GMT' yyyy", new Date())
+    ? parse(completedDt, "EEE MMM dd HH:mm:ss 'UTC' yyyy", new Date())
     : null;
 
   const formattedCompletedDt = parsedCompletedDt
@@ -58,7 +58,7 @@ const MyCompletedRushmoreCard: React.FC<MyCompletedRushmoreCardProps> = ({
   if (firstCompletedDt) {
     const parsedFirstCompletedDt = parse(
       firstCompletedDt,
-      "EEE MMM dd HH:mm:ss 'GMT' yyyy",
+      "EEE MMM dd HH:mm:ss 'UTC' yyyy",
       new Date()
     );
 

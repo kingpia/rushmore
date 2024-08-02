@@ -39,7 +39,7 @@ const UserRushmoreCard: React.FC<UserRushmorCardProps> = ({
 
   const parsedCompletedDt = parse(
     completedDt,
-    "EEE MMM dd HH:mm:ss 'GMT' yyyy",
+    "EEE MMM dd HH:mm:ss 'UTC' yyyy",
     new Date()
   );
 
@@ -55,7 +55,7 @@ const UserRushmoreCard: React.FC<UserRushmorCardProps> = ({
   if (firstCompletedDt) {
     const parsedFirstCompletedDt = parse(
       firstCompletedDt,
-      "EEE MMM dd HH:mm:ss 'GMT' yyyy",
+      "EEE MMM dd HH:mm:ss 'UTC' yyyy",
       new Date()
     );
     console.log(

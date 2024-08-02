@@ -1,10 +1,11 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { List, Divider } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import * as SecureStore from "expo-secure-store";
 import { useUserFocus } from "../service/UserFocusContext";
+import versionInfo from "../version.json"; // Import version information
 
 type ProfileSettingsScreenProps = {
   navigation: NativeStackNavigationProp<AppStackParamList>;
@@ -61,6 +62,10 @@ const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
         onPress={handleLogoutPress}
         left={(props) => <List.Icon {...props} icon="logout" />}
       />
+      <Divider />
+      <View style={styles.versionContainer}>
+        <Text style={styles.versionText}>Version {versionInfo.version}</Text>
+      </View>
     </View>
   );
 };
@@ -68,6 +73,17 @@ const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  versionContainer: {
+    position: "absolute",
+    bottom: 10,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  versionText: {
+    fontSize: 16,
+    color: "gray",
   },
 });
 
