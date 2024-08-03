@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, Animated } from "react-native";
-import { Avatar, Button, Text } from "react-native-paper";
+import {
+  View,
+  StyleSheet,
+  Animated,
+  Image,
+  TouchableOpacity,
+} from "react-native";
+import { Button, Text, Modal, Portal } from "react-native-paper";
 import { UserService } from "../service/UserService";
 import { UserRushmore } from "../model/UserRushmore";
-import UserRushmoreCard from "../components/UserRushmoreCard";
 import { RushmoreHorizontalView } from "../components/RushmoreHorizontalView";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "../nav/params/AppStackParamList";
 import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { getSocialNetworkButtonText } from "../utils/SocialUtils";
 import { useUserFocus } from "../service/UserFocusContext";
-import { RushmoreService } from "../service/RushmoreService";
 import { UserRushmoreDTO } from "../model/UserRushmoreDTO";
 import PublishedUserRushmoreCard from "../components/PublishedUserRushmoreCard";
 
@@ -28,15 +32,15 @@ export const UserProfileScreen = ({
   const defaultImage = require("../assets/shylo.png");
   const [categories, setCategories] = useState<string[]>(["All"]); // Initialize with "All"
   const [selectedCategory, setSelectedCategory] = useState("All");
-
   const [socialButtonText, setSocialButtonText] = useState<string>("");
   const userService = new UserService<User>();
   const { userFocus, setUserFocus } = useUserFocus(); // Destructure setUserFocus here
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false); // Modal visibility state
+  const [fadeAnim] = useState(new Animated.Value(0));
 
   console.log("UserProfileScreen");
 
   const renderItemSeparator = () => <View style={styles.divider} />;
-  const [fadeAnim] = useState(new Animated.Value(0));
 
   useFocusEffect(
     React.useCallback(() => {
@@ -161,7 +165,7 @@ export const UserProfileScreen = ({
           return prevUserData; // Return undefined if prevUserData is undefined
         }
 
-        // Return the updated state with followersCount decremented by 1
+        // Return the updated state with followersCount incremented by 1
         return {
           ...prevUserData,
           followersCount: prevUserData.followersCount + 1,
@@ -226,17 +230,26 @@ export const UserProfileScreen = ({
     });
   };
 
+  const handleProfileImagePress = () => {
+    setIsModalVisible(true);
+  };
+
   return (
     <View style={styles.container}>
       <View style={{ alignItems: "center" }}>
-        <View style={styles.avatarContainer}>
-          <Avatar.Image
-            size={120}
-            source={defaultImage}
-            style={styles.avatar}
-          />
-          <Text style={styles.username}>@{route.params.user.userName}</Text>
-        </View>
+        <TouchableOpacity onPress={handleProfileImagePress}>
+          <View style={styles.avatarContainer}>
+            <Image
+              style={styles.avatar}
+              source={
+                userData?.profileImagePath
+                  ? { uri: userData.profileImagePath }
+                  : defaultImage
+              }
+            />
+            <Text style={styles.username}>@{route.params.user.userName}</Text>
+          </View>
+        </TouchableOpacity>
 
         <View style={{ flexDirection: "row" }}>
           <Button
@@ -299,6 +312,23 @@ export const UserProfileScreen = ({
       ) : (
         <Text style={styles.emptyMessage}>No Rushmore Results</Text>
       )}
+
+      <Portal>
+        <Modal
+          visible={isModalVisible}
+          onDismiss={() => setIsModalVisible(false)}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <Image
+            style={styles.fullImage}
+            source={
+              userData?.profileImagePath
+                ? { uri: userData.profileImagePath }
+                : defaultImage
+            }
+          />
+        </Modal>
+      </Portal>
     </View>
   );
 };
@@ -313,6 +343,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     marginBottom: 10,
   },
   username: {
@@ -351,4 +384,17 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#CCCCCC",
   },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  fullImage: {
+    width: 300,
+    height: 300,
+    resizeMode: "contain",
+  },
 });
+
+export default UserProfileScreen;

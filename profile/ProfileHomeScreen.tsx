@@ -1,17 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
-
 import {
   View,
   StyleSheet,
   Modal,
   Text,
   TouchableOpacity,
-  FlatList,
+  Image,
 } from "react-native";
 import {
-  Avatar,
   Button,
   IconButton,
   ActivityIndicator,
@@ -359,8 +357,8 @@ export const ProfileHomeScreen = ({
       ) : (
         <>
           <View style={styles.container}>
-            <Avatar.Image
-              size={120}
+            <Image
+              style={styles.avatar}
               source={
                 userData?.profileImagePath
                   ? { uri: userData.profileImagePath }
@@ -494,6 +492,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     margin: 5,
   },
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 10,
+  },
   actionButtons: {
     flexDirection: "row",
     alignItems: "center",
@@ -541,3 +545,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
+
+export default ProfileHomeScreen;
